@@ -60,9 +60,9 @@ function createCard(name, imgLink) {
   var myObj = {};
 
   myObj.name = name;
-  myObj.picture = 'img/cards' + imgLink;
+  myObj.picture = 'img/cards/' + imgLink;
   myObj.amount = generateNumber(0, 20);
-  myObj.price = generateNumber(100, 1500);
+  myObj.price = generateNumber(100, 1500, 50);
   myObj.weight = generateNumber(30, 300);
   myObj.rating = generateRating();
   myObj['nutrition_facts'] = generateNutrition(CONTENTS);
@@ -87,8 +87,41 @@ function collectCards(quantity) {
   return cardsCollection;
 }
 
-// var CARDS = collectCards(26);
+var cards = collectCards(26);
 //
 // for (var i = 0; i < CARDS.length; i++) {
 // console.log(CARDS[i].picture)
 // }
+
+document.querySelector('.catalog__cards').classList.remove('catalog__cards--load');
+document.querySelector('.catalog__load').classList.add('visually-hidden');
+
+var cardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
+var catalogNest = document.querySelector('.catalog__cards-wrap');
+
+for (var i = 0; i < cards.length; i++) {
+  var newCard = cardTemplate.cloneNode(true);
+
+  if (cards[i].amount > 5) {
+    newCard.classList.add('card--in-stock');
+  } else if (cards[i].amount >= 1 && cards[i].amount <= 5) {
+    newCard.classList.add('card--little');
+  } else if (cards[i].amount === 0) {
+    newCard.classList.add('card--soon');
+  }
+
+  newCard.querySelector('.card__title').textContent = cards[i].name;
+  newCard.querySelector('.card__img').src = cards[i].picture;
+  newCard.querySelector('.card__price').firstChild.textContent = cards[i].price + ' ';
+  newCard.querySelector('.card__weight').textContent = '/ ' + cards[i].weight + ' Г';
+  newCard.querySelector('.star__count').textContent = cards[i].rating.number;
+
+  if (cards[i].nutrition_facts.sugar === true) {
+    newCard.querySelector('.card__characteristic').textContent = 'Без сахара. ' + cards[i].nutrition_facts.energy + ' ккал';
+  } else {
+    newCard.querySelector('.card__characteristic').textContent = 'Содержит сахар. ' + cards[i].nutrition_facts.energy + ' ккал';
+  }
+  newCard.querySelector('.card__composition-list').textContent = cards[i].nutrition_facts.contents;
+
+  catalogNest.appendChild(newCard);
+}
