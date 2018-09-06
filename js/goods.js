@@ -187,6 +187,60 @@ function renderIfSugar(data) {
 
 cardDom = ['#card', '.catalog__card', '.card__title', '.card__img', '.card__weight', '.stars__rating', '.star__count', '.card__characteristic', '.card__composition-list'];
 
+function CONSTRUCTOR () {
+  var myObj = {
+  },
+
+  getTitle: function () {
+    this.getNest().querySelector(this.title);
+  },
+
+  getPictureRef: function () {
+    this.getNest().querySelector(this.pictureRef);
+  },
+
+  getPrice: function () {
+    this.getNest().querySelector(this.price);
+  },
+
+  getWeight: function () {
+    this.getNest().querySelector(this.weight);
+  },
+
+  getStars: function () {
+    this.getNest().querySelector(this.stars);
+  },
+
+  getStarsCount: function () {
+    this.getNest().querySelector(this.starsCount);
+  },
+
+  getCharacteristics: function () {
+    this.getNest().querySelector(this.characteristics);
+  },
+
+  getComposition: function () {
+    this.getNest().querySelector(this.composition);
+  }
+  }
+
+  return myObj;
+}
+
+var CatalogBuild = new CONSTRUCTOR();
+
+CatalogBuild.template = '#card';
+CatalogBuild.nest = '.catalog__card';
+CatalogBuild.title = '.card__title';
+CatalogBuild.pictureRef = '.card__img';
+CatalogBuild.price = '.card__img';
+CatalogBuild.weight = '.card__weight';
+CatalogBuild.stars = '.stars__rating';
+CatalogBuild.starsCOUNT = '.star__count';
+CatalogBuild.characteristics = '.card__characteristic';
+CatalogBuild.composition = '.card__composition-list';
+
+
 var toBuildCatalog = {
   template: '#card',
   nest: '.catalog__card',
@@ -239,6 +293,10 @@ var toBuildCatalog = {
     this.getNest().querySelector(this.composition);
   }
 };
+
+function gen(obj, data) {
+ fillAmount(obj.getAmount
+}
 
 function createCatalogCard(data) {
   var cardTemplate = document.querySelector('#card').cloneNode(true).content;
