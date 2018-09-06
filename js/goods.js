@@ -44,7 +44,7 @@ function getRating() {
   return myObj;
 }
 
-// generates nutrition_facts object
+// generates nutritioFacts object
 
 function getNutrition(contentsList) {
   var myObj = {};
@@ -77,7 +77,7 @@ function createCard(name, imgLink) {
   myObj.price = getRandomInt(100, 1500, 50);
   myObj.weight = getRandomInt(30, 300);
   myObj.rating = getRating();
-  myObj['nutrition_facts'] = getNutrition(CONTENTS);
+  myObj.nutritionFacts = getNutrition(CONTENTS);
 
   return myObj;
 }
@@ -116,15 +116,15 @@ function fillTextContent(owner, text) {
   owner.textContent = text;
 }
 
-// fill picture link
+// fill source link
 
-function fillPictureSource(owner, src) {
+function fillSource(owner, src) {
   owner.src = src;
 }
 
 // add special class in depend on amount
 
-function renderAmount(amount) {
+function fillAmount(owner, amount) {
   var myClass = '';
 
   if (amount > 5) {
@@ -135,7 +135,11 @@ function renderAmount(amount) {
     myClass = 'card--soon';
   }
 
-  return myClass;
+  owner.classList.add(myClass);
+}
+
+function fillWeight(owner, weight) {
+  fillTextContent(owner, '/ ' + weight + ' Г');
 }
 
 // add class and change text in depend on stars raiting
@@ -171,15 +175,70 @@ function renderStars(owner, data) {
 // change text in depend on sugar
 
 function renderIfSugar(data) {
-  var ifSugar = (data.nutrition_facts.sugar === true) ?
-    'Без сахара. ' + data.nutrition_facts.energy + ' ккал'
+  var ifSugar = (data.nutritionFacts.sugar === true) ?
+    'Без сахара. ' + data.nutritionFacts.energy + ' ккал'
     :
-    'Содержит сахар. ' + data.nutrition_facts.energy + ' ккал';
+    'Содержит сахар. ' + data.nutritionFacts.energy + ' ккал';
 
   return ifSugar;
 }
 
 // create single card
+
+cardDom = ['#card', '.catalog__card', '.card__title', '.card__img', '.card__weight', '.stars__rating', '.star__count', '.card__characteristic', '.card__composition-list'];
+
+var toBuildCatalog = {
+  template: '#card',
+  nest: '.catalog__card',
+  title: '.card__title',
+  pictureRef: '.card__img',
+  price: '.card__img',
+  weight: '.card__weight',
+  stars: '.stars__rating',
+  starsCount: '.star__count',
+  characteristics: '.card__characteristic',
+  composition: '.card__composition-list',
+
+  getTemplate: function () {
+    return document.querySelector(this.template).cloneNode(true).content;
+  },
+
+  getNest: function () {
+    this.getTemplate().querySelector(this.nest);
+  },
+
+  getTitle: function () {
+    this.getNest().querySelector(this.title);
+  },
+
+  getPictureRef: function () {
+    this.getNest().querySelector(this.pictureRef);
+  },
+
+  getPrice: function () {
+    this.getNest().querySelector(this.price);
+  },
+
+  getWeight: function () {
+    this.getNest().querySelector(this.weight);
+  },
+
+  getStars: function () {
+    this.getNest().querySelector(this.stars);
+  },
+
+  getStarsCount: function () {
+    this.getNest().querySelector(this.starsCount);
+  },
+
+  getCharacteristics: function () {
+    this.getNest().querySelector(this.characteristics);
+  },
+
+  getComposition: function () {
+    this.getNest().querySelector(this.composition);
+  }
+};
 
 function createCatalogCard(data) {
   var cardTemplate = document.querySelector('#card').cloneNode(true).content;
@@ -193,16 +252,16 @@ function createCatalogCard(data) {
   var cardCharacteristics = card.querySelector('.card__characteristic');
   var cardComposition = card.querySelector('.card__composition-list');
 
-  card.classList.add(renderAmount(data.amount));
+  fillAmount(card, data.amount);
   cardStars.classList.remove('stars__rating--five');
   cardStars.classList.add(renderStars(cardStars, data));
   fillTextContent(cardTitle, data.name);
-  fillPictureSource(cardPictureSource, data.picture);
+  fillSource(cardPictureSource, data.picture);
   fillTextContent(cardPrice, data.price);
-  fillTextContent(cardWeight, '/ ' + data.weight + ' Г');
+  fillWeight(cardWeight, data.weight);
   fillTextContent(cardStarsCount, data.rating.number);
   fillTextContent(cardCharacteristics, renderIfSugar(data));
-  fillTextContent(cardComposition, data.nutrition_facts.contents);
+  fillTextContent(cardComposition, data.nutritionFacts.contents);
 
   return card;
 }
@@ -239,8 +298,7 @@ function createCartCard(data) {
   var cardQuantity = card.querySelector('.card-order__count');
 
   fillTextContent(cardTitle, data.name);
-  fillPictureSource(cardPictureSource, data.picture);
-  cardQuantity.value = getRandomInt(1, data.amount);
+  fillSource(cardPictureSource, data.picture);
   fillTextContent(cardPrice, data.price * cardQuantity.value + ' ₽');
 
   return card;
