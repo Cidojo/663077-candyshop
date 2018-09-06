@@ -138,10 +138,6 @@ function fillAmount(owner, amount) {
   owner.classList.add(myClass);
 }
 
-function fillWeight(owner, weight) {
-  fillTextContent(owner, '/ ' + weight + ' Г');
-}
-
 function fillPrice(owner, data) {
   fillTextContent(owner, '' + data + owner.textContent.substr(owner.textContent.indexOf(' ')));
 }
@@ -269,7 +265,7 @@ function generateFragment(obj, data) {
 
 
   if (obj.weight) {
-    fillWeight(obj.getWeight(), data.weight);
+    fillTextContent(obj.getWeight(), '/ ' + data.weight + ' Г');
   }
 
   if (obj.starsCount) {
