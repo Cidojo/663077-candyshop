@@ -122,7 +122,7 @@ function fillSource(owner, src) {
   owner.src = src;
 }
 
-// add special class in depend on amount
+// add special class on depend on amount
 
 function fillAmount(owner, amount) {
   var myClass = '';
@@ -140,6 +140,10 @@ function fillAmount(owner, amount) {
 
 function fillWeight(owner, weight) {
   fillTextContent(owner, '/ ' + weight + ' Г');
+}
+
+function fillPrice(owner, data) {
+  fillTextContent(owner, '' + data + owner.textContent.substr(owner.textContent.indexOf(' ')));
 }
 
 // add class and change text in depend on stars raiting
@@ -185,192 +189,138 @@ function renderIfSugar(data) {
 
 // create single card
 
-cardDom = ['#card', '.catalog__card', '.card__title', '.card__img', '.card__weight', '.stars__rating', '.star__count', '.card__characteristic', '.card__composition-list'];
+function toBuildTemplate() {
+  return {
+    getTemplate: function () {
+      return document.querySelector(this.template).cloneNode(true).content;
+    },
 
-function CONSTRUCTOR () {
-  var myObj = {
-  },
+    getNest: function () {
+      this.fragment = this.getTemplate().querySelector(this.nest);
+    },
 
-  getTitle: function () {
-    this.getNest().querySelector(this.title);
-  },
+    getTitle: function () {
+      return this.fragment.querySelector(this.title);
+    },
 
-  getPictureRef: function () {
-    this.getNest().querySelector(this.pictureRef);
-  },
+    getPictureRef: function () {
+      return this.fragment.querySelector(this.pictureRef);
+    },
 
-  getPrice: function () {
-    this.getNest().querySelector(this.price);
-  },
+    getPrice: function () {
+      return this.fragment.querySelector(this.price);
+    },
 
-  getWeight: function () {
-    this.getNest().querySelector(this.weight);
-  },
+    getWeight: function () {
+      return this.fragment.querySelector(this.weight);
+    },
 
-  getStars: function () {
-    this.getNest().querySelector(this.stars);
-  },
+    getStars: function () {
+      return this.fragment.querySelector(this.stars);
+    },
 
-  getStarsCount: function () {
-    this.getNest().querySelector(this.starsCount);
-  },
+    getStarsCount: function () {
+      return this.fragment.querySelector(this.starsCount);
+    },
 
-  getCharacteristics: function () {
-    this.getNest().querySelector(this.characteristics);
-  },
+    getCharacteristics: function () {
+      return this.fragment.querySelector(this.characteristics);
+    },
 
-  getComposition: function () {
-    this.getNest().querySelector(this.composition);
-  }
-  }
-
-  return myObj;
+    getComposition: function () {
+      return this.fragment.querySelector(this.composition);
+    }
+  };
 }
 
-var CatalogBuild = new CONSTRUCTOR();
+function toBuildCatalog() {
+  var myObject = toBuildTemplate();
 
-CatalogBuild.template = '#card';
-CatalogBuild.nest = '.catalog__card';
-CatalogBuild.title = '.card__title';
-CatalogBuild.pictureRef = '.card__img';
-CatalogBuild.price = '.card__img';
-CatalogBuild.weight = '.card__weight';
-CatalogBuild.stars = '.stars__rating';
-CatalogBuild.starsCOUNT = '.star__count';
-CatalogBuild.characteristics = '.card__characteristic';
-CatalogBuild.composition = '.card__composition-list';
+  myObject.template = '#card';
+  myObject.nest = '.catalog__card';
+  myObject.title = '.card__title';
+  myObject.pictureRef = '.card__img';
+  myObject.price = '.card__price';
+  myObject.weight = '.card__weight';
+  myObject.stars = '.stars__rating';
+  myObject.starsCount = '.star__count';
+  myObject.characteristics = '.card__characteristic';
+  myObject.composition = '.card__composition-list';
 
-
-var toBuildCatalog = {
-  template: '#card',
-  nest: '.catalog__card',
-  title: '.card__title',
-  pictureRef: '.card__img',
-  price: '.card__img',
-  weight: '.card__weight',
-  stars: '.stars__rating',
-  starsCount: '.star__count',
-  characteristics: '.card__characteristic',
-  composition: '.card__composition-list',
-
-  getTemplate: function () {
-    return document.querySelector(this.template).cloneNode(true).content;
-  },
-
-  getNest: function () {
-    this.getTemplate().querySelector(this.nest);
-  },
-
-  getTitle: function () {
-    this.getNest().querySelector(this.title);
-  },
-
-  getPictureRef: function () {
-    this.getNest().querySelector(this.pictureRef);
-  },
-
-  getPrice: function () {
-    this.getNest().querySelector(this.price);
-  },
-
-  getWeight: function () {
-    this.getNest().querySelector(this.weight);
-  },
-
-  getStars: function () {
-    this.getNest().querySelector(this.stars);
-  },
-
-  getStarsCount: function () {
-    this.getNest().querySelector(this.starsCount);
-  },
-
-  getCharacteristics: function () {
-    this.getNest().querySelector(this.characteristics);
-  },
-
-  getComposition: function () {
-    this.getNest().querySelector(this.composition);
-  }
-};
-
-function gen(obj, data) {
- fillAmount(obj.getAmount
+  return myObject;
 }
 
-function createCatalogCard(data) {
-  var cardTemplate = document.querySelector('#card').cloneNode(true).content;
-  var card = cardTemplate.querySelector('.catalog__card');
-  var cardTitle = card.querySelector('.card__title');
-  var cardPictureSource = card.querySelector('.card__img');
-  var cardPrice = card.querySelector('.card__price').firstChild;
-  var cardWeight = card.querySelector('.card__weight');
-  var cardStars = card.querySelector('.stars__rating');
-  var cardStarsCount = card.querySelector('.star__count');
-  var cardCharacteristics = card.querySelector('.card__characteristic');
-  var cardComposition = card.querySelector('.card__composition-list');
+function generateFragment(obj, data) {
+  obj.getNest();
 
-  fillAmount(card, data.amount);
-  cardStars.classList.remove('stars__rating--five');
-  cardStars.classList.add(renderStars(cardStars, data));
-  fillTextContent(cardTitle, data.name);
-  fillSource(cardPictureSource, data.picture);
-  fillTextContent(cardPrice, data.price);
-  fillWeight(cardWeight, data.weight);
-  fillTextContent(cardStarsCount, data.rating.number);
-  fillTextContent(cardCharacteristics, renderIfSugar(data));
-  fillTextContent(cardComposition, data.nutritionFacts.contents);
+  fillAmount(obj.fragment, data.amount);
 
-  return card;
+  if (obj.stars) {
+    obj.getStars().classList.remove('stars__rating--five');
+    obj.getStars().classList.add(renderStars(obj.getStars(), data));
+  }
+
+
+  fillTextContent(obj.getTitle(), data.name);
+
+  fillSource(obj.getPictureRef(), data.picture);
+
+  fillPrice(obj.getPrice().firstChild, data.price);
+
+
+  if (obj.weight) {
+    fillWeight(obj.getWeight(), data.weight);
+  }
+
+  if (obj.starsCount) {
+    fillTextContent(obj.getStarsCount(), data.rating.number);
+  }
+
+  if (obj.characteristics) {
+    fillTextContent(obj.getCharacteristics(), renderIfSugar(data));
+  }
+
+  if (obj.composition) {
+    fillTextContent(obj.getComposition(), data.nutritionFacts.contents);
+  }
+
+  return obj.fragment;
 }
 
 // modify DOM tree
 
-function fillCards(data, nest) {
+function fillCards(template, data, nest) {
   var fragment = document.createDocumentFragment();
   var cardsNest = nest;
 
   for (var i = 0; i < data.length; i++) {
-    fragment.appendChild(createCatalogCard(data[i]));
+    fragment.appendChild(generateFragment(template, data[i]));
   }
 
   cardsNest.appendChild(fragment);
 }
 
-fillCards(cards, catalogCardsNest);
+fillCards(toBuildCatalog(), cards, catalogCardsNest);
 
 
 // Part 3. Generate cart products
+
 document.querySelector('.goods__card-empty').classList.add('visually-hidden');
 
 var cartCards = collectCards(3);
 var cartCardsNest = document.querySelector('.goods__cards');
 cartCardsNest.classList.remove('goods__cards--empty');
 
-function createCartCard(data) {
-  var cardTemplate = document.querySelector('#card-order').cloneNode(true).content;
-  var card = cardTemplate.querySelector('.card-order');
-  var cardTitle = card.querySelector('.card-order__title');
-  var cardPictureSource = card.querySelector('.card-order__img');
-  var cardPrice = card.querySelector('.card-order__price').firstChild;
-  var cardQuantity = card.querySelector('.card-order__count');
+function toBuildCart() {
+  var myObject = toBuildTemplate();
 
-  fillTextContent(cardTitle, data.name);
-  fillSource(cardPictureSource, data.picture);
-  fillTextContent(cardPrice, data.price * cardQuantity.value + ' ₽');
+  myObject.template = '#card-order';
+  myObject.nest = '.card-order';
+  myObject.title = '.card-order__title';
+  myObject.pictureRef = '.card-order__img';
+  myObject.price = '.card-order__price';
 
-  return card;
+  return myObject;
 }
 
-function fillCartCards(data, nest) {
-  var fragment = document.createDocumentFragment();
-  var cardsNest = nest;
-
-  for (var i = 0; i < data.length; i++) {
-    fragment.appendChild(createCartCard(data[i]));
-  }
-
-  cardsNest.appendChild(fragment);
-}
-
-fillCartCards(cartCards, cartCardsNest);
+fillCards(toBuildCart(), cartCards, cartCardsNest);
