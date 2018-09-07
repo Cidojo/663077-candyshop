@@ -213,99 +213,40 @@ function renderIfSugar(data) {
 
 // create single card
 
-// function toBuildTemplate() {
-//   return {
-//     getTemplate() {
-//       return document.querySelector(this.template).cloneNode(true).content;
-//     },
-//     getNest() {
-//       this.fragment = this.getTemplate().querySelector(this.nest);
-//     },
-//     getTitle() {
-//       return this.fragment.querySelector(this.title);
-//     },
-//     getPictureRef() {
-//       return this.fragment.querySelector(this.pictureRef);
-//     },
-//     getPrice() {
-//       return this.fragment.querySelector(this.price);
-//     },
-//     getWeight() {
-//       return this.fragment.querySelector(this.weight);
-//     },
-//     getStars() {
-//       return this.fragment.querySelector(this.stars);
-//     },
-//     getStarsCount() {
-//       return this.fragment.querySelector(this.starsCount);
-//     },
-//     getCharacteristics() {
-//       return this.fragment.querySelector(this.characteristics);
-//     },
-//     getComposition() {
-//       return this.fragment.querySelector(this.composition);
-//     }
-//   };
-// }
+var CATALOG_TEMPLATE = {
+  template: '#card',
+  nest: '.catalog__card',
+  title: '.card__title',
+  pictureRef: '.card__img',
+  price: '.card__price',
+  weight: '.card__weight',
+  stars: '.stars__rating',
+  starsCount: '.star__count',
+  characteristics: '.card__characteristic',
+  composition: '.card__composition-list'
+};
 
-class ToBuildTemplate {
-  constructor (Obj) {
-    Obj
-  };
-  getTemplate() {
+var CART_TEMPLATE = {
+  template: '#card-order',
+  nest: '.card-order',
+  title: '.card-order__title',
+  pictureRef: '.card-order__img',
+  price: '.card-order__price'
+};
+
+function BuildTemplate(Obj) {
+  Object.assign(this, Obj);
+
+  this.getTemplate = function () {
     return document.querySelector(this.template).cloneNode(true).content;
   };
-  getNest() {
+  this.getNest = function () {
     this.fragment = this.getTemplate().querySelector(this.nest);
   };
-  getTitle() {
-    return this.fragment.querySelector(this.title);
+  this.getDomElement = function (selector) {
+    return this.fragment.querySelector(selector);
   };
-  getPictureRef() {
-    return this.fragment.querySelector(this.pictureRef);
-  };
-  getPrice() {
-    return this.fragment.querySelector(this.price);
-  };
-  getWeight() {
-    return this.fragment.querySelector(this.weight);
-  };
-  getStars() {
-    return this.fragment.querySelector(this.stars);
-  };
-  getStarsCount() {
-    return this.fragment.querySelector(this.starsCount);
-  };
-  getCharacteristics() {
-    return this.fragment.querySelector(this.characteristics);
-  };
-  getComposition() {
-    return this.fragment.querySelector(this.composition);
-  }
 }
-
-function toBuildCatalog() {
-  var myObject = toBuildTemplate();
-
-  myObject.template = '#card';
-  myObject.nest = '.catalog__card';
-  myObject.title = '.card__title';
-  myObject.pictureRef = '.card__img';
-  myObject.price = '.card__price';
-  myObject.weight = '.card__weight';
-  myObject.stars = '.stars__rating';
-  myObject.starsCount = '.star__count';
-  myObject.characteristics = '.card__characteristic';
-  myObject.composition = '.card__composition-list';
-
-  return myObject;
-}
-
-var toBuildCatalog = new ToBuildTemplate(
-      // var myObject = toBuildTemplate();
-
-    this.template = '#card'
-  )
 
 // generate new HTML fragment in DOM
 
@@ -313,25 +254,25 @@ function generateFragment(obj, data) {
   obj.getNest();
 
   fillAmount(obj.fragment, data.amount);
-  fillTextContent(obj.getTitle(), data.name);
-  fillSource(obj.getPictureRef(), data.picture);
-  fillPrice(obj.getPrice().firstChild, data.price);
+  fillTextContent(obj.getDomElement(obj.title), data.name);
+  fillSource(obj.getDomElement(obj.pictureRef), data.picture);
+  fillPrice(obj.getDomElement(obj.price).firstChild, data.price);
 
   if (obj.stars) {
-    obj.getStars().classList.remove('stars__rating--five');
-    obj.getStars().classList.add(renderStars(obj.getStars(), data));
+    obj.getDomElement(obj.stars).classList.remove('stars__rating--five');
+    obj.getDomElement(obj.stars).classList.add(renderStars(obj.getDomElement(obj.stars), data));
   }
   if (obj.weight) {
-    fillTextContent(obj.getWeight(), '/ ' + data.weight + ' Г');
+    fillTextContent(obj.getDomElement(obj.weight), '/ ' + data.weight + ' Г');
   }
   if (obj.starsCount) {
-    fillTextContent(obj.getStarsCount(), data.rating.number);
+    fillTextContent(obj.getDomElement(obj.starsCount), data.rating.number);
   }
   if (obj.characteristics) {
-    fillTextContent(obj.getCharacteristics(), renderIfSugar(data));
+    fillTextContent(obj.getDomElement(obj.characteristics), renderIfSugar(data));
   }
   if (obj.composition) {
-    fillTextContent(obj.getComposition(), data.nutritionFacts.contents);
+    fillTextContent(obj.getDomElement(obj.composition), data.nutritionFacts.contents);
   }
 
   return obj.fragment;
@@ -343,6 +284,7 @@ function fillCards(template, data, parent) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < data.length; i++) {
+
     fragment.appendChild(generateFragment(template, data[i]));
   }
 
@@ -351,35 +293,22 @@ function fillCards(template, data, parent) {
 
 // PART 2 CALLBACK
 
-fillCards(toBuildCatalog(), cards, catalog);
+fillCards(new BuildTemplate(CATALOG_TEMPLATE), cards, catalog);
 
 // -------------------------------------------------
 // Part 3. Generate cart products
 // -------------------------------------------------
 
 // DATA
+var CART_AMOUNT = 3;
 var cart = document.querySelector('.goods__cards');
-var cartCards = collectCards(3);
+var cartCards = collectCards(CART_AMOUNT);
 
 // NODES
 
 document.querySelector('.goods__card-empty').classList.add('visually-hidden');
 cart.classList.remove('goods__cards--empty');
 
-// METHODS.3
-
-function toBuildCart() {
-  var myObject = toBuildTemplate();
-
-  myObject.template = '#card-order';
-  myObject.nest = '.card-order';
-  myObject.title = '.card-order__title';
-  myObject.pictureRef = '.card-order__img';
-  myObject.price = '.card-order__price';
-
-  return myObject;
-}
-
 // PART 3 CALLBACK
 
-fillCards(toBuildCart(), cartCards, cart);
+fillCards(new BuildTemplate(CART_TEMPLATE), cartCards, cart);
