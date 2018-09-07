@@ -1,8 +1,12 @@
 'use strict';
 
-// Part 1. Generate array of card objects
+// -------------------------------------------------
+// PART 1. Generate an array of card objects
+// -------------------------------------------------
 
-// Data
+// DATA
+
+var CARDS_AMOUNT = 26;
 
 var CARD_NAME = ['Чесночные сливки', 'Огуречный педант', 'Молочная хрюша', 'Грибной шейк', 'Баклажановое безумие',
   'Паприколу итальяно', 'Нинзя-удар васаби', 'Хитрый баклажан', 'Горчичный вызов', 'Кедровая липучка',
@@ -11,78 +15,96 @@ var CARD_NAME = ['Чесночные сливки', 'Огуречный педа
   'Новогоднее настроение', 'С пивком потянет', 'Мисс креветка', 'Бесконечный взрыв', 'Невинные винные', 'Бельгийское пенное',
   'Острый язычок'];
 
-var PICTURE_NAMES = ['gum-cedar.jpg', 'gum-chile.jpg', 'gum-eggplant.jpg', 'gum-mustard.jpg', 'gum-portwine.jpg', 'gum-wasabi.jpg',
-  'ice-cucumber.jpg', 'ice-eggplant.jpg', 'ice-garlic.jpg', 'ice-italian.jpg', 'ice-mushroom.jpg', 'ice-pig.jpg', 'marmalade-beer.jpg',
-  'marmalade-caviar.jpg', 'marmalade-corn.jpg', 'marmalade-new-year.jpg', 'marmalade-sour.jpg', 'marshmallow-bacon.jpg',
-  'marshmallow-beer.jpg', 'marshmallow-shrimp.jpg', 'marshmallow-spicy.jpg', 'marshmallow-wine.jpg', 'soda-bacon.jpg', 'soda-celery.jpg',
-  'soda-cob.jpg', 'soda-garlic.jpg', 'soda-peanut-grapes.jpg', 'soda-russian.jpg'];
+var PICTURE_NAMES = ['img/cards/gum-cedar.jpg', 'img/cards/gum-chile.jpg', 'img/cards/gum-eggplant.jpg', 'img/cards/gum-mustard.jpg',
+  'img/cards/gum-portwine.jpg', 'img/cards/gum-wasabi.jpg', 'img/cards/ice-cucumber.jpg', 'img/cards/ice-eggplant.jpg', 'img/cards/ice-garlic.jpg',
+  'img/cards/ice-italian.jpg', 'img/cards/ice-mushroom.jpg', 'img/cards/ice-pig.jpg', 'img/cards/marmalade-beer.jpg', 'img/cards/marmalade-caviar.jpg',
+  'img/cards/marmalade-corn.jpg', 'img/cards/marmalade-new-year.jpg', 'img/cards/marmalade-sour.jpg', 'img/cards/marshmallow-bacon.jpg',
+  'img/cards/marshmallow-beer.jpg', 'img/cards/marshmallow-shrimp.jpg', 'img/cards/marshmallow-spicy.jpg', 'img/cards/marshmallow-wine.jpg',
+  'img/cards/soda-bacon.jpg', 'img/cards/soda-celery.jpg', 'img/cards/soda-cob.jpg', 'img/cards/soda-garlic.jpg', 'img/cards/soda-peanut-grapes.jpg',
+  'img/cards/soda-russian.jpg'];
 
 var CONTENTS = ['молоко', 'сливки', 'вода', 'пищевой краситель', 'патока', 'ароматизатор бекона', 'ароматизатор свинца',
   'ароматизатор дуба, идентичный натуральному', 'ароматизатор картофеля', 'лимонная кислота', 'загуститель', 'эмульгатор',
   'консервант: сорбат калия', 'посолочная смесь: соль, нитрит натрия', 'ксилит ', 'карбамид', 'вилларибо', 'виллабаджо'];
 
+var RATING = {
+  value: [1, 5],
+  number: [10, 900]
+};
+
+var AMOUNT = {
+  min: 0,
+  max: 20
+};
+
+var PRICE = {
+  min: 100,
+  max: 1500,
+  round: 50
+};
+
+var WEIGHT = {
+  min: 30,
+  max: 300
+};
+
+var ENERGY = {
+  min: 70,
+  max: 500
+};
+
+// METHODS.1
+
 // get random number from interval
 
 function getRandomInt(min, max, round) {
-  var number = min + Math.round(Math.random() * (max - min));
-
-  if (!isNaN(round) || round !== undefined) {
-    number = Math.round((number / round)) * round;
-  }
-
-  return number;
+  round = round || 1;
+  return Math.round(((min + Math.round(Math.random() * (max - min))) / round)) * round;
 }
 
-// generates rating object
+// generate rating object
 
-function getRating() {
-  var myObj = {};
-
-  myObj.value = getRandomInt(1, 5);
-  myObj.number = getRandomInt(10, 900);
-
-  return myObj;
+function getRating(rating) {
+  return {
+    value: getRandomInt(rating.value[0], rating.value[1]),
+    number: getRandomInt(rating.number[0], rating.number[1])
+  };
 }
 
-// generates nutritioFacts object
+// generate nutritioFacts object
 
-function getNutrition(contentsList) {
-  var myObj = {};
-  var myArray = contentsList.slice(0);
-  var tries = getRandomInt(1, myArray.length - 1);
-  var contents = [];
+function getNutrition(contentsInitial) {
+  var contentsCustom = contentsInitial.slice(0);
+  var tries = getRandomInt(1, contentsCustom.length - 1);
 
   for (var i = 0; i < tries; i++) {
-    var randomIndex = getRandomInt(0, myArray.length - 1);
+    var randomIndex = getRandomInt(0, contentsCustom.length - 1);
 
-    contents.push(myArray[randomIndex]);
-    myArray.splice(randomIndex, 1);
+    contentsCustom.splice(randomIndex, 1);
   }
 
-  myObj.sugar = !!Math.round(Math.random());
-  myObj.energy = getRandomInt(70, 500);
-  myObj.contents = contents.join(', ') + '.';
-
-  return myObj;
+  return {
+    sugar: !!Math.round(Math.random()),
+    energy: getRandomInt(ENERGY.min, ENERGY.max),
+    contents: contentsCustom.join(', ') + '.'
+  };
 }
 
-// creates new catalog card
+// PRECEDING RESULT: create new catalog card
 
 function createCard(name, imgLink) {
-  var myObj = {};
-
-  myObj.name = name;
-  myObj.picture = 'img/cards/' + imgLink;
-  myObj.amount = getRandomInt(0, 20);
-  myObj.price = getRandomInt(100, 1500, 50);
-  myObj.weight = getRandomInt(30, 300);
-  myObj.rating = getRating();
-  myObj.nutritionFacts = getNutrition(CONTENTS);
-
-  return myObj;
+  return {
+    name: name,
+    picture: imgLink,
+    amount: getRandomInt(AMOUNT.min, AMOUNT.max),
+    price: getRandomInt(PRICE.min, PRICE.max, PRICE.round),
+    weight: getRandomInt(WEIGHT.min, WEIGHT.max),
+    rating: getRating(RATING),
+    nutritionFacts: getNutrition(CONTENTS)
+  };
 }
 
-// build specified amount of catalog cards
+// RESULTto generate certain number of catalog cards
 
 function collectCards(quantity) {
   var cardsCollection = [];
@@ -101,14 +123,24 @@ function collectCards(quantity) {
   return cardsCollection;
 }
 
-var cards = collectCards(26);
+// PART 1 CALLBACK
 
-// Part 2. DOM tree modification
+var cards = collectCards(CARDS_AMOUNT);
 
-document.querySelector('.catalog__load').classList.add('visually-hidden');
+// -------------------------------------------------
+// PART 2. OPERATIONS WITH DOM: generate DOM elements and modify DOM tree
+// -------------------------------------------------
+
+// DATA
 
 var catalog = document.querySelector('.catalog__cards');
+
+// NODES
+
+document.querySelector('.catalog__load').classList.add('visually-hidden');
 catalog.classList.remove('catalog__cards--load');
+
+// METHODS.2
 
 // fill textContent property of an owner
 
@@ -122,7 +154,7 @@ function fillSource(owner, src) {
   owner.src = src;
 }
 
-// add special class on depend on amount
+// add special class in depend on amount
 
 function fillAmount(owner, amount) {
   var myClass = '';
@@ -175,58 +207,81 @@ function renderStars(owner, data) {
 // change text in depend on sugar
 
 function renderIfSugar(data) {
-  var ifSugar = (data.nutritionFacts.sugar === true) ?
-    'Без сахара. ' + data.nutritionFacts.energy + ' ккал'
-    :
-    'Содержит сахар. ' + data.nutritionFacts.energy + ' ккал';
-
-  return ifSugar;
+  return ((data.nutritionFacts.sugar === true) ? 'Без сахара. ' : 'Содержит сахар. ')
+  + data.nutritionFacts.energy + ' ккал';
 }
 
 // create single card
 
-function toBuildTemplate() {
-  return {
-    getTemplate: function () {
-      return document.querySelector(this.template).cloneNode(true).content;
-    },
+// function toBuildTemplate() {
+//   return {
+//     getTemplate() {
+//       return document.querySelector(this.template).cloneNode(true).content;
+//     },
+//     getNest() {
+//       this.fragment = this.getTemplate().querySelector(this.nest);
+//     },
+//     getTitle() {
+//       return this.fragment.querySelector(this.title);
+//     },
+//     getPictureRef() {
+//       return this.fragment.querySelector(this.pictureRef);
+//     },
+//     getPrice() {
+//       return this.fragment.querySelector(this.price);
+//     },
+//     getWeight() {
+//       return this.fragment.querySelector(this.weight);
+//     },
+//     getStars() {
+//       return this.fragment.querySelector(this.stars);
+//     },
+//     getStarsCount() {
+//       return this.fragment.querySelector(this.starsCount);
+//     },
+//     getCharacteristics() {
+//       return this.fragment.querySelector(this.characteristics);
+//     },
+//     getComposition() {
+//       return this.fragment.querySelector(this.composition);
+//     }
+//   };
+// }
 
-    getNest: function () {
-      this.fragment = this.getTemplate().querySelector(this.nest);
-    },
-
-    getTitle: function () {
-      return this.fragment.querySelector(this.title);
-    },
-
-    getPictureRef: function () {
-      return this.fragment.querySelector(this.pictureRef);
-    },
-
-    getPrice: function () {
-      return this.fragment.querySelector(this.price);
-    },
-
-    getWeight: function () {
-      return this.fragment.querySelector(this.weight);
-    },
-
-    getStars: function () {
-      return this.fragment.querySelector(this.stars);
-    },
-
-    getStarsCount: function () {
-      return this.fragment.querySelector(this.starsCount);
-    },
-
-    getCharacteristics: function () {
-      return this.fragment.querySelector(this.characteristics);
-    },
-
-    getComposition: function () {
-      return this.fragment.querySelector(this.composition);
-    }
+class ToBuildTemplate {
+  constructor (Obj) {
+    Obj
   };
+  getTemplate() {
+    return document.querySelector(this.template).cloneNode(true).content;
+  };
+  getNest() {
+    this.fragment = this.getTemplate().querySelector(this.nest);
+  };
+  getTitle() {
+    return this.fragment.querySelector(this.title);
+  };
+  getPictureRef() {
+    return this.fragment.querySelector(this.pictureRef);
+  };
+  getPrice() {
+    return this.fragment.querySelector(this.price);
+  };
+  getWeight() {
+    return this.fragment.querySelector(this.weight);
+  };
+  getStars() {
+    return this.fragment.querySelector(this.stars);
+  };
+  getStarsCount() {
+    return this.fragment.querySelector(this.starsCount);
+  };
+  getCharacteristics() {
+    return this.fragment.querySelector(this.characteristics);
+  };
+  getComposition() {
+    return this.fragment.querySelector(this.composition);
+  }
 }
 
 function toBuildCatalog() {
@@ -246,36 +301,35 @@ function toBuildCatalog() {
   return myObject;
 }
 
+var toBuildCatalog = new ToBuildTemplate(
+      // var myObject = toBuildTemplate();
+
+    this.template = '#card'
+  )
+
+// generate new HTML fragment in DOM
+
 function generateFragment(obj, data) {
   obj.getNest();
 
   fillAmount(obj.fragment, data.amount);
+  fillTextContent(obj.getTitle(), data.name);
+  fillSource(obj.getPictureRef(), data.picture);
+  fillPrice(obj.getPrice().firstChild, data.price);
 
   if (obj.stars) {
     obj.getStars().classList.remove('stars__rating--five');
     obj.getStars().classList.add(renderStars(obj.getStars(), data));
   }
-
-
-  fillTextContent(obj.getTitle(), data.name);
-
-  fillSource(obj.getPictureRef(), data.picture);
-
-  fillPrice(obj.getPrice().firstChild, data.price);
-
-
   if (obj.weight) {
     fillTextContent(obj.getWeight(), '/ ' + data.weight + ' Г');
   }
-
   if (obj.starsCount) {
     fillTextContent(obj.getStarsCount(), data.rating.number);
   }
-
   if (obj.characteristics) {
     fillTextContent(obj.getCharacteristics(), renderIfSugar(data));
   }
-
   if (obj.composition) {
     fillTextContent(obj.getComposition(), data.nutritionFacts.contents);
   }
@@ -283,7 +337,7 @@ function generateFragment(obj, data) {
   return obj.fragment;
 }
 
-// modify DOM tree
+// RESULT.2to create new CARDS in DOM tree
 
 function fillCards(template, data, parent) {
   var fragment = document.createDocumentFragment();
@@ -295,16 +349,24 @@ function fillCards(template, data, parent) {
   parent.appendChild(fragment);
 }
 
+// PART 2 CALLBACK
+
 fillCards(toBuildCatalog(), cards, catalog);
 
-
+// -------------------------------------------------
 // Part 3. Generate cart products
+// -------------------------------------------------
+
+// DATA
+var cart = document.querySelector('.goods__cards');
+var cartCards = collectCards(3);
+
+// NODES
 
 document.querySelector('.goods__card-empty').classList.add('visually-hidden');
-
-var cartCards = collectCards(3);
-var cart = document.querySelector('.goods__cards');
 cart.classList.remove('goods__cards--empty');
+
+// METHODS.3
 
 function toBuildCart() {
   var myObject = toBuildTemplate();
@@ -317,5 +379,7 @@ function toBuildCart() {
 
   return myObject;
 }
+
+// PART 3 CALLBACK
 
 fillCards(toBuildCart(), cartCards, cart);
