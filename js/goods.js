@@ -107,8 +107,8 @@ var cards = collectCards(26);
 
 document.querySelector('.catalog__load').classList.add('visually-hidden');
 
-var catalogCardsNest = document.querySelector('.catalog__cards');
-catalogCardsNest.classList.remove('catalog__cards--load');
+var catalog = document.querySelector('.catalog__cards');
+catalog.classList.remove('catalog__cards--load');
 
 // fill textContent property of an owner
 
@@ -285,18 +285,17 @@ function generateFragment(obj, data) {
 
 // modify DOM tree
 
-function fillCards(template, data, nest) {
+function fillCards(template, data, parent) {
   var fragment = document.createDocumentFragment();
-  var cardsNest = nest;
 
   for (var i = 0; i < data.length; i++) {
     fragment.appendChild(generateFragment(template, data[i]));
   }
 
-  cardsNest.appendChild(fragment);
+  parent.appendChild(fragment);
 }
 
-fillCards(toBuildCatalog(), cards, catalogCardsNest);
+fillCards(toBuildCatalog(), cards, catalog);
 
 
 // Part 3. Generate cart products
@@ -304,8 +303,8 @@ fillCards(toBuildCatalog(), cards, catalogCardsNest);
 document.querySelector('.goods__card-empty').classList.add('visually-hidden');
 
 var cartCards = collectCards(3);
-var cartCardsNest = document.querySelector('.goods__cards');
-cartCardsNest.classList.remove('goods__cards--empty');
+var cart = document.querySelector('.goods__cards');
+cart.classList.remove('goods__cards--empty');
 
 function toBuildCart() {
   var myObject = toBuildTemplate();
@@ -319,4 +318,4 @@ function toBuildCart() {
   return myObject;
 }
 
-fillCards(toBuildCart(), cartCards, cartCardsNest);
+fillCards(toBuildCart(), cartCards, cart);
