@@ -53,6 +53,10 @@ var ENERGY = {
   max: 500
 };
 
+var MAX_AMOUNT = 5;
+
+var STARS_LITERAL = ['one', 'two', 'three', 'four', 'five'];
+
 // METHODS.1
 
 // get random number from interval
@@ -157,14 +161,21 @@ function fillSource(owner, src) {
 // add special class in depend on amount
 
 function fillAmount(owner, amount) {
-  var myClass = '';
+  var myClass;
 
-  if (amount > 5) {
-    myClass = 'card--in-stock';
-  } else if (amount >= 1 && amount <= 5) {
-    myClass = 'card--little';
-  } else if (amount === 0) {
-    myClass = 'card--soon';
+  switch (true) {
+    case (amount > MAX_AMOUNT):
+      myClass = 'card--in-stock';
+      break;
+    case (amount >= 1 && amount <= MAX_AMOUNT):
+      myClass = 'card--little';
+      break;
+    case (amount === 0):
+      myClass = 'card--soon';
+      break;
+    default:
+      myClass = '';
+      break;
   }
 
   owner.classList.add(myClass);
@@ -177,31 +188,22 @@ function fillPrice(owner, data) {
 // add class and change text in depend on stars raiting
 
 function renderStars(owner, data) {
-  var rating = '';
-  var ratingText = ' звезды';
+  var ratingText;
 
-  switch (data.rating.value) {
-    case 1:
-      rating = 'one';
+  switch (true) {
+    case (data.rating.value % 10 === 1):
       ratingText = ' звезда';
       break;
-    case 2:
-      rating = 'two';
+    case (data.rating.value % 10 === 2 || data.rating.value % 10 === 3 || data.rating.value % 10 === 4):
+      ratingText = ' звезды';
       break;
-    case 3:
-      rating = 'three';
-      break;
-    case 4:
-      rating = 'four';
-      break;
-    case 5:
-      rating = 'five';
+    default:
       ratingText = ' звезд';
       break;
   }
 
   fillTextContent(owner, 'Рейтинг: ' + data.rating.value + ratingText);
-  return 'stars__rating--' + rating;
+  return 'stars__rating--' + STARS_LITERAL[data.rating.value - 1];
 }
 
 // change text in depend on sugar
