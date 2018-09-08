@@ -8,7 +8,7 @@
 
 var CARDS_AMOUNT = 26;
 
-var CARD_NAME = ['Чесночные сливки', 'Огуречный педант', 'Молочная хрюша', 'Грибной шейк', 'Баклажановое безумие',
+var CARD_NAMES = ['Чесночные сливки', 'Огуречный педант', 'Молочная хрюша', 'Грибной шейк', 'Баклажановое безумие',
   'Паприколу итальяно', 'Нинзя-удар васаби', 'Хитрый баклажан', 'Горчичный вызов', 'Кедровая липучка',
   'Корманный портвейн', 'Чилийский задира', 'Беконовый взрыв', 'Арахис vs виноград', 'Сельдерейная душа',
   'Початок в бутылке', 'Чернющий мистер чеснок', 'Раша федераша', 'Кислая мина', 'Кукурузное утро', 'Икорный фуршет',
@@ -28,8 +28,8 @@ var CONTENTS = ['молоко', 'сливки', 'вода', 'пищевой кр
   'консервант: сорбат калия', 'посолочная смесь: соль, нитрит натрия', 'ксилит ', 'карбамид', 'вилларибо', 'виллабаджо'];
 
 var RATING = {
-  value: [1, 5],
-  number: [10, 900]
+  values: [1, 5],
+  numbers: [10, 900]
 };
 
 var AMOUNT = {
@@ -55,7 +55,7 @@ var ENERGY = {
 
 var MAX_AMOUNT = 5;
 
-var STARS_LITERAL = ['one', 'two', 'three', 'four', 'five'];
+var STARS_LITERALS = ['one', 'two', 'three', 'four', 'five'];
 
 // METHODS.1
 
@@ -70,8 +70,8 @@ function getRandomInt(min, max, round) {
 
 function getRating(rating) {
   return {
-    value: getRandomInt(rating.value[0], rating.value[1]),
-    number: getRandomInt(rating.number[0], rating.number[1])
+    value: getRandomInt(rating.values[0], rating.values[1]),
+    number: getRandomInt(rating.numbers[0], rating.numbers[1])
   };
 }
 
@@ -112,7 +112,7 @@ function createCard(name, imgLink) {
 
 function collectCards(quantity) {
   var cardsCollection = [];
-  var cloneNames = CARD_NAME.slice(0);
+  var cloneNames = CARD_NAMES.slice(0);
   var clonePictureNames = PICTURE_NAMES.slice(0);
 
   for (var i = 0; i < quantity; i++) {
@@ -203,7 +203,7 @@ function renderStars(owner, data) {
   }
 
   fillTextContent(owner, 'Рейтинг: ' + data.rating.value + ratingText);
-  return 'stars__rating--' + STARS_LITERAL[data.rating.value - 1];
+  return 'stars__rating--' + STARS_LITERALS[data.rating.value - 1];
 }
 
 // change text in depend on sugar
