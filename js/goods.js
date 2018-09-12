@@ -6,7 +6,7 @@
 
 // @@@DATA Раздел 3.1
 
-var CARDS_AMOUNT = 26;
+var CARDS_AMOUNT = 0;
 
 var CARD_NAMES = ['Чесночные сливки', 'Огуречный педант', 'Молочная хрюша', 'Грибной шейк', 'Баклажановое безумие',
   'Паприколу итальяно', 'Нинзя-удар васаби', 'Хитрый баклажан', 'Горчичный вызов', 'Кедровая липучка',
@@ -82,7 +82,7 @@ var CART_TEMPLATE = {
 
 // @@@DATA Раздел 3.3
 
-var CART_AMOUNT = 3;
+var CART_AMOUNT = 0;
 
 // -------------------------------------------------
 // 2. NODES - НОДЫ
@@ -92,15 +92,10 @@ var CART_AMOUNT = 3;
 
 var catalog = document.querySelector('.catalog__cards');
 
-document.querySelector('.catalog__load').classList.add('visually-hidden');
-catalog.classList.remove('catalog__cards--load');
-
 // @@@NODES Раздел 3.3
 
 var cart = document.querySelector('.goods__cards');
 var cartCards = collectCards(CART_AMOUNT);
-document.querySelector('.goods__card-empty').classList.add('visually-hidden');
-cart.classList.remove('goods__cards--empty');
 
 // -------------------------------------------------
 // 3. FUNC - ФУНКЦИИ И МЕТОДЫ
