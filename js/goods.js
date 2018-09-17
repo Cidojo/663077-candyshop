@@ -6,7 +6,7 @@
 
 // @@@DATA Раздел 3.1
 
-var CARDS_AMOUNT = 0;
+var CARDS_AMOUNT = 25;
 
 var CARD_NAMES = ['Чесночные сливки', 'Огуречный педант', 'Молочная хрюша', 'Грибной шейк', 'Баклажановое безумие',
   'Паприколу итальяно', 'Нинзя-удар васаби', 'Хитрый баклажан', 'Горчичный вызов', 'Кедровая липучка',
@@ -82,7 +82,13 @@ var CART_TEMPLATE = {
 
 // @@@DATA Раздел 3.3
 
-var CART_AMOUNT = 0;
+var CART_AMOUNT = 3;
+
+// @@@DATA Раздел 4.1
+
+var FAVORITE_BUTTON_CLASS = 'card__btn-favorite';
+var FAVORITE_SELECTED_CLASS = FAVORITE_BUTTON_CLASS + '--selected';
+var ADD_TO_CART_BUTTON_CLASS = 'card__btn';
 
 // -------------------------------------------------
 // 2. NODES - НОДЫ
@@ -95,7 +101,6 @@ var catalog = document.querySelector('.catalog__cards');
 // @@@NODES Раздел 3.3
 
 var cart = document.querySelector('.goods__cards');
-var cartCards = collectCards(CART_AMOUNT);
 
 // -------------------------------------------------
 // 3. FUNC - ФУНКЦИИ И МЕТОДЫ
@@ -260,7 +265,44 @@ function BuildTemplate(Obj) {
 
 // формирует новый fragment в документе, соответствующий карточке товара
 
-function generateFragment(obj, data) {
+function getCatalogCard(obj, data) {
+  obj.getNest();
+  obj.getDomElement(obj.stars).classList.remove('stars__rating--five');
+  obj.getDomElement(obj.stars).classList.add(renderStars(obj.getDomElement(obj.stars), data));
+
+  fillTextContent(obj.getDomElement(obj.title), data.name);
+  fillAmount(obj.fragment, data.amount);
+  fillSource(obj.getDomElement(obj.pictureRef), data.picture);
+  fillPrice(obj.getDomElement(obj.price).firstChild, data.price);
+
+  fillTextContent(obj.getDomElement(obj.weight), '/ ' + data.weight + ' Г');
+  fillTextContent(obj.getDomElement(obj.starsCount), data.rating.number);
+  fillTextContent(obj.getDomElement(obj.characteristics), renderIfSugar(data));
+  fillTextContent(obj.getDomElement(obj.composition), data.nutritionFacts.contents);
+
+  return obj.fragment;
+}
+
+// вставляет fragment - агрегатор заданного количества карточек в catalog
+
+function fillCards(template, data, parent) {
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 0; i < data.length; i++) {
+    var rendered = getCatalogCard(template, data[i]);
+
+    rendered.addEventListener('click', onClickCheckEvent);
+    fragment.appendChild(rendered);
+  }
+
+  parent.appendChild(fragment);
+}
+
+// @@@FUNC Раздел 3.3
+
+// формирует новый fragment в документе, соответствующий карточке товара в корзине
+
+function getCartCard(obj, data) {
   obj.getNest();
 
   fillAmount(obj.fragment, data.amount);
@@ -268,37 +310,40 @@ function generateFragment(obj, data) {
   fillSource(obj.getDomElement(obj.pictureRef), data.picture);
   fillPrice(obj.getDomElement(obj.price).firstChild, data.price);
 
-  if (obj.stars) {
-    obj.getDomElement(obj.stars).classList.remove('stars__rating--five');
-    obj.getDomElement(obj.stars).classList.add(renderStars(obj.getDomElement(obj.stars), data));
-  }
-  if (obj.weight) {
-    fillTextContent(obj.getDomElement(obj.weight), '/ ' + data.weight + ' Г');
-  }
-  if (obj.starsCount) {
-    fillTextContent(obj.getDomElement(obj.starsCount), data.rating.number);
-  }
-  if (obj.characteristics) {
-    fillTextContent(obj.getDomElement(obj.characteristics), renderIfSugar(data));
-  }
-  if (obj.composition) {
-    fillTextContent(obj.getDomElement(obj.composition), data.nutritionFacts.contents);
-  }
-
   return obj.fragment;
 }
 
-// вставляет fragment - агрегатор заданного количества карточек в DOM дерево
+// вставляет fragment - карточеку в корзину
 
-function fillCards(template, data, parent) {
+function fillCarts(template, data, parent) {
   var fragment = document.createDocumentFragment();
+  var rendered = getCartCard(template, data);
 
-  for (var i = 0; i < data.length; i++) {
-
-    fragment.appendChild(generateFragment(template, data[i]));
-  }
-
+  fragment.appendChild(rendered);
   parent.appendChild(fragment);
+}
+
+// @@@FUNC 4.1
+
+function getCardData(card, data) {
+  var cardName = card.querySelector('.card__title').textContent;
+  for (var i = 0; i < data.length; i++) {
+    if (cardName === data[i].name) {
+      return data[i];
+    }
+  }
+  return data[i];
+}
+
+// @@@FUNC Раздел 4.1
+
+function onClickCheckEvent(evt) {
+  evt.preventDefault();
+  if (evt.target.classList.contains(FAVORITE_BUTTON_CLASS)) {
+    evt.target.classList.toggle(FAVORITE_SELECTED_CLASS);
+  } else if (evt.target.classList.contains(ADD_TO_CART_BUTTON_CLASS)) {
+    fillCarts(new BuildTemplate(CART_TEMPLATE), getCardData(evt.currentTarget, cards), cart);
+  }
 }
 
 // -------------------------------------------------
@@ -319,4 +364,6 @@ fillCards(new BuildTemplate(CATALOG_TEMPLATE), cards, catalog);
 
 // @@@INIT Раздел 3.3
 
-fillCards(new BuildTemplate(CART_TEMPLATE), cartCards, cart);
+// var cartCards = collectCards(1);
+
+// fillCards(new BuildTemplate(CART_TEMPLATE), cartCards, cart);
