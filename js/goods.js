@@ -15,13 +15,15 @@ var CARD_NAMES = ['Чесночные сливки', 'Огуречный пед�
   'Новогоднее настроение', 'С пивком потянет', 'Мисс креветка', 'Бесконечный взрыв', 'Невинные винные', 'Бельгийское пенное',
   'Острый язычок'];
 
-var PICTURE_NAMES = ['img/cards/gum-cedar.jpg', 'img/cards/gum-chile.jpg', 'img/cards/gum-eggplant.jpg', 'img/cards/gum-mustard.jpg',
-  'img/cards/gum-portwine.jpg', 'img/cards/gum-wasabi.jpg', 'img/cards/ice-cucumber.jpg', 'img/cards/ice-eggplant.jpg', 'img/cards/ice-garlic.jpg',
-  'img/cards/ice-italian.jpg', 'img/cards/ice-mushroom.jpg', 'img/cards/ice-pig.jpg', 'img/cards/marmalade-beer.jpg', 'img/cards/marmalade-caviar.jpg',
-  'img/cards/marmalade-corn.jpg', 'img/cards/marmalade-new-year.jpg', 'img/cards/marmalade-sour.jpg', 'img/cards/marshmallow-bacon.jpg',
-  'img/cards/marshmallow-beer.jpg', 'img/cards/marshmallow-shrimp.jpg', 'img/cards/marshmallow-spicy.jpg', 'img/cards/marshmallow-wine.jpg',
-  'img/cards/soda-bacon.jpg', 'img/cards/soda-celery.jpg', 'img/cards/soda-cob.jpg', 'img/cards/soda-garlic.jpg', 'img/cards/soda-peanut-grapes.jpg',
-  'img/cards/soda-russian.jpg'];
+var PICTURE_NAMES = ['gum-cedar.jpg', 'gum-chile.jpg', 'gum-eggplant.jpg', 'gum-mustard.jpg',
+  'gum-portwine.jpg', 'gum-wasabi.jpg', 'ice-cucumber.jpg', 'ice-eggplant.jpg', 'ice-garlic.jpg',
+  'ice-italian.jpg', 'ice-mushroom.jpg', 'ice-pig.jpg', 'marmalade-beer.jpg', 'marmalade-caviar.jpg',
+  'marmalade-corn.jpg', 'marmalade-new-year.jpg', 'marmalade-sour.jpg', 'marshmallow-bacon.jpg',
+  'marshmallow-beer.jpg', 'marshmallow-shrimp.jpg', 'marshmallow-spicy.jpg', 'marshmallow-wine.jpg',
+  'soda-bacon.jpg', 'soda-celery.jpg', 'soda-cob.jpg', 'soda-garlic.jpg', 'soda-peanut-grapes.jpg',
+  'soda-russian.jpg'];
+
+var PICTURE_PATH = 'img/cards/';
 
 var CONTENTS = ['молоко', 'сливки', 'вода', 'пищевой краситель', 'патока', 'ароматизатор бекона', 'ароматизатор свинца',
   'ароматизатор дуба, идентичный натуральному', 'ароматизатор картофеля', 'лимонная кислота', 'загуститель', 'эмульгатор',
@@ -213,12 +215,6 @@ function fillAmount(owner, amount) {
   owner.classList.add(myClass);
 }
 
-// заполняет свойтво textContent DOM/fragment элемента в зависимости от цены
-
-function fillPrice(owner, data) {
-  fillTextContent(owner, '' + data + owner.textContent.substr(owner.textContent.indexOf(' ')));
-}
-
 // добавляет класс DOM/fragment элементу + меняет текст(окончание) в зависимости от количества звезд
 
 function renderStars(owner, data) {
@@ -271,9 +267,8 @@ function getCatalogCard(obj, data) {
   obj.getDomElement(obj.stars).classList.add(renderStars(obj.getDomElement(obj.stars), data));
 
   fillTextContent(obj.getDomElement(obj.title), data.name);
-  fillAmount(obj.fragment, data.amount);
-  fillSource(obj.getDomElement(obj.pictureRef), data.picture);
-  fillPrice(obj.getDomElement(obj.price).firstChild, data.price);
+  fillSource(obj.getDomElement(obj.pictureRef), PICTURE_PATH + data.picture);
+  fillTextContent(obj.getDomElement(obj.price).firstChild, data.price + ' ');
 
   fillTextContent(obj.getDomElement(obj.weight), '/ ' + data.weight + ' Г');
   fillTextContent(obj.getDomElement(obj.starsCount), data.rating.number);
