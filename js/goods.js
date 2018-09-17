@@ -256,7 +256,7 @@ function BuildTemplate(Obj) {
 
 // формирует новый fragment в документе, соответствующий карточке товара
 
-function getCardFragment(obj, data) {
+function getCatalogCard(obj, data) {
   obj.getNest();
 
   renderAmount(obj.fragment, data.amount);
@@ -281,8 +281,10 @@ function fillCatalog(template, data, parent) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < data.length; i++) {
+    var rendered = getCatalogCard(template, data[i]);
 
-    fragment.appendChild(getCardFragment(template, data[i]));
+    rendered.addEventListener('click', onClickCheckEvent);
+    fragment.appendChild(rendered);
   }
 
   parent.appendChild(fragment);
@@ -290,7 +292,7 @@ function fillCatalog(template, data, parent) {
 
 // @@@FUNC Раздел 3.3
 
-function getCartFragment(obj, data) {
+function getCartCard(obj, data) {
   obj.getNest();
   obj.getDomElement(obj.amount).value = 1;
 
@@ -303,13 +305,33 @@ function getCartFragment(obj, data) {
 
 function fillCart(template, data, parent) {
   var fragment = document.createDocumentFragment();
+  var rendered = getCartCard(template, data);
 
-  for (var i = 0; i < data.length; i++) {
-
-    fragment.appendChild(getCartFragment(template, data[i]));
-  }
-
+  fragment.appendChild(rendered);
   parent.appendChild(fragment);
+}
+
+// @@@FUNC 4.1
+
+function getCardData(card, data) {
+  var cardName = card.querySelector('.card__title').textContent;
+  for (var i = 0; i < data.length; i++) {
+    if (cardName === data[i].name) {
+      return data[i];
+    }
+  }
+  return data[i];
+}
+
+// @@@FUNC Раздел 4.1
+
+function onClickCheckEvent(evt) {
+  evt.preventDefault();
+  if (evt.target.classList.contains(FAVORITE_BUTTON_CLASS)) {
+    evt.target.classList.toggle(FAVORITE_SELECTED_CLASS);
+  } else if (evt.target.classList.contains(ADD_TO_CART_BUTTON_CLASS)) {
+    fillCarts(new BuildTemplate(CART_TEMPLATE), getCardData(evt.currentTarget, cards), cart);
+  }
 }
 
 // -------------------------------------------------
