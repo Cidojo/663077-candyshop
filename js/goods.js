@@ -87,6 +87,12 @@ var CART_TEMPLATE = {
 
 var CART_AMOUNT = 3;
 
+// @@@DATA Раздел 4.1
+
+var FAVORITE_BUTTON_CLASS = 'card__btn-favorite';
+var FAVORITE_SELECTED_CLASS = FAVORITE_BUTTON_CLASS + '--selected';
+var ADD_TO_CART_BUTTON_CLASS = 'card__btn';
+
 // -------------------------------------------------
 // 2. NODES - НОДЫ
 // -------------------------------------------------
@@ -330,7 +336,7 @@ function onClickCheckEvent(evt) {
   if (evt.target.classList.contains(FAVORITE_BUTTON_CLASS)) {
     evt.target.classList.toggle(FAVORITE_SELECTED_CLASS);
   } else if (evt.target.classList.contains(ADD_TO_CART_BUTTON_CLASS)) {
-    fillCarts(new BuildTemplate(CART_TEMPLATE), getCardData(evt.currentTarget, cards), cart);
+    fillCart(new BuildTemplate(CART_TEMPLATE), getCardData(evt.currentTarget, cards), cart);
   }
 }
 
@@ -351,6 +357,6 @@ var cards = collectCards(CARDS_AMOUNT);
 fillCatalog(new BuildTemplate(CATALOG_TEMPLATE), cards, catalog);
 
 // @@@INIT Раздел 3.3
-var cartCards = collectCards(CART_AMOUNT);
-
-fillCart(new BuildTemplate(CART_TEMPLATE), cartCards, cart);
+// var cartCards = collectCards(CART_AMOUNT);
+//
+// fillCart(new BuildTemplate(CART_TEMPLATE), cartCards, cart);
