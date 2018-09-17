@@ -266,6 +266,7 @@ function getCatalogCard(obj, data) {
   obj.getDomElement(obj.stars).classList.remove('stars__rating--five');
   obj.getDomElement(obj.stars).classList.add(renderStars(obj.getDomElement(obj.stars), data));
 
+  fillAmount(obj.fragment, data.amount);
   fillTextContent(obj.getDomElement(obj.title), data.name);
   fillSource(obj.getDomElement(obj.pictureRef), PICTURE_PATH + data.picture);
   fillTextContent(obj.getDomElement(obj.price).firstChild, data.price + ' ');
