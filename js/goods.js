@@ -6,7 +6,7 @@
 
 // @@@DATA Раздел 3.1
 
-var CARDS_AMOUNT = 0;
+var CARDS_AMOUNT = 10;
 
 var CARD_NAMES = ['Чесночные сливки', 'Огуречный педант', 'Молочная хрюша', 'Грибной шейк', 'Баклажановое безумие',
   'Паприколу итальяно', 'Нинзя-удар васаби', 'Хитрый баклажан', 'Горчичный вызов', 'Кедровая липучка',
@@ -79,12 +79,13 @@ var CART_TEMPLATE = {
   nest: '.card-order',
   title: '.card-order__title',
   pictureRef: '.card-order__img',
-  price: '.card-order__price'
+  price: '.card-order__price',
+  amount: '.card-order__count'
 };
 
 // @@@DATA Раздел 3.3
 
-var CART_AMOUNT = 0;
+var CART_AMOUNT = 3;
 
 // -------------------------------------------------
 // 2. NODES - НОДЫ
@@ -97,7 +98,6 @@ var catalog = document.querySelector('.catalog__cards');
 // @@@NODES Раздел 3.3
 
 var cart = document.querySelector('.goods__cards');
-var cartCards = collectCards(CART_AMOUNT);
 
 // -------------------------------------------------
 // 3. FUNC - ФУНКЦИИ И МЕТОДЫ
@@ -189,7 +189,7 @@ function fillSource(owner, src) {
 
 // добавляет класс DOM/fragment элементу в зависимости от количества
 
-function fillAmount(owner, amount) {
+function renderAmount(owner, amount) {
   var myClass;
 
   switch (true) {
@@ -256,42 +256,57 @@ function BuildTemplate(Obj) {
 
 // формирует новый fragment в документе, соответствующий карточке товара
 
-function generateFragment(obj, data) {
+function getCardFragment(obj, data) {
   obj.getNest();
 
-  fillAmount(obj.fragment, data.amount);
+  renderAmount(obj.fragment, data.amount);
   fillTextContent(obj.getDomElement(obj.title), data.name);
   fillSource(obj.getDomElement(obj.pictureRef), PICTURE_PATH + data.picture);
   fillTextContent(obj.getDomElement(obj.price).firstChild, data.price + ' ');
 
-  if (obj.stars) {
-    obj.getDomElement(obj.stars).classList.remove('stars__rating--five');
-    obj.getDomElement(obj.stars).classList.add(renderStars(obj.getDomElement(obj.stars), data));
-  }
-  if (obj.weight) {
-    fillTextContent(obj.getDomElement(obj.weight), '/ ' + data.weight + ' Г');
-  }
-  if (obj.starsCount) {
-    fillTextContent(obj.getDomElement(obj.starsCount), data.rating.number);
-  }
-  if (obj.characteristics) {
-    fillTextContent(obj.getDomElement(obj.characteristics), renderIfSugar(data));
-  }
-  if (obj.composition) {
-    fillTextContent(obj.getDomElement(obj.composition), data.nutritionFacts.contents);
-  }
+  obj.getDomElement(obj.stars).classList.remove('stars__rating--five');
+  obj.getDomElement(obj.stars).classList.add(renderStars(obj.getDomElement(obj.stars), data));
+
+  fillTextContent(obj.getDomElement(obj.weight), '/ ' + data.weight + ' Г');
+  fillTextContent(obj.getDomElement(obj.starsCount), data.rating.number);
+  fillTextContent(obj.getDomElement(obj.characteristics), renderIfSugar(data));
+  fillTextContent(obj.getDomElement(obj.composition), data.nutritionFacts.contents);
 
   return obj.fragment;
 }
 
 // вставляет fragment - агрегатор заданного количества карточек в DOM дерево
 
-function fillCards(template, data, parent) {
+function fillCatalog(template, data, parent) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < data.length; i++) {
 
-    fragment.appendChild(generateFragment(template, data[i]));
+    fragment.appendChild(getCardFragment(template, data[i]));
+  }
+
+  parent.appendChild(fragment);
+}
+
+// @@@FUNC Раздел 3.3
+
+function getCartFragment(obj, data) {
+  obj.getNest();
+  obj.getDomElement(obj.amount).value = 1;
+
+  fillTextContent(obj.getDomElement(obj.title), data.name);
+  fillSource(obj.getDomElement(obj.pictureRef), PICTURE_PATH + data.picture);
+  fillTextContent(obj.getDomElement(obj.price).firstChild, data.price + ' ₽');
+
+  return obj.fragment;
+}
+
+function fillCart(template, data, parent) {
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 0; i < data.length; i++) {
+
+    fragment.appendChild(getCartFragment(template, data[i]));
   }
 
   parent.appendChild(fragment);
@@ -311,8 +326,9 @@ var cards = collectCards(CARDS_AMOUNT);
 
 // @@@INIT Раздел 3.2
 
-fillCards(new BuildTemplate(CATALOG_TEMPLATE), cards, catalog);
+fillCatalog(new BuildTemplate(CATALOG_TEMPLATE), cards, catalog);
 
 // @@@INIT Раздел 3.3
+var cartCards = collectCards(CART_AMOUNT);
 
-fillCards(new BuildTemplate(CART_TEMPLATE), cartCards, cart);
+fillCart(new BuildTemplate(CART_TEMPLATE), cartCards, cart);
