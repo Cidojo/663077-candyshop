@@ -304,8 +304,10 @@ function getCatalog(obj, data) {
 // вставляет fragment - агрегатор заданного количества карточек в DOM дерево
 
 function deleteElemChildren(elem) {
-  while (elem.firstChild) {
-    elem.removeChild(elem.firstChild);
+  var elems = elem.querySelectorAll('article');
+  for (var i = 0; i < elems.length; i++) {
+    // debugger
+    elems[i].remove();
   }
 }
 
