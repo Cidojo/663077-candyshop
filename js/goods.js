@@ -97,16 +97,18 @@ var CART_INCREASE_BUTTON = 'card-order__btn--increase';
 var CART_DECREASE_BUTTON = 'card-order__btn--decrease';
 
 
+var deliverStoreBtnId = 'deliver__store';
+var deliverCourierBtnId = 'deliver__courier';
 // -------------------------------------------------
 // 2. NODES - НОДЫ
 // -------------------------------------------------
 
 var emptyCartHeader = document.querySelector('.main-header__basket');
 var emptyCartBottom = document.querySelector('.goods__card-empty');
-var deliverStoreBtn = document.querySelector('#deliver__store');
 var deliverStoreBlock = document.querySelector('.deliver__store');
-var deliverCourierBtn = document.querySelector('#deliver__courier');
+var deliverStoreBtn = document.querySelector('#deliver__store');
 var deliverCourierBlock = document.querySelector('.deliver__courier');
+var deliverCourierBtn = document.querySelector('#deliver__courier');
 // -------------------------------------------------
 // 3. FUNC - ФУНКЦИИ И МЕТОДЫ
 // -------------------------------------------------
@@ -390,8 +392,7 @@ function formCartList(currentCard, list) {
   } else {
     var newCartItemIndex = isCardInList(cardClicked, cards);
 
-    list.push(cards[newCartItemIndex]);
-    list[list.length - 1].count = 1;
+    list.push(Object.assign({}, cards[newCartItemIndex], {count: 1}));
   }
 
   return list;
@@ -456,26 +457,37 @@ function onClickCartCard(evt) {
 
 // выбор доставки
 
-function onClickDelivery() {
+function onClickDelivery(evt) {
   var toBeShown = deliverStoreBlock;
   var toBeHidden = deliverCourierBlock;
 
-  if (deliverCourierBtn.attributes.checked === true) {
+  if (evt.target.id === deliverCourierBtnId) {
     toBeShown = deliverCourierBlock;
     toBeHidden = deliverStoreBlock;
   }
 
   toBeShown.classList.remove('visually-hidden');
   toBeHidden.classList.add('visually-hidden');
+
+  var myListHide = toBeShown.querySelectorAll('label');
+  for (var i = 0; i < myListHide.length; i++) {
+    myListHide[i].previousElementSibling.setAttribute('disabled', true);
+  }
+
+  var myListShow = toBeHidden.querySelectorAll('label');
+
+  for (var j = 0; j < myListShow.length; j++) {
+    myListShow[j].previousElementSibling.removeAttribute('disabled');
+  }
 }
 
 // -------------------------------------------------
 // 4. EVT - ОБРАБОТЧИКИ СОБЫТИЙ
 // -------------------------------------------------
 
-deliverStoreBlock.addEventListener('click', onClickDelivery);
+deliverStoreBtn.addEventListener('click', onClickDelivery);
 
-deliverCourierBlock.addEventListener('click', onClickDelivery);
+deliverCourierBtn.addEventListener('click', onClickDelivery);
 
 // -------------------------------------------------
 // 5. INIT - ИСПОЛНЕНИЕ
