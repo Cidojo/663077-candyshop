@@ -62,6 +62,7 @@ var STARS_LITERALS = ['one', 'two', 'three', 'four', 'five'];
 // @@@DATA Раздел 3.2
 
 var CATALOG_TEMPLATE = {
+  parent: '.catalog__cards',
   template: '#card',
   nest: '.catalog__card',
   title: '.card__title',
@@ -75,6 +76,7 @@ var CATALOG_TEMPLATE = {
 };
 
 var CART_TEMPLATE = {
+  parent: '.goods__cards',
   template: '#card-order',
   nest: '.card-order',
   title: '.card-order__title',
@@ -83,28 +85,28 @@ var CART_TEMPLATE = {
   count: '.card-order__count'
 };
 
-// @@@DATA Раздел 3.3
-
-var CART_QTY = 3;
-
 // @@@DATA Раздел 4.1
+var cartList = [];
 
 var FAVORITE_BUTTON_CLASS = 'card__btn-favorite';
 var FAVORITE_SELECTED_CLASS = FAVORITE_BUTTON_CLASS + '--selected';
 var ADD_TO_CART_BUTTON_CLASS = 'card__btn';
 
+var DELETE_FROM_CART_BUTTON = 'card-order__close';
+var CART_INCREASE_BUTTON = 'card-order__btn--increase';
+var CART_DECREASE_BUTTON = 'card-order__btn--decrease';
+
+
 // -------------------------------------------------
 // 2. NODES - НОДЫ
 // -------------------------------------------------
 
-// @@@NODES Раздел 3.2
-
-var catalog = document.querySelector('.catalog__cards');
-
-// @@@NODES Раздел 3.3
-
-var cart = document.querySelector('.goods__cards');
-
+var emptyCartHeader = document.querySelector('.main-header__basket');
+var emptyCartBottom = document.querySelector('.goods__card-empty');
+var deliverStoreBtn = document.querySelector('#deliver__store');
+var deliverStoreBlock = document.querySelector('.deliver__store');
+var deliverCourierBtn = document.querySelector('#deliver__courier');
+var deliverCourierBlock = document.querySelector('.deliver__courier');
 // -------------------------------------------------
 // 3. FUNC - ФУНКЦИИ И МЕТОДЫ
 // -------------------------------------------------
@@ -181,6 +183,28 @@ function collectCards(quantity) {
 
 // @@@FUNC Раздел 3.2
 
+// изменяет окончание в зависимости от количества
+
+var declOfNum = (function () {
+  var cases = [2, 0, 1, 1, 1, 2];
+  var declOfNumSubFunction = function (titles, number) {
+    number = Math.abs(number);
+    return titles[
+      (number % 100 > 4 && number % 100 < 20) ?
+        2 : cases[(number % 10 < 5) ?
+          number % 10 : 5]];
+  };
+  return function (_titles) {
+    if (arguments.length === 1) {
+      return function (_number) {
+        return declOfNumSubFunction(_titles, _number);
+      };
+    } else {
+      return declOfNumSubFunction.apply(null, arguments);
+    }
+  };
+})();
+
 // заполняет свойство textContent у DOM/fragment элемента
 
 function fillTextContent(owner, text) {
@@ -191,6 +215,16 @@ function fillTextContent(owner, text) {
 
 function fillSource(owner, src) {
   owner.src = src;
+}
+
+// заполняет цену
+
+function fillPrice(owner, data) {
+  var myString = owner.textContent.split(' ');
+  myString[0] = data;
+  myString = myString.join(' ');
+
+  fillTextContent(owner, myString);
 }
 
 // добавляет класс DOM/fragment элементу в зависимости от количества
@@ -219,32 +253,20 @@ function renderAmount(owner, amount) {
 // добавляет класс DOM/fragment элементу + меняет текст(окончание) в зависимости от количества звезд
 
 function renderStars(owner, data) {
-  var ratingText;
-
-  switch (true) {
-    case (data.rating.value % 10 === 1):
-      ratingText = ' звезда';
-      break;
-    case (data.rating.value % 10 === 2 || data.rating.value % 10 === 3 || data.rating.value % 10 === 4):
-      ratingText = ' звезды';
-      break;
-    default:
-      ratingText = ' звезд';
-      break;
-  }
+  var ratingText = ' ' + declOfNum(['звезда', 'звезды', 'звезд'], data.rating.value);
 
   fillTextContent(owner, 'Рейтинг: ' + data.rating.value + ratingText);
   return 'stars__rating--' + STARS_LITERALS[data.rating.value - 1];
 }
 
-// заполняет свойтво textContent DOM/fragment элемента в зависимости флага isSugar
+// проверяет содержит ли сахар и добавляет соответствующий текст
 
 function renderIfSugar(data) {
   return ((data.nutritionFacts.sugar === true) ? 'Без сахара. ' : 'Содержит сахар. ')
   + data.nutritionFacts.energy + ' ккал';
 }
 
-// шаблон для создания объекта с предустановленными методами
+// конструктор? для создания объекта с установленными методами
 
 function BuildTemplate(Obj) {
   Object.assign(this, Obj);
@@ -260,23 +282,15 @@ function BuildTemplate(Obj) {
   };
 }
 
-function fillPrice(owner, data) {
-  var myString = owner.textContent.split(' ');
-  myString[0] = data;
-  myString = myString.join(' ');
-
-  fillTextContent(owner, myString);
-}
-
 // формирует новый fragment в документе, соответствующий карточке товара
 
 function getCatalog(obj, data) {
   obj.getNest();
 
-  renderAmount(obj.fragment, data.amount);
   fillTextContent(obj.getDomElement(obj.title), data.name);
   fillSource(obj.getDomElement(obj.pictureRef), PICTURE_PATH + data.picture);
   fillPrice(obj.getDomElement(obj.price).firstChild, data.price);
+  renderAmount(obj.fragment, data.amount);
 
   if (obj.stars) {
     obj.getDomElement(obj.stars).classList.remove('stars__rating--five');
@@ -285,13 +299,13 @@ function getCatalog(obj, data) {
   if (obj.weight) {
     fillTextContent(obj.getDomElement(obj.weight), '/ ' + data.weight + ' Г');
   }
-  if (obj.weight) {
+  if (obj.starsCount) {
     fillTextContent(obj.getDomElement(obj.starsCount), data.rating.number);
   }
-  if (obj.weight) {
+  if (obj.characteristics) {
     fillTextContent(obj.getDomElement(obj.characteristics), renderIfSugar(data));
   }
-  if (obj.weight) {
+  if (obj.composition) {
     fillTextContent(obj.getDomElement(obj.composition), data.nutritionFacts.contents);
   }
   if (obj.count) {
@@ -301,87 +315,167 @@ function getCatalog(obj, data) {
   return obj.fragment;
 }
 
-// вставляет fragment - агрегатор заданного количества карточек в DOM дерево
+// вставляет fragment - лист заданного количества карточек в DOM дерево
 
-function deleteElemChildren(elem) {
-  var elems = elem.querySelectorAll('article');
-  for (var i = 0; i < elems.length; i++) {
-    // debugger
-    elems[i].remove();
-  }
-}
-
-function fillCards(template, data, parent, listener) {
-  deleteElemChildren(parent);
+function fillCards(template, data, listener) {
+  var parent = document.querySelector(template.parent);
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < data.length; i++) {
-    var rendered = getCatalog(template, data[i]);
+  delSecondChild(parent);
+
+  data.forEach(function (elem) {
+    var rendered = getCatalog(template, elem);
 
     if (listener) {
-      listener(rendered);
+      rendered.addEventListener('click', listener);
     }
-
     fragment.appendChild(rendered);
-  }
+  });
 
   parent.appendChild(fragment);
 }
 
-// @@@FUNC Раздел 3.3
+// @@@FUNC Раздел 4.1
 
-// @@@FUNC 4.1
+// удаляет всех потомков DOM элемента, кроме первого
 
-var cartList = [];
+function delSecondChild(elem) {
+  while (elem.children[1]) {
+    elem.removeChild(elem.children[1]);
+  }
+}
+
+// проверяет, есть ли переданный элемент в переданном списке --- используется для добавления товара в корзину
 
 function isCardInList(cardName, list) {
   var flag = false;
 
   if (list.length !== 0) {
-    for (var i = 0; i < list.length; i++) {
-      if (cardName === list[i].name) {
-        flag = i;
+    list.forEach(function (elem, index) {
+      if (cardName === elem.name) {
+        flag = index;
       }
-    }
+    });
   }
+
   return flag;
 }
 
-function getCartList(currentCard) {
+function delCartItem(list, index) {
+  list.splice(index, 1);
+}
+
+function increaseCartItem(list, index) {
+  if (list[index].amount > list[index].count) {
+    list[index].count += 1;
+    list[index].amount -= 1;
+  }
+}
+
+function decreaseCartItem(list, index) {
+  if (list[index].count > 1) {
+    list[index].count -= 1;
+    list[index].amount += 1;
+  }
+}
+
+// изменяет массив, соответствующий состоянию корзины по щелчку по карточке
+function formCartList(currentCard, list) {
   var cardClicked = currentCard.querySelector('.card__title').textContent;
-  var isInCart = isCardInList(cardClicked, cartList);
+  var isInCart = isCardInList(cardClicked, list);
+
 
   if (isInCart !== false) {
-    cartList[isInCart].count += 1;
+    increaseCartItem(list, isInCart);
   } else {
     var newCartItemIndex = isCardInList(cardClicked, cards);
 
-    cartList.push(cards[newCartItemIndex]);
-    cartList[cartList.length - 1].count = 1;
+    list.push(cards[newCartItemIndex]);
+    list[list.length - 1].count = 1;
   }
 
-  return cartList;
+  return list;
 }
 
-// @@@FUNC Раздел 4.1
 
-function onClickCheckEvent(evt) {
+function modifyCartList(currentCard, list, mode) {
+  var cardClicked = currentCard.querySelector('.card-order__title').textContent;
+  var isInCart = isCardInList(cardClicked, list);
+  switch (true) {
+    case (mode === 'Del'):
+      delCartItem(list, isInCart);
+      break;
+    case (mode === 'Inc'):
+      increaseCartItem(list, isInCart);
+      break;
+    case (mode === 'Dec'):
+      decreaseCartItem(list, isInCart);
+      break;
+  }
+
+  return list;
+}
+
+// алгоритм обработчика событий по клику на карточку каталога
+
+function onClickCatalogCard(evt) {
   evt.preventDefault();
   if (evt.target.classList.contains(FAVORITE_BUTTON_CLASS)) {
     evt.target.classList.toggle(FAVORITE_SELECTED_CLASS);
   } else if (evt.target.classList.contains(ADD_TO_CART_BUTTON_CLASS)) {
-    getCartList(evt.currentTarget);
-    fillCards(new BuildTemplate(CART_TEMPLATE), cartList, cart);
+    cartList = formCartList(evt.currentTarget, cartList);
+    emptyCartBottom.classList.add('visually-hidden');
+    fillTextContent(emptyCartHeader, 'В корзине ' + cartList.length + ' ' + declOfNum(['товар', 'товара', 'товаров'], cartList.length));
+    fillCards(new BuildTemplate(CART_TEMPLATE), cartList, onClickCartCard);
   }
+}
+
+// алгоритм обработчика событий по клику на карточку каталога
+
+function onClickCartCard(evt) {
+  evt.preventDefault();
+  var mode;
+
+  if (evt.target.classList.contains(DELETE_FROM_CART_BUTTON)) {
+    mode = 'Del';
+  } else if (evt.target.classList.contains(CART_INCREASE_BUTTON)) {
+    mode = 'Inc';
+  } else if (evt.target.classList.contains(CART_DECREASE_BUTTON)) {
+    mode = 'Dec';
+  }
+
+  cartList = modifyCartList(evt.currentTarget, cartList, mode);
+  if (cartList.length === 0) {
+    emptyCartBottom.classList.remove('visually-hidden');
+    fillTextContent(emptyCartHeader, 'В корзине ничего нет');
+  }
+
+  fillCards(new BuildTemplate(CART_TEMPLATE), cartList, onClickCartCard);
+  fillTextContent(emptyCartHeader, 'В корзине ' + cartList.length + ' ' + declOfNum(['товар', 'товара', 'товаров'], cartList.length));
+}
+
+// выбор доставки
+
+function onClickDelivery() {
+  var toBeShown = deliverStoreBlock;
+  var toBeHidden = deliverCourierBlock;
+
+  if (deliverCourierBtn.attributes.checked === true) {
+    toBeShown = deliverCourierBlock;
+    toBeHidden = deliverStoreBlock;
+  }
+
+  toBeShown.classList.remove('visually-hidden');
+  toBeHidden.classList.add('visually-hidden');
 }
 
 // -------------------------------------------------
 // 4. EVT - ОБРАБОТЧИКИ СОБЫТИЙ
 // -------------------------------------------------
 
-function onCardClick(currentTarget) {
-  currentTarget.addEventListener('click', onClickCheckEvent);
-}
+deliverStoreBlock.addEventListener('click', onClickDelivery);
+
+deliverCourierBlock.addEventListener('click', onClickDelivery);
 
 // -------------------------------------------------
 // 5. INIT - ИСПОЛНЕНИЕ
@@ -393,7 +487,7 @@ var cards = collectCards(CARDS_QTY);
 
 // @@@INIT Раздел 3.2
 
-fillCards(new BuildTemplate(CATALOG_TEMPLATE), cards, catalog, onCardClick);
+fillCards(new BuildTemplate(CATALOG_TEMPLATE), cards, onClickCatalogCard);
 
 // @@@INIT Раздел 3.3
 // var cartCards = collectCards(CART_QTY);
