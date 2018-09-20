@@ -97,56 +97,28 @@ var CART_INCREASE_BUTTON = 'card-order__btn--increase';
 var CART_DECREASE_BUTTON = 'card-order__btn--decrease';
 
 
-var FORM_INPUTS = {
-  contacts: {
+var FORM_INPUTS = [
+  {
     block: '.contact-data',
-    inputs: '.text-input__input',
-
-    name: '#contact-data__name',
-    tel: '#contact-data__tel',
-    email: '#contact-data__email'
+    inputs: '.text-input__input'
+  },
+  {
+    block: '.payment__card-wrap',
+    inputs: '.text-input__input'
+  },
+  {
+    block: '.payment__cash-wrap'
   },
 
-  paymentCard: {
-      block: '.payment__card-wrap',
-      inputs: '.text-input__input',
-
-      cardNumber: '#payment__card-number',
-      cardDate: '#payment__card-data',
-      cardCvc: '#payment__card-cvc',
-      cardholder: '#payment__cardholder'
-    },
-  paymentCash: {
-      block: '.payment__cash-wrap'
-    },
-
-  deliverStore: {
-      block: '.deliver__store',
-      inputs: '.input-btn__input',
-
-      toggle: '#deliver__store',
-      optionsName: 'store'
-    },
-  deliverCourier: {
-      block: '.deliver__courier',
-      inputs: ['.text-input__input', '.deliver__textarea'],
-
-      toggle: '#deliver__courier',
-      street: '#deliver__street',
-      house: '#deliver__house',
-      floor: '#deliver__floor',
-      room: '#deliver__room'
-    }
-  };
-
-var contactsInputs = document.querySelector('.contact-data').querySelectorAll('.text-input__input');
-var paymentInputs = document.querySelector('.contact-data');
-var contactsInputs = document.querySelector('.contact-data');
-
-function (formSection) {
-  formSection.block.querySelectorAll(formSection.block.inputs);
-}
-
+  {
+    block: '.deliver__store',
+    inputs: '.input-btn__input'
+  },
+  {
+    block: '.deliver__courier',
+    inputs: 'fieldset'
+  }
+];
 
 var deliverStoreBtnId = 'deliver__store';
 var deliverCourierBtnId = 'deliver__courier';
@@ -479,6 +451,7 @@ function onClickCatalogCard(evt) {
     emptyCartBottom.classList.add('visually-hidden');
     fillTextContent(emptyCartHeader, 'В корзине ' + cartList.length + ' ' + declOfNum(['товар', 'товара', 'товаров'], cartList.length));
     fillCards(new BuildTemplate(CART_TEMPLATE), cartList, onClickCartCard);
+    checkCart(cartList, FORM_INPUTS);
   }
 }
 
@@ -504,6 +477,7 @@ function onClickCartCard(evt) {
 
   fillCards(new BuildTemplate(CART_TEMPLATE), cartList, onClickCartCard);
   fillTextContent(emptyCartHeader, 'В корзине ' + cartList.length + ' ' + declOfNum(['товар', 'товара', 'товаров'], cartList.length));
+  checkCart(cartList, FORM_INPUTS);
 }
 
 // выбор доставки
@@ -530,18 +504,35 @@ function onClickDelivery(evt) {
   for (var j = 0; j < myListShow.length; j++) {
     myListShow[j].setAttribute('disabled', 'true');
   }
+  checkCart(cartList, FORM_INPUTS);
 }
 
-function getIsCartEmpty(list) {
-  if (list.length !== 0) {
-    return false;
+function modifyInput(sectionObj, toggle) {
+  if (document.querySelector(sectionObj.block).classList.contains('visually-hidden')) {
+    return;
   }
-  return true;
+  var nodeList = document.querySelector(sectionObj.block).querySelectorAll(sectionObj.inputs);
+  // debugger
+  for (var i = 0; i < nodeList.length; i++) {
+    if (toggle === 'on') {
+      nodeList[i].setAttribute('disabled', true);
+    } else if (toggle === 'off') {
+      nodeList[i].removeAttribute('disabled');
+    }
+  }
 }
 
-function setDisabled() {
-  var list = [];
+function checkCart(myArray, obj) {
+  for (var i = 0; i < obj.length; i++) {
+    if (myArray.length === 0) {
+      modifyInput(obj[i], 'on');
+    } else {
+      modifyInput(obj[i], 'off');
+    }
+  }
 }
+
+
 // -------------------------------------------------
 // 4. EVT - ОБРАБОТЧИКИ СОБЫТИЙ
 // -------------------------------------------------
@@ -549,15 +540,6 @@ function setDisabled() {
 deliverStoreBtn.addEventListener('click', onClickDelivery);
 
 deliverCourierBtn.addEventListener('click', onClickDelivery);
-
-deliverCourierBlock.addEventListener('change', function (evt) {
-  if (evt.currentTarget.classList.contains('visually-hidden')) {
-    var myListHide = evt.currentTarget.querySelectorAll('[tabindex = "0"]');
-    for (var i = 0; i < myListHide.length; i++) {
-      myListHide[i].removeAttribute('disabled');
-    }
-  }
-});
 
 // -------------------------------------------------
 // 5. INIT - ИСПОЛНЕНИЕ
@@ -575,3 +557,4 @@ fillCards(new BuildTemplate(CATALOG_TEMPLATE), cards, onClickCatalogCard);
 // var cartCards = collectCards(CART_QTY);
 //
 // fillCart(new BuildTemplate(CART_TEMPLATE), cartCards, cart);
+checkCart(cartList, FORM_INPUTS);
