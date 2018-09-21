@@ -86,7 +86,8 @@ var CART_TEMPLATE = {
 };
 
 // @@@DATA Раздел 4.1
-var cartList = [];
+
+var cartCards = [];
 
 var FAVORITE_BUTTON_CLASS = 'card__btn-favorite';
 var FAVORITE_SELECTED_CLASS = FAVORITE_BUTTON_CLASS + '--selected';
@@ -97,31 +98,28 @@ var CART_INCREASE_BUTTON = 'card-order__btn--increase';
 var CART_DECREASE_BUTTON = 'card-order__btn--decrease';
 
 
-var FORM_INPUTS = [
-  {
+var FORM_INPUTS = {
+  contacts: {
     block: '.contact-data',
     inputs: '.text-input__input'
   },
-  {
+  paymentCard: {
     block: '.payment__card-wrap',
     inputs: '.text-input__input'
   },
-  {
+  paymentCash: {
     block: '.payment__cash-wrap'
   },
-
-  {
+  deliverStore: {
     block: '.deliver__store',
     inputs: '.input-btn__input'
   },
-  {
+  deliverCourier: {
     block: '.deliver__courier',
     inputs: 'fieldset'
   }
-];
+};
 
-var deliverStoreBtnId = 'deliver__store';
-var deliverCourierBtnId = 'deliver__courier';
 // -------------------------------------------------
 // 2. NODES - НОДЫ
 // -------------------------------------------------
@@ -132,6 +130,7 @@ var deliverStoreBlock = document.querySelector('.deliver__store');
 var deliverStoreBtn = document.querySelector('#deliver__store');
 var deliverCourierBlock = document.querySelector('.deliver__courier');
 var deliverCourierBtn = document.querySelector('#deliver__courier');
+var deliverCourierBtnId = 'deliver__courier';
 // -------------------------------------------------
 // 3. FUNC - ФУНКЦИИ И МЕТОДЫ
 // -------------------------------------------------
@@ -386,72 +385,79 @@ function isCardInList(cardName, list) {
   return flag;
 }
 
-function delCartItem(list, index) {
-  list.splice(index, 1);
+function delCartItem(indexInCart, indexInCatalog) {
+  catalogCards[indexInCatalog].amount += cartCards[indexInCart].count;
+  cartCards.splice(indexInCart, 1);
 }
 
-function increaseCartItem(list, index) {
-  if (list[index].amount > list[index].count) {
-    list[index].count += 1;
-    list[index].amount -= 1;
+function increaseCartItem(indexInCart, indexInCatalog) {
+  if (catalogCards[indexInCatalog].amount > cartCards[indexInCart].count) {
+    cartCards[indexInCart].count += 1;
+    catalogCards[indexInCatalog].amount -= 1;
   }
 }
 
-function decreaseCartItem(list, index) {
-  if (list[index].count > 1) {
-    list[index].count -= 1;
-    list[index].amount += 1;
+function decreaseCartItem(indexInCart, indexInCatalog) {
+  if (cartCards[indexInCart].count > 1) {
+    cartCards[indexInCart].count -= 1;
+    catalogCards[indexInCatalog].amount += 1;
+  } else if (cartCards[indexInCart].count === 1) {
+    delCartItem(indexInCart, indexInCatalog);
   }
 }
 
 // изменяет массив, соответствующий состоянию корзины по щелчку по карточке
-function formCartList(currentCard, list) {
+function formCartList(currentCard) {
   var cardClicked = currentCard.querySelector('.card__title').textContent;
-  var isInCart = isCardInList(cardClicked, list);
+  var cartIndex = isCardInList(cardClicked, cartCards);
+  var catalogIndex = isCardInList(cardClicked, catalogCards);
 
-
-  if (isInCart !== false) {
-    increaseCartItem(list, isInCart);
+  if (cartIndex !== false) {
+    increaseCartItem(cartIndex, catalogIndex);
   } else {
-    var newCartItemIndex = isCardInList(cardClicked, cards);
-
-    list.push(Object.assign({}, cards[newCartItemIndex], {count: 1}));
+    cartCards.push(Object.assign({}, catalogCards[catalogIndex], {count: 1}));
+    catalogCards[catalogIndex].amount -= 1;
   }
 
-  return list;
+  return cartCards;
 }
 
 
-function modifyCartList(currentCard, list, mode) {
+function modifyCartList(currentCard, mode) {
   var cardClicked = currentCard.querySelector('.card-order__title').textContent;
-  var isInCart = isCardInList(cardClicked, list);
+  var cartIndex = isCardInList(cardClicked, cartCards);
+  var catalogIndex = isCardInList(cardClicked, catalogCards);
+
   switch (true) {
     case (mode === 'Del'):
-      delCartItem(list, isInCart);
+      delCartItem(cartIndex, catalogIndex);
       break;
     case (mode === 'Inc'):
-      increaseCartItem(list, isInCart);
+      increaseCartItem(cartIndex, catalogIndex);
       break;
     case (mode === 'Dec'):
-      decreaseCartItem(list, isInCart);
+      decreaseCartItem(cartIndex, catalogIndex);
       break;
   }
 
-  return list;
+  return cartCards;
 }
 
 // алгоритм обработчика событий по клику на карточку каталога
 
 function onClickCatalogCard(evt) {
   evt.preventDefault();
+
   if (evt.target.classList.contains(FAVORITE_BUTTON_CLASS)) {
     evt.target.classList.toggle(FAVORITE_SELECTED_CLASS);
+
   } else if (evt.target.classList.contains(ADD_TO_CART_BUTTON_CLASS)) {
-    cartList = formCartList(evt.currentTarget, cartList);
+    cartCards = formCartList(evt.currentTarget);
+
     emptyCartBottom.classList.add('visually-hidden');
-    fillTextContent(emptyCartHeader, 'В корзине ' + cartList.length + ' ' + declOfNum(['товар', 'товара', 'товаров'], cartList.length));
-    fillCards(new BuildTemplate(CART_TEMPLATE), cartList, onClickCartCard);
-    checkCart(cartList, FORM_INPUTS);
+    fillTextContent(emptyCartHeader, 'В корзине ' + cartCards.length + ' ' + declOfNum(['товар', 'товара', 'товаров'], cartCards.length));
+    fillCards(new BuildTemplate(CART_TEMPLATE), cartCards, onClickCartCard);
+    checkCart();
   }
 }
 
@@ -469,15 +475,15 @@ function onClickCartCard(evt) {
     mode = 'Dec';
   }
 
-  cartList = modifyCartList(evt.currentTarget, cartList, mode);
-  if (cartList.length === 0) {
+  cartCards = modifyCartList(evt.currentTarget, mode);
+  if (cartCards.length === 0) {
     emptyCartBottom.classList.remove('visually-hidden');
     fillTextContent(emptyCartHeader, 'В корзине ничего нет');
   }
 
-  fillCards(new BuildTemplate(CART_TEMPLATE), cartList, onClickCartCard);
-  fillTextContent(emptyCartHeader, 'В корзине ' + cartList.length + ' ' + declOfNum(['товар', 'товара', 'товаров'], cartList.length));
-  checkCart(cartList, FORM_INPUTS);
+  fillCards(new BuildTemplate(CART_TEMPLATE), cartCards, onClickCartCard);
+  fillTextContent(emptyCartHeader, 'В корзине ' + cartCards.length + ' ' + declOfNum(['товар', 'товара', 'товаров'], cartCards.length));
+  checkCart();
 }
 
 // выбор доставки
@@ -494,25 +500,20 @@ function onClickDelivery(evt) {
   toBeShown.classList.remove('visually-hidden');
   toBeHidden.classList.add('visually-hidden');
 
-  var myListHide = toBeShown.querySelectorAll('[tabindex = "0"]');
-  for (var i = 0; i < myListHide.length; i++) {
-    myListHide[i].removeAttribute('disabled');
-  }
-
-  var myListShow = toBeHidden.querySelectorAll('[tabindex = "0"]');
-
-  for (var j = 0; j < myListShow.length; j++) {
-    myListShow[j].setAttribute('disabled', 'true');
-  }
-  checkCart(cartList, FORM_INPUTS);
+  modifyInput(FORM_INPUTS.deliverStore, 'off');
+  modifyInput(FORM_INPUTS.deliverCourier, 'off');
+  checkCart();
 }
 
 function modifyInput(sectionObj, toggle) {
-  if (document.querySelector(sectionObj.block).classList.contains('visually-hidden')) {
-    return;
+  var block = document.querySelector(sectionObj.block);
+  var nodeList = block.querySelectorAll(sectionObj.inputs);
+  var isHidden = block.classList.contains('visually-hidden') || false;
+
+  if (isHidden) {
+    toggle = 'on';
   }
-  var nodeList = document.querySelector(sectionObj.block).querySelectorAll(sectionObj.inputs);
-  // debugger
+
   for (var i = 0; i < nodeList.length; i++) {
     if (toggle === 'on') {
       nodeList[i].setAttribute('disabled', true);
@@ -522,16 +523,17 @@ function modifyInput(sectionObj, toggle) {
   }
 }
 
-function checkCart(myArray, obj) {
-  for (var i = 0; i < obj.length; i++) {
-    if (myArray.length === 0) {
-      modifyInput(obj[i], 'on');
+// проверка товаров в корзине
+
+function checkCart() {
+  for (var subObj in FORM_INPUTS) {
+    if (cartCards.length === 0) {
+      modifyInput(FORM_INPUTS[subObj], 'on');
     } else {
-      modifyInput(obj[i], 'off');
+      modifyInput(FORM_INPUTS[subObj], 'off');
     }
   }
 }
-
 
 // -------------------------------------------------
 // 4. EVT - ОБРАБОТЧИКИ СОБЫТИЙ
@@ -547,14 +549,12 @@ deliverCourierBtn.addEventListener('click', onClickDelivery);
 
 // @@@INIT Раздел 3.1
 
-var cards = collectCards(CARDS_QTY);
+var catalogCards = collectCards(CARDS_QTY);
 
 // @@@INIT Раздел 3.2
 
-fillCards(new BuildTemplate(CATALOG_TEMPLATE), cards, onClickCatalogCard);
+fillCards(new BuildTemplate(CATALOG_TEMPLATE), catalogCards, onClickCatalogCard);
 
-// @@@INIT Раздел 3.3
-// var cartCards = collectCards(CART_QTY);
-//
-// fillCart(new BuildTemplate(CART_TEMPLATE), cartCards, cart);
-checkCart(cartList, FORM_INPUTS);
+// @@@INIT Раздел 4.2
+
+checkCart();
