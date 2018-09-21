@@ -558,3 +558,115 @@ fillCards(new BuildTemplate(CATALOG_TEMPLATE), catalogCards, onClickCatalogCard)
 // @@@INIT Раздел 4.2
 
 checkCart();
+
+// ЕЩЕ НЕ РЕФАКТОРИЛ, НАПИСАНО КАК ЕСТЬ
+//  | | | | | | | | | | | | | | | | | |
+// \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+
+//  price filters
+
+var priceHandlerLeft = document.querySelector('.range__btn--left');
+var priceHandlerRight = document.querySelector('.range__btn--right');
+var priceFillLine = document.querySelector('.range__fill-line');
+var rangePriceMin = document.querySelector('.range__price--min');
+var rangePriceMax = document.querySelector('.range__price--max');
+
+function getCurrentHandlerX(handler) {
+  return handler.offsetLeft;
+}
+
+priceHandlerLeft.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var startCoordsX = evt.clientX;
+
+  function onMouseMove(moveEvt) {
+    moveEvt.preventDefault();
+
+    var shiftX = startCoordsX - moveEvt.clientX;
+
+    startCoordsX = moveEvt.clientX;
+
+    var jump = (priceHandlerLeft.offsetLeft - shiftX);
+
+    jump = (jump < 0) ? 0 : jump;
+    jump = (jump > getCurrentHandlerX(priceHandlerRight)) ? getCurrentHandlerX(priceHandlerRight) : jump;
+
+    priceHandlerLeft.style.left = jump + 'px';
+    priceFillLine.style.left = priceHandlerLeft.offsetWidth + jump + 'px';
+    rangePriceMin.textContent = jump;
+  }
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
+
+priceHandlerRight.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var startCoordsX = evt.clientX;
+
+  function onMouseMove(moveEvt) {
+    moveEvt.preventDefault();
+
+    var shiftX = startCoordsX - moveEvt.clientX;
+
+    startCoordsX = moveEvt.clientX;
+
+    var jump = (priceHandlerRight.offsetLeft - shiftX);
+    var max = document.querySelector('.range__filter').offsetWidth;
+
+    jump = (jump > max) ? max : jump;
+    jump = (jump < getCurrentHandlerX(priceHandlerLeft)) ? getCurrentHandlerX(priceHandlerLeft) : jump;
+
+    priceHandlerRight.style.left = jump + 'px';
+    priceFillLine.style.right = max - jump + 'px';
+    rangePriceMax.textContent = jump;
+  }
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
+
+// Алгоритм Луна
+
+
+var cardNumberInput = document.querySelector('#payment__card-number');
+
+cardNumberInput.value = '1234567890123456';
+
+function lunn() {
+  var sum = 0;
+  cardNumberInput.value.split('').forEach(function (elem) {
+    elem = Number(elem);
+
+    if (elem % 2 !== 0) {
+      elem *= 2;
+      if (elem >= 10) {
+        elem -= 9;
+      }
+    }
+    sum += elem;
+  });
+
+  if (sum % 10 === 0) {
+    return true;
+  } else {
+    return false;
+  }
+
+}
