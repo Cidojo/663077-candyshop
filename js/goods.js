@@ -131,6 +131,11 @@ var deliverStoreBtn = document.querySelector('#deliver__store');
 var deliverCourierBlock = document.querySelector('.deliver__courier');
 var deliverCourierBtn = document.querySelector('#deliver__courier');
 var deliverCourierBtnId = 'deliver__courier';
+var paymentCardBlock = document.querySelector('.payment__card-wrap');
+var paymentCashBlock = document.querySelector('.payment__cash-wrap');
+var paymentCashBtnId = 'payment__cash';
+var paymentCardBtn = document.querySelector('#payment__card');
+var paymentCashBtn = document.querySelector('#payment__cash');
 // -------------------------------------------------
 // 3. FUNC - ФУНКЦИИ И МЕТОДЫ
 // -------------------------------------------------
@@ -450,7 +455,7 @@ function onClickCatalogCard(evt) {
 
   if (evt.target.classList.contains(FAVORITE_BUTTON_CLASS)) {
     evt.target.classList.toggle(FAVORITE_SELECTED_CLASS);
-
+    evt.target.blur();
   } else if (evt.target.classList.contains(ADD_TO_CART_BUTTON_CLASS)) {
     cartCards = formCartList(evt.currentTarget);
 
@@ -505,6 +510,23 @@ function onClickDelivery(evt) {
   checkCart();
 }
 
+function onClickPayment(evt) {
+  var toBeShown = paymentCardBlock;
+  var toBeHidden = paymentCashBlock;
+
+  if (evt.target.id === paymentCashBtnId) {
+    toBeShown = paymentCashBlock;
+    toBeHidden = paymentCardBlock;
+  }
+
+  toBeShown.classList.remove('visually-hidden');
+  toBeHidden.classList.add('visually-hidden');
+
+  modifyInput(FORM_INPUTS.paymentCard, 'off');
+  modifyInput(FORM_INPUTS.paymentCash, 'off');
+  checkCart();
+}
+
 function modifyInput(sectionObj, toggle) {
   var block = document.querySelector(sectionObj.block);
   var nodeList = block.querySelectorAll(sectionObj.inputs);
@@ -540,8 +562,9 @@ function checkCart() {
 // -------------------------------------------------
 
 deliverStoreBtn.addEventListener('click', onClickDelivery);
-
 deliverCourierBtn.addEventListener('click', onClickDelivery);
+paymentCardBtn.addEventListener('click', onClickPayment);
+paymentCashBtn.addEventListener('click', onClickPayment);
 
 // -------------------------------------------------
 // 5. INIT - ИСПОЛНЕНИЕ
@@ -647,7 +670,7 @@ priceHandlerRight.addEventListener('mousedown', function (evt) {
 
 var cardNumberInput = document.querySelector('#payment__card-number');
 
-cardNumberInput.value = '1234567890123456';
+cardNumberInput.value = '4276550032461518';
 
 function getLuhnValidation(string) {
   var sum = 0;
@@ -681,8 +704,9 @@ cardNumberInput.addEventListener('input', function (evt) {
 var formSubmitBtn = document.querySelector('.buy__submit-btn');
 
 formSubmitBtn.addEventListener('click', function (evt) {
-  if (!getLuhnValidation(cardNumberInput.value)) {
-    cardNumberInput.setCustomValidity('неверный номер карты');
-    evt.preventDefault();
+  if (formSubmitBtn.checkValidity()) {
+    if (!getLuhnValidation(cardNumberInput.value)) {
+      evt.preventDefault();
+    }
   }
 });
