@@ -649,9 +649,9 @@ var cardNumberInput = document.querySelector('#payment__card-number');
 
 cardNumberInput.value = '1234567890123456';
 
-function lunn() {
+function getLuhnValidation(string) {
   var sum = 0;
-  cardNumberInput.value.split('').forEach(function (elem) {
+  string.split('').forEach(function (elem) {
     elem = Number(elem);
 
     if (elem % 2 !== 0) {
@@ -668,5 +668,21 @@ function lunn() {
   } else {
     return false;
   }
-
 }
+
+cardNumberInput.addEventListener('input', function (evt) {
+  var cardStatus = 'Не определен';
+  if (getLuhnValidation(evt.currentTarget.value)) {
+    cardStatus = 'Одобрено';
+  }
+  document.querySelector('.payment__card-status').textContent = cardStatus;
+});
+
+var formSubmitBtn = document.querySelector('.buy__submit-btn');
+
+formSubmitBtn.addEventListener('click', function (evt) {
+  if (!getLuhnValidation(cardNumberInput.value)) {
+    cardNumberInput.setCustomValidity('неверный номер карты');
+    evt.preventDefault();
+  }
+});
