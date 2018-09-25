@@ -32,11 +32,7 @@ var CART_TEMPLATE = {
 
 // @@@DATA Раздел 4.1
 
-var cartCards = [];
 
-var FAVORITE_BUTTON_CLASS = 'card__btn-favorite';
-var FAVORITE_SELECTED_CLASS = FAVORITE_BUTTON_CLASS + '--selected';
-var ADD_TO_CART_BUTTON_CLASS = 'card__btn';
 
 var DELETE_FROM_CART_BUTTON = 'card-order__close';
 var CART_INCREASE_BUTTON = 'card-order__btn--increase';
@@ -69,8 +65,6 @@ var FORM_INPUTS = {
 // 2. NODES - НОДЫ
 // -------------------------------------------------
 
-var emptyCartHeader = document.querySelector('.main-header__basket');
-var emptyCartBottom = document.querySelector('.goods__card-empty');
 var deliverStoreBlock = document.querySelector('.deliver__store');
 var deliverStoreBtn = document.querySelector('#deliver__store');
 var deliverCourierBlock = document.querySelector('.deliver__courier');
@@ -91,7 +85,6 @@ var paymentCashBtn = document.querySelector('#payment__cash');
 
 // создает объект - карточку товара
 
-
 // возвращает массив объектов - карточек товаров
 
 // @@@FUNC Раздел 3.2
@@ -104,143 +97,19 @@ var paymentCashBtn = document.querySelector('#payment__cash');
 
 // конструктор? для создания объекта с установленными методами
 
-function BuildTemplate(Obj) {
-  Object.assign(this, Obj);
-
-  this.getTemplate = function () {
-    return document.querySelector(this.template).cloneNode(true).content;
-  };
-  this.getNest = function () {
-    this.fragment = this.getTemplate().querySelector(this.nest);
-  };
-  this.getDomElement = function (selector) {
-    return this.fragment.querySelector(selector);
-  };
-}
-
 // формирует новый fragment в документе, соответствующий карточке товара
 
 // вставляет fragment - лист заданного количества карточек в DOM дерево
-
-function fillCards(template, data, listener) {
-  var parent = document.querySelector(template.parent);
-  var fragment = document.createDocumentFragment();
-
-  delSecondChild(parent);
-
-  data.forEach(function (elem) {
-    var rendered = window.getCardFragment(template, elem);
-
-    if (listener) {
-      rendered.addEventListener('click', listener);
-    }
-    fragment.appendChild(rendered);
-  });
-
-  parent.appendChild(fragment);
-}
 
 // @@@FUNC Раздел 4.1
 
 // удаляет всех потомков DOM элемента, кроме первого
 
-function delSecondChild(elem) {
-  while (elem.children[1]) {
-    elem.removeChild(elem.children[1]);
-  }
-}
-
 // проверяет, есть ли переданный элемент в переданном списке --- используется для добавления товара в корзину
 
-function isCardInList(cardName, list) {
-  var flag = false;
-
-  if (list.length !== 0) {
-    list.forEach(function (elem, index) {
-      if (cardName === elem.name) {
-        flag = index;
-      }
-    });
-  }
-
-  return flag;
-}
-
-function delCartItem(indexInCart, indexInCatalog) {
-  window.catalogCards[indexInCatalog].amount += cartCards[indexInCart].count;
-  cartCards.splice(indexInCart, 1);
-}
-
-function increaseCartItem(indexInCart, indexInCatalog) {
-  if (window.catalogCards[indexInCatalog].amount > cartCards[indexInCart].count) {
-    cartCards[indexInCart].count += 1;
-    window.catalogCards[indexInCatalog].amount -= 1;
-  }
-}
-
-function decreaseCartItem(indexInCart, indexInCatalog) {
-  if (cartCards[indexInCart].count > 1) {
-    cartCards[indexInCart].count -= 1;
-    window.catalogCards[indexInCatalog].amount += 1;
-  } else if (cartCards[indexInCart].count === 1) {
-    delCartItem(indexInCart, indexInCatalog);
-  }
-}
-
 // изменяет массив, соответствующий состоянию корзины по щелчку по карточке
-function formCartList(currentCard) {
-  var cardClicked = currentCard.querySelector('.card__title').textContent;
-  var cartIndex = isCardInList(cardClicked, cartCards);
-  var catalogIndex = isCardInList(cardClicked, window.catalogCards);
-
-  if (cartIndex !== false) {
-    increaseCartItem(cartIndex, catalogIndex);
-  } else {
-    cartCards.push(Object.assign({}, window.catalogCards[catalogIndex], {count: 1}));
-    window.catalogCards[catalogIndex].amount -= 1;
-  }
-
-  return cartCards;
-}
-
-
-function modifyCartList(currentCard, mode) {
-  var cardClicked = currentCard.querySelector('.card-order__title').textContent;
-  var cartIndex = isCardInList(cardClicked, cartCards);
-  var catalogIndex = isCardInList(cardClicked, window.catalogCards);
-
-  switch (true) {
-    case (mode === 'Del'):
-      delCartItem(cartIndex, catalogIndex);
-      break;
-    case (mode === 'Inc'):
-      increaseCartItem(cartIndex, catalogIndex);
-      break;
-    case (mode === 'Dec'):
-      decreaseCartItem(cartIndex, catalogIndex);
-      break;
-  }
-
-  return cartCards;
-}
 
 // алгоритм обработчика событий по клику на карточку каталога
-
-function onClickCatalogCard(evt) {
-  evt.preventDefault();
-
-  if (evt.target.classList.contains(FAVORITE_BUTTON_CLASS)) {
-    evt.target.classList.toggle(FAVORITE_SELECTED_CLASS);
-    evt.target.blur();
-  } else if (evt.target.classList.contains(ADD_TO_CART_BUTTON_CLASS)) {
-    cartCards = formCartList(evt.currentTarget);
-
-    emptyCartBottom.classList.add('visually-hidden');
-    window.fillTextContent(emptyCartHeader, 'В корзине ' + cartCards.length + ' ' + window.getStringEnding(['товар', 'товара', 'товаров'], cartCards.length));
-    fillCards(new BuildTemplate(CART_TEMPLATE), cartCards, onClickCartCard);
-    checkCart();
-  }
-}
 
 // алгоритм обработчика событий по клику на карточку каталога
 
@@ -256,14 +125,14 @@ function onClickCartCard(evt) {
     mode = 'Dec';
   }
 
-  cartCards = modifyCartList(evt.currentTarget, mode);
-  if (cartCards.length === 0) {
+  window.cartCards = window.modifyCartList(evt.currentTarget, mode);
+  if (window.cartCards.length === 0) {
     emptyCartBottom.classList.remove('visually-hidden');
     window.fillTextContent(emptyCartHeader, 'В корзине ничего нет');
   }
 
-  fillCards(new BuildTemplate(CART_TEMPLATE), cartCards, onClickCartCard);
-  window.fillTextContent(emptyCartHeader, 'В корзине ' + cartCards.length + ' ' + window.getStringEnding(['товар', 'товара', 'товаров'], cartCards.length));
+  window.fillCards(new window.BuildTemplate(CART_TEMPLATE), window.cartCards, onClickCartCard);
+  window.fillTextContent(emptyCartHeader, 'В корзине ' + window.cartCards.length + ' ' + window.getStringEnding(['товар', 'товара', 'товаров'], window.cartCards.length));
   checkCart();
 }
 
@@ -325,7 +194,7 @@ function modifyInput(sectionObj, toggle) {
 
 function checkCart() {
   for (var subObj in FORM_INPUTS) {
-    if (cartCards.length === 0) {
+    if (window.cartCards.length === 0) {
       modifyInput(FORM_INPUTS[subObj], 'on');
     } else {
       modifyInput(FORM_INPUTS[subObj], 'off');
@@ -349,8 +218,6 @@ paymentCashBtn.addEventListener('click', onClickPayment);
 // @@@INIT Раздел 3.1
 
 // @@@INIT Раздел 3.2
-
-fillCards(new BuildTemplate(CATALOG_TEMPLATE), window.catalogCards, onClickCatalogCard);
 
 // @@@INIT Раздел 4.2
 
