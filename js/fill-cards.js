@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var CATALOG_TEMPLATE = {
+  var catalogTemplate = new BuildTemplate({
     parent: '.catalog__cards',
     template: '#card',
     nest: '.catalog__card',
@@ -13,9 +13,9 @@
     starsCount: '.star__count',
     characteristics: '.card__characteristic',
     composition: '.card__composition-list'
-  };
+  });
 
-  var CART_TEMPLATE = {
+  var cartTemplate = new BuildTemplate({
     parent: '.goods__cards',
     template: '#card-order',
     nest: '.card-order',
@@ -23,7 +23,7 @@
     pictureRef: '.card-order__img',
     price: '.card-order__price',
     count: '.card-order__count'
-  };
+  });
 
   function BuildTemplate(Obj) {
     Object.assign(this, Obj);
@@ -59,11 +59,12 @@
 
   window.fillCards = {
     catalogCards: function () {
-      fillCards(new BuildTemplate(CATALOG_TEMPLATE), window.catalogCards, window.onClickCatalogCard);
+      fillCards(catalogTemplate, window.catalogCards, window.onClickCatalogCard);
     },
     cartCards: function () {
-      fillCards(new BuildTemplate(CART_TEMPLATE), window.cartCards, window.onClickCartCard);
+      fillCards(cartTemplate, window.cartCards, window.onClickCartCard);
     }
   };
+
   window.fillCards.catalogCards();
 })();

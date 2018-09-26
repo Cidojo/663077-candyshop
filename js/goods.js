@@ -11,18 +11,7 @@
 // -------------------------------------------------
 // 2. NODES - НОДЫ
 // -------------------------------------------------
-window.emptyCartHeader = document.querySelector('.main-header__basket');
-window.emptyCartBottom = document.querySelector('.goods__card-empty');
-var deliverStoreBlock = document.querySelector('.deliver__store');
-var deliverStoreBtn = document.querySelector('#deliver__store');
-var deliverCourierBlock = document.querySelector('.deliver__courier');
-var deliverCourierBtn = document.querySelector('#deliver__courier');
-var deliverCourierBtnId = 'deliver__courier';
-var paymentCardBlock = document.querySelector('.payment__card-wrap');
-var paymentCashBlock = document.querySelector('.payment__cash-wrap');
-var paymentCashBtnId = 'payment__cash';
-var paymentCardBtn = document.querySelector('#payment__card');
-var paymentCashBtn = document.querySelector('#payment__cash');
+
 // -------------------------------------------------
 // 3. FUNC - ФУНКЦИИ И МЕТОДЫ
 // -------------------------------------------------
@@ -63,52 +52,11 @@ var paymentCashBtn = document.querySelector('#payment__cash');
 
 // выбор доставки
 
-function onClickDelivery(evt) {
-  var toBeShown = deliverStoreBlock;
-  var toBeHidden = deliverCourierBlock;
-
-  if (evt.target.id === deliverCourierBtnId) {
-    toBeShown = deliverCourierBlock;
-    toBeHidden = deliverStoreBlock;
-  }
-
-  toBeShown.classList.remove('visually-hidden');
-  toBeHidden.classList.add('visually-hidden');
-
-  window.modifyInput(window.FORM_INPUTS.deliverStore, 'off');
-  window.modifyInput(window.FORM_INPUTS.deliverCourier, 'off');
-  window.checkCart();
-}
-
-function onClickPayment(evt) {
-  var toBeShown = paymentCardBlock;
-  var toBeHidden = paymentCashBlock;
-
-  if (evt.target.id === paymentCashBtnId) {
-    toBeShown = paymentCashBlock;
-    toBeHidden = paymentCardBlock;
-  }
-
-  toBeShown.classList.remove('visually-hidden');
-  toBeHidden.classList.add('visually-hidden');
-
-  window.modifyInput(window.FORM_INPUTS.paymentCard, 'off');
-  window.modifyInput(window.FORM_INPUTS.paymentCash, 'off');
-  window.checkCart();
-}
-
-
 // проверка товаров в корзине
-
 
 // -------------------------------------------------
 // 4. EVT - ОБРАБОТЧИКИ СОБЫТИЙ
 // -------------------------------------------------
-
-deliverStoreBtn.addEventListener('click', onClickDelivery);
-deliverCourierBtn.addEventListener('click', onClickDelivery);
-paymentCardBtn.addEventListener('click', onClickPayment);
-paymentCashBtn.addEventListener('click', onClickPayment);
 
 // -------------------------------------------------
 // 5. INIT - ИСПОЛНЕНИЕ
@@ -201,50 +149,4 @@ priceHandlerRight.addEventListener('mousedown', function (evt) {
 
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
-});
-
-// Алгоритм Луна
-
-
-var cardNumberInput = document.querySelector('#payment__card-number');
-
-cardNumberInput.value = '4276550032461518';
-
-function getLuhnValidation(string) {
-  var sum = 0;
-  string.split('').forEach(function (elem) {
-    elem = Number(elem);
-
-    if (elem % 2 !== 0) {
-      elem *= 2;
-      if (elem >= 10) {
-        elem -= 9;
-      }
-    }
-    sum += elem;
-  });
-
-  if (sum % 10 === 0) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-cardNumberInput.addEventListener('input', function (evt) {
-  var cardStatus = 'Не определен';
-  if (getLuhnValidation(evt.currentTarget.value)) {
-    cardStatus = 'Одобрено';
-  }
-  document.querySelector('.payment__card-status').textContent = cardStatus;
-});
-
-var formSubmitBtn = document.querySelector('.buy__submit-btn');
-
-formSubmitBtn.addEventListener('click', function (evt) {
-  if (formSubmitBtn.checkValidity()) {
-    if (!getLuhnValidation(cardNumberInput.value)) {
-      evt.preventDefault();
-    }
-  }
 });

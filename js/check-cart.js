@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  window.FORM_INPUTS = {
+  var FORM_INPUTS = {
     contacts: {
       block: '.contact-data',
       inputs: '.text-input__input'
@@ -23,14 +23,23 @@
     }
   };
 
+  var emptyCartHeader = document.querySelector('.main-header__basket');
+  var emptyCartBottom = document.querySelector('.goods__card-empty');
+
   window.checkCart = function () {
-    for (var subObj in window.FORM_INPUTS) {
-      if (window.cartCards.length === 0) {
-        window.modifyInput(window.FORM_INPUTS[subObj], 'on');
-      } else {
-        window.modifyInput(window.FORM_INPUTS[subObj], 'off');
-      }
+    if (window.cartCards.length === 0) {
+      Object.keys(FORM_INPUTS).forEach(function (key) {
+        window.modifyInput(FORM_INPUTS[key], 'on');
+      });
+      emptyCartBottom.classList.remove('visually-hidden');
+      window.fillTextContent(emptyCartHeader, 'В корзине ничего нет');
+    } else {
+      Object.keys(FORM_INPUTS).forEach(function (key) {
+        window.modifyInput(FORM_INPUTS[key], 'off');
+      });
+      emptyCartBottom.classList.add('visually-hidden');
     }
+    window.fillTextContent(emptyCartHeader, 'В корзине ' + window.cartCards.length + ' ' + window.getStringEnding(['товар', 'товара', 'товаров'], window.cartCards.length));
   };
 
   window.checkCart();

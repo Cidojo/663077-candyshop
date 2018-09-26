@@ -12,10 +12,7 @@
       evt.target.classList.toggle(FAVORITE_SELECTED_CLASS);
       evt.target.blur();
     } else if (evt.target.classList.contains(ADD_TO_CART_BUTTON_CLASS)) {
-      window.cartCards = window.formCartList(evt.currentTarget);
-
-      window.emptyCartBottom.classList.add('visually-hidden');
-      window.fillTextContent(window.emptyCartHeader, 'В корзине ' + window.cartCards.length + ' ' + window.getStringEnding(['товар', 'товара', 'товаров'], window.cartCards.length));
+      window.cartCards = window.modifyCartList(evt);
       window.fillCards.cartCards();
       window.checkCart();
     }
