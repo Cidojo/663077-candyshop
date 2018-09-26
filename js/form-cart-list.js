@@ -47,8 +47,13 @@
 
   window.modifyCartList = function (currentCard, mode) {
     var cardClicked = currentCard.querySelector('.card-order__title').textContent;
-    var cartIndex = window.isCardInList(cardClicked, window.cartCards);
-    var catalogIndex = window.isCardInList(cardClicked, window.catalogCards);
+    var cartIndex = window.cartCards.map(function (it) {
+      return it.name;
+    }).indexOf(cardClicked);
+
+    var catalogIndex = window.catalogCards.map(function (it) {
+      return it.name;
+    }).indexOf(cardClicked);
 
     switch (true) {
       case (mode === 'Del'):
