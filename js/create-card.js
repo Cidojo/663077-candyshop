@@ -59,6 +59,8 @@
     };
   }
 
+  //  возвращает объект - карточку товара из каталога
+
   window.createCard = function (name, imgLink) {
     return {
       name: name,

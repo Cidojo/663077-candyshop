@@ -1,18 +1,65 @@
 'use strict';
 
+(function () {
+
+})();
+
 // -------------------------------------------------
 // 1. DATA - ИСХОДНЫЕ ДАННЫЕ
 // -------------------------------------------------
 
+// @@@DATA Раздел 3.1
+
 // @@@DATA Раздел 3.2
 
+var CART_TEMPLATE = {
+  parent: '.goods__cards',
+  template: '#card-order',
+  nest: '.card-order',
+  title: '.card-order__title',
+  pictureRef: '.card-order__img',
+  price: '.card-order__price',
+  count: '.card-order__count'
+};
+
 // @@@DATA Раздел 4.1
+
+var cartCards = [];
+
+
+var DELETE_FROM_CART_BUTTON = 'card-order__close';
+var CART_INCREASE_BUTTON = 'card-order__btn--increase';
+var CART_DECREASE_BUTTON = 'card-order__btn--decrease';
+
+
+var FORM_INPUTS = {
+  contacts: {
+    block: '.contact-data',
+    inputs: '.text-input__input'
+  },
+  paymentCard: {
+    block: '.payment__card-wrap',
+    inputs: '.text-input__input'
+  },
+  paymentCash: {
+    block: '.payment__cash-wrap'
+  },
+  deliverStore: {
+    block: '.deliver__store',
+    inputs: '.input-btn__input'
+  },
+  deliverCourier: {
+    block: '.deliver__courier',
+    inputs: 'fieldset'
+  }
+};
 
 // -------------------------------------------------
 // 2. NODES - НОДЫ
 // -------------------------------------------------
-window.emptyCartHeader = document.querySelector('.main-header__basket');
-window.emptyCartBottom = document.querySelector('.goods__card-empty');
+
+var emptyCartHeader = document.querySelector('.main-header__basket');
+var emptyCartBottom = document.querySelector('.goods__card-empty');
 var deliverStoreBlock = document.querySelector('.deliver__store');
 var deliverStoreBtn = document.querySelector('#deliver__store');
 var deliverCourierBlock = document.querySelector('.deliver__courier');
@@ -31,6 +78,9 @@ var paymentCashBtn = document.querySelector('#payment__cash');
 
 // возвращает случайное число из интервала, {round} - кратность окончания полученного числа из ряда [5, 10, 50, 100 ...]
 
+// возвращает объект raiting объекта - карточки товара
+
+// возвращает объект nutritionFacts объекта - карточки товара
 // создает объект - карточку товара
 
 // возвращает массив объектов - карточек товаров
@@ -43,7 +93,14 @@ var paymentCashBtn = document.querySelector('#payment__cash');
 
 // заполняет свойтво src у DOM/fragment элемента
 
+// заполняет цену
+
+// добавляет класс DOM/fragment элементу в зависимости от количества
+
+// добавляет класс DOM/fragment элементу + меняет текст(окончание) в зависимости от количества звезд
+
 // конструктор? для создания объекта с установленными методами
+
 
 // формирует новый fragment в документе, соответствующий карточке товара
 
@@ -53,13 +110,38 @@ var paymentCashBtn = document.querySelector('#payment__cash');
 
 // удаляет всех потомков DOM элемента, кроме первого
 
+
 // проверяет, есть ли переданный элемент в переданном списке --- используется для добавления товара в корзину
 
 // изменяет массив, соответствующий состоянию корзины по щелчку по карточке
 
 // алгоритм обработчика событий по клику на карточку каталога
 
+
 // алгоритм обработчика событий по клику на карточку каталога
+
+function onClickCartCard(evt) {
+  evt.preventDefault();
+  var mode;
+
+  if (evt.target.classList.contains(DELETE_FROM_CART_BUTTON)) {
+    mode = 'Del';
+  } else if (evt.target.classList.contains(CART_INCREASE_BUTTON)) {
+    mode = 'Inc';
+  } else if (evt.target.classList.contains(CART_DECREASE_BUTTON)) {
+    mode = 'Dec';
+  }
+
+  cartCards = modifyCartList(evt.currentTarget, mode);
+  if (cartCards.length === 0) {
+    emptyCartBottom.classList.remove('visually-hidden');
+    fillTextContent(emptyCartHeader, 'В корзине ничего нет');
+  }
+
+  fillCards(new BuildTemplate(CART_TEMPLATE), cartCards, onClickCartCard);
+  fillTextContent(emptyCartHeader, 'В корзине ' + cartCards.length + ' ' + declOfNum(['товар', 'товара', 'товаров'], cartCards.length));
+  checkCart();
+}
 
 // выбор доставки
 
@@ -75,9 +157,9 @@ function onClickDelivery(evt) {
   toBeShown.classList.remove('visually-hidden');
   toBeHidden.classList.add('visually-hidden');
 
-  window.modifyInput(window.FORM_INPUTS.deliverStore, 'off');
-  window.modifyInput(window.FORM_INPUTS.deliverCourier, 'off');
-  window.checkCart();
+  modifyInput(FORM_INPUTS.deliverStore, 'off');
+  modifyInput(FORM_INPUTS.deliverCourier, 'off');
+  checkCart();
 }
 
 function onClickPayment(evt) {
@@ -92,14 +174,40 @@ function onClickPayment(evt) {
   toBeShown.classList.remove('visually-hidden');
   toBeHidden.classList.add('visually-hidden');
 
-  window.modifyInput(window.FORM_INPUTS.paymentCard, 'off');
-  window.modifyInput(window.FORM_INPUTS.paymentCash, 'off');
-  window.checkCart();
+  modifyInput(FORM_INPUTS.paymentCard, 'off');
+  modifyInput(FORM_INPUTS.paymentCash, 'off');
+  checkCart();
 }
 
+function modifyInput(sectionObj, toggle) {
+  var block = document.querySelector(sectionObj.block);
+  var nodeList = block.querySelectorAll(sectionObj.inputs);
+  var isHidden = block.classList.contains('visually-hidden') || false;
+
+  if (isHidden) {
+    toggle = 'on';
+  }
+
+  for (var i = 0; i < nodeList.length; i++) {
+    if (toggle === 'on') {
+      nodeList[i].setAttribute('disabled', true);
+    } else if (toggle === 'off') {
+      nodeList[i].removeAttribute('disabled');
+    }
+  }
+}
 
 // проверка товаров в корзине
 
+function checkCart() {
+  for (var subObj in FORM_INPUTS) {
+    if (cartCards.length === 0) {
+      modifyInput(FORM_INPUTS[subObj], 'on');
+    } else {
+      modifyInput(FORM_INPUTS[subObj], 'off');
+    }
+  }
+}
 
 // -------------------------------------------------
 // 4. EVT - ОБРАБОТЧИКИ СОБЫТИЙ
@@ -119,6 +227,8 @@ paymentCashBtn.addEventListener('click', onClickPayment);
 // @@@INIT Раздел 3.2
 
 // @@@INIT Раздел 4.2
+
+checkCart();
 
 // ЕЩЕ НЕ РЕФАКТОРИЛ, НАПИСАНО КАК ЕСТЬ
 //  | | | | | | | | | | | | | | | | | |

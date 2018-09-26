@@ -18,6 +18,8 @@
     'soda-bacon.jpg', 'soda-celery.jpg', 'soda-cob.jpg', 'soda-garlic.jpg', 'soda-peanut-grapes.jpg',
     'soda-russian.jpg'];
 
+    // возвращает массив из карточек товара
+
   function collectCards(quantity) {
     var cardsCollection = [];
     var cloneNames = CARD_NAMES.slice(0);

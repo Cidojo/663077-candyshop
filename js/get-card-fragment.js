@@ -5,9 +5,10 @@
 
   var STARS_LITERALS = ['one', 'two', 'three', 'four', 'five'];
 
-  // @@@DATA Раздел 3.1
-
   var PICTURE_PATH = 'img/cards/';
+
+  // заполняет свойство src значением из соответствующего свойства переданного объекта (карточки)
+
 
   function fillSource(owner, src) {
     owner.src = src;
