@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  window.onClickCartCard = function (evt) {
+  window.onCartCardClick = function (evt) {
     evt.preventDefault();
 
     window.modifyCartList(evt);
