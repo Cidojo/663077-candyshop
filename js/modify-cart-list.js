@@ -14,6 +14,7 @@
     if (window.catalogCards[indexInCatalog].amount > window.cartCards[indexInCart].count) {
       window.cartCards[indexInCart].count += 1;
       window.catalogCards[indexInCatalog].amount -= 1;
+      window.cartCards[indexInCart].price = window.cartCards[indexInCart].count * window.cartCards[indexInCart].pricePerItem;
     }
   }
 
@@ -21,6 +22,7 @@
     if (window.cartCards[indexInCart].count > 1) {
       window.cartCards[indexInCart].count -= 1;
       window.catalogCards[indexInCatalog].amount += 1;
+      window.cartCards[indexInCart].price = window.cartCards[indexInCart].count * window.cartCards[indexInCart].pricePerItem;
     } else if (window.cartCards[indexInCart].count === 1) {
       delCartItem(indexInCart, indexInCatalog);
     }
@@ -52,7 +54,7 @@
       if (cardIndexes.cartIndex !== -1) {
         increaseCartItem(cardIndexes.cartIndex, cardIndexes.catalogIndex);
       } else {
-        window.cartCards.push(Object.assign({}, window.catalogCards[cardIndexes.catalogIndex], {count: 1}));
+        window.cartCards.push(Object.assign({}, window.catalogCards[cardIndexes.catalogIndex], {count: 1, pricePerItem: window.catalogCards[cardIndexes.catalogIndex].price}));
         window.catalogCards[cardIndexes.catalogIndex].amount -= 1;
       }
 

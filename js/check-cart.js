@@ -37,9 +37,26 @@
       Object.keys(FORM_INPUTS).forEach(function (key) {
         window.modifyInput(FORM_INPUTS[key], 'off');
       });
+
       emptyCartBottom.classList.add('visually-hidden');
+
+      var fullCartMessage = 'В корзине ' +
+        window.cartCards.length +
+        ' ' +
+        window.getStringEnding(['товар', 'товара', 'товаров'], window.cartCards.length) +
+        ' на сумму ' +
+        window.cartCards
+          .map(function (current) {
+            return current.price * current.count;
+          })
+          .reduce(function (sum, current) {
+            return sum + current;
+          }, 0) +
+          ' ' +
+          window.getStringEnding(['рубль', 'рубля', 'рублей']) +
+          '.';
+      window.fillTextContent(emptyCartHeader, fullCartMessage);
     }
-    window.fillTextContent(emptyCartHeader, 'В корзине ' + window.cartCards.length + ' ' + window.getStringEnding(['товар', 'товара', 'товаров'], window.cartCards.length));
   };
 
   window.checkCart();

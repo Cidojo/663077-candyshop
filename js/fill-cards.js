@@ -1,8 +1,9 @@
 'use strict';
 
 (function () {
+
   var catalogTemplate = new BuildTemplate({
-    parent: '.catalog__cards',
+    parent: document.querySelector('.catalog__cards'),
     template: '#card',
     nest: '.catalog__card',
     title: '.card__title',
@@ -16,7 +17,7 @@
   });
 
   var cartTemplate = new BuildTemplate({
-    parent: '.goods__cards',
+    parent: document.querySelector('.goods__cards'),
     template: '#card-order',
     nest: '.card-order',
     title: '.card-order__title',
@@ -40,7 +41,7 @@
   }
 
   function fillCards(template, data, listener) {
-    var parent = document.querySelector(template.parent);
+    var parent = template.parent;
     var fragment = document.createDocumentFragment();
 
     window.removeDomChild(parent, 2);
@@ -59,7 +60,17 @@
 
   window.fillCards = {
     catalogCards: function () {
-      fillCards(catalogTemplate, window.catalogCards, window.onClickCatalogCard);
+      if (!window.catalogCards.length) {
+        document.querySelector('.catalog__load').classList.remove('visually-hidden');
+        window.removeDomChild(catalogTemplate.parent, 2);
+        window.removeDomChild(cartTemplate.parent, 2);
+        window.cartCards = [];
+        window.checkCart();
+        return;
+      } else {
+        document.querySelector('.catalog__load').classList.add('visually-hidden');
+        fillCards(catalogTemplate, window.catalogCards, window.onClickCatalogCard);
+      }
     },
     cartCards: function () {
       fillCards(cartTemplate, window.cartCards, window.onClickCartCard);
