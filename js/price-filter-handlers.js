@@ -6,17 +6,13 @@
   var priceFillLine = document.querySelector('.range__fill-line');
   var rangePriceMin = document.querySelector('.range__price--min');
   var rangePriceMax = document.querySelector('.range__price--max');
-  var barLength = document.querySelector('.range__filter').offsetWidth;
+  var priceBarLength = document.querySelector('.range__filter').offsetWidth;
 
-  var max = window.catalogCards
-    .map(function (current) {
-      return current.price;
-    })
-    .sort(function (a, b) {
-      return a < b;
-    })[0];
+  var maxPrice = Math.max.apply(null, window.catalogCards.map(function (current) {
+    return current.price;
+  }));
 
-  var scale = max / barLength;
+  var priceBarScale = maxPrice / priceBarLength;
 
   priceHandlerLeft.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -37,7 +33,7 @@
 
       priceHandlerLeft.style.left = jump + 'px';
       priceFillLine.style.left = priceHandlerLeft.offsetWidth / 2 + jump + 'px';
-      rangePriceMin.textContent = Math.round(jump * scale);
+      rangePriceMin.textContent = Math.round(jump * priceBarScale);
     }
 
     var onMouseUp = function (upEvt) {
@@ -66,12 +62,12 @@
 
       var jump = priceHandlerRight.offsetLeft - shiftX;
 
-      jump = (jump > barLength) ? barLength : jump;
+      jump = (jump > priceBarLength) ? priceBarLength : jump;
       jump = (jump < priceHandlerLeft.offsetLeft) ? priceHandlerLeft.offsetLeft : jump;
 
       priceHandlerRight.style.left = jump + 'px';
-      priceFillLine.style.right = barLength - jump - priceHandlerRight.offsetWidth / 2 + 'px';
-      rangePriceMax.textContent = Math.round(jump * scale);
+      priceFillLine.style.right = priceBarLength - jump - priceHandlerRight.offsetWidth / 2 + 'px';
+      rangePriceMax.textContent = Math.round(jump * priceBarScale);
     }
 
     function onMouseUp(upEvt) {
@@ -86,6 +82,6 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  rangePriceMin.textContent = Math.round((priceHandlerLeft.offsetLeft - priceHandlerLeft.offsetWidth / 2) * scale);
-  rangePriceMax.textContent = Math.round((priceHandlerRight.offsetLeft - priceHandlerRight.offsetWidth / 2) * scale);
+  rangePriceMin.textContent = Math.round((priceHandlerLeft.offsetLeft - priceHandlerLeft.offsetWidth / 2) * priceBarScale);
+  rangePriceMax.textContent = Math.round((priceHandlerRight.offsetLeft - priceHandlerRight.offsetWidth / 2) * priceBarScale);
 })();

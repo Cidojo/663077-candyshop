@@ -48,11 +48,11 @@
                   window.getStringEnding(['товар', 'товара', 'товаров'], window.cartCards.length) +
                       ' на сумму ' +
                           window.cartCards
-                              .map(function (current) {
-                                return current.price * current.count;
-                              })
+                              // .map(function (current) {
+                              //   return current.price * current.count;
+                              // })
                               .reduce(function (sum, current) {
-                                return sum + current;
+                                return sum + current.price * current.count;
                               }, 0) +
                                   ' ' +
                                       window.getStringEnding(['рубль', 'рубля', 'рублей']) +

@@ -27,24 +27,13 @@
   // добавляет класс DOM/fragment элементу в зависимости от количества
 
   function fillAmount(owner, amount) {
-    var myClass;
-
-    switch (true) {
-      case (amount > MAX_AMOUNT):
-        myClass = 'card--in-stock';
-        break;
-      case (amount >= 1 && amount <= MAX_AMOUNT):
-        myClass = 'card--little';
-        break;
-      case (amount === 0):
-        myClass = 'card--soon';
-        break;
-      default:
-        myClass = '';
-        break;
+    if (amount > MAX_AMOUNT) {
+      return;
     }
 
-    owner.classList.add(myClass);
+    owner.classList.remove('card--in-stock');
+
+    owner.classList.add(amount ? 'card--little' : 'card--soon');
   }
 
   // добавляет класс DOM/fragment элементу + меняет текст(окончание) в зависимости от количества звезд

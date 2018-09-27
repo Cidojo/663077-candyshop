@@ -35,10 +35,8 @@
   var formSubmitBtn = document.querySelector('.buy__submit-btn');
 
   formSubmitBtn.addEventListener('click', function (evt) {
-    if (formSubmitBtn.checkValidity()) {
-      if (!getLuhnValidation(cardNumberInput.value)) {
-        evt.preventDefault();
-      }
+    if (formSubmitBtn.checkValidity() && !getLuhnValidation(cardNumberInput.value)) {
+      evt.preventDefault();
     }
   });
 })();
