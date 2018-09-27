@@ -10,12 +10,14 @@
       toggle = 'on';
     }
 
-    for (var i = 0; i < nodeList.length; i++) {
-      if (toggle === 'on') {
-        nodeList[i].disabled = 'true';
-      } else if (toggle === 'off') {
-        nodeList[i].disabled = '';
-      }
+    if (toggle === 'on') {
+      nodeList.forEach(function (it) {
+        it.disabled = 'true';
+      });
+    } else if (toggle === 'off') {
+      nodeList.forEach(function (it) {
+        it.disabled = '';
+      });
     }
   };
 })();
