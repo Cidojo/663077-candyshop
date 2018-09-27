@@ -5,7 +5,7 @@
 
   var STARS_LITERALS = ['one', 'two', 'three', 'four', 'five'];
 
-  var PICTURE_PATH = 'img/cards/';
+  var PICTURES_PATH = 'img/cards/';
 
   // заполняет свойство src значением из соответствующего свойства переданного объекта (карточки)
 
@@ -26,7 +26,7 @@
 
   // добавляет класс DOM/fragment элементу в зависимости от количества
 
-  function renderAmount(owner, amount) {
+  function fillAmount(owner, amount) {
     var myClass;
 
     switch (true) {
@@ -49,31 +49,33 @@
 
   // добавляет класс DOM/fragment элементу + меняет текст(окончание) в зависимости от количества звезд
 
-  function renderStars(owner, data) {
-    var ratingText = ' ' + window.getStringEnding(['звезда', 'звезды', 'звезд'], data.rating.value);
+  function fillStars(owner, data) {
+    var ratingText = 'Рейтинг: ' +
+        data.rating.value + ' ' +
+        window.getStringEnding(['звезда', 'звезды', 'звезд'], data.rating.value);
 
-    window.fillTextContent(owner, 'Рейтинг: ' + data.rating.value + ratingText);
+    window.fillTextContent(owner, ratingText);
     return 'stars__rating--' + STARS_LITERALS[data.rating.value - 1];
   }
 
   // проверяет содержит ли сахар и добавляет соответствующий текст
 
-  function renderIfSugar(data) {
-    return ((data.nutritionFacts.sugar === true) ? 'Без сахара. ' : 'Содержит сахар. ')
-    + data.nutritionFacts.energy + ' ккал';
+  function fillSugar(data) {
+    return data.nutritionFacts.sugar ? 'Без сахара. ' : 'Содержит сахар. ' +
+        data.nutritionFacts.energy + ' ккал';
   }
 
   window.getCardFragment = function (obj, data) {
     obj.getNest();
 
     window.fillTextContent(obj.getDomElement(obj.title), data.name);
-    fillSource(obj.getDomElement(obj.pictureRef), PICTURE_PATH + data.picture);
+    fillSource(obj.getDomElement(obj.pictureRef), PICTURES_PATH + data.picture);
     fillPrice(obj.getDomElement(obj.price).firstChild, data.price);
-    renderAmount(obj.fragment, data.amount);
+    fillAmount(obj.fragment, data.amount);
 
     if (obj.stars) {
       obj.getDomElement(obj.stars).classList.remove('stars__rating--five');
-      obj.getDomElement(obj.stars).classList.add(renderStars(obj.getDomElement(obj.stars), data));
+      obj.getDomElement(obj.stars).classList.add(fillStars(obj.getDomElement(obj.stars), data));
     }
     if (obj.weight) {
       window.fillTextContent(obj.getDomElement(obj.weight), '/ ' + data.weight + ' Г');
@@ -82,7 +84,7 @@
       window.fillTextContent(obj.getDomElement(obj.starsCount), data.rating.number);
     }
     if (obj.characteristics) {
-      window.fillTextContent(obj.getDomElement(obj.characteristics), renderIfSugar(data));
+      window.fillTextContent(obj.getDomElement(obj.characteristics), fillSugar(data));
     }
     if (obj.composition) {
       window.fillTextContent(obj.getDomElement(obj.composition), data.nutritionFacts.contents);

@@ -28,33 +28,35 @@
 
   window.checkCart = function () {
     if (window.cartCards.length === 0) {
-      Object.keys(FORM_INPUTS).forEach(function (key) {
-        window.modifyInput(FORM_INPUTS[key], 'on');
-      });
+      Object.keys(FORM_INPUTS)
+          .forEach(function (key) {
+            window.modifyInput(FORM_INPUTS[key], 'on');
+          });
       emptyCartBottom.classList.remove('visually-hidden');
       window.fillTextContent(emptyCartHeader, 'В корзине ничего нет');
     } else {
-      Object.keys(FORM_INPUTS).forEach(function (key) {
-        window.modifyInput(FORM_INPUTS[key], 'off');
-      });
+      Object.keys(FORM_INPUTS)
+          .forEach(function (key) {
+            window.modifyInput(FORM_INPUTS[key], 'off');
+          });
 
       emptyCartBottom.classList.add('visually-hidden');
 
       var fullCartMessage = 'В корзине ' +
-        window.cartCards.length +
-        ' ' +
-        window.getStringEnding(['товар', 'товара', 'товаров'], window.cartCards.length) +
-        ' на сумму ' +
-        window.cartCards
-          .map(function (current) {
-            return current.price * current.count;
-          })
-          .reduce(function (sum, current) {
-            return sum + current;
-          }, 0) +
-          ' ' +
-          window.getStringEnding(['рубль', 'рубля', 'рублей']) +
-          '.';
+          window.cartCards.length +
+              ' ' +
+                  window.getStringEnding(['товар', 'товара', 'товаров'], window.cartCards.length) +
+                      ' на сумму ' +
+                          window.cartCards
+                              .map(function (current) {
+                                return current.price * current.count;
+                              })
+                              .reduce(function (sum, current) {
+                                return sum + current;
+                              }, 0) +
+                                  ' ' +
+                                      window.getStringEnding(['рубль', 'рубля', 'рублей']) +
+                                          '.';
       window.fillTextContent(emptyCartHeader, fullCartMessage);
     }
   };

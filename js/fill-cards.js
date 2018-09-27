@@ -47,35 +47,34 @@
     window.removeDomChild(parent, 2);
 
     data.forEach(function (elem) {
-      var rendered = window.getCardFragment(template, elem);
+      var card = window.getCardFragment(template, elem);
 
       if (listener) {
-        rendered.addEventListener('click', listener);
+        card.addEventListener('click', listener);
       }
-      fragment.appendChild(rendered);
+      fragment.appendChild(card);
     });
 
     parent.appendChild(fragment);
   }
 
   window.fillCards = {
-    catalogCards: function () {
+    renderCatalogCards: function () {
       if (!window.catalogCards.length) {
         document.querySelector('.catalog__load').classList.remove('visually-hidden');
         window.removeDomChild(catalogTemplate.parent, 2);
         window.removeDomChild(cartTemplate.parent, 2);
         window.cartCards = [];
         window.checkCart();
-        return;
       } else {
         document.querySelector('.catalog__load').classList.add('visually-hidden');
-        fillCards(catalogTemplate, window.catalogCards, window.onClickCatalogCard);
+        fillCards(catalogTemplate, window.catalogCards, window.onCatalogCardClick);
       }
     },
-    cartCards: function () {
-      fillCards(cartTemplate, window.cartCards, window.onClickCartCard);
+    renderCartCards: function () {
+      fillCards(cartTemplate, window.cartCards, window.onCartCardClick);
     }
   };
 
-  window.fillCards.catalogCards();
+  window.fillCards.renderCatalogCards();
 })();

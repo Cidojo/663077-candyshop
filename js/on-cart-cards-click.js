@@ -5,7 +5,7 @@
     evt.preventDefault();
 
     window.modifyCartList(evt);
-    window.fillCards.cartCards();
+    window.fillCards.renderCartCards();
     window.checkCart();
   };
 })();

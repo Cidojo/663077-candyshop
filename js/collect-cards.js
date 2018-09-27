@@ -22,16 +22,16 @@
 
   function collectCards(quantity) {
     var cardsCollection = [];
-    var cloneNames = CARD_NAMES.slice(0);
-    var clonePictureNames = PICTURE_NAMES.slice(0);
+    var cloneOfNames = CARD_NAMES.slice(0);
+    var cloneOfPictureNames = PICTURE_NAMES.slice(0);
 
     for (var i = 0; i < quantity; i++) {
-      var nameIndex = window.getRandomInt(0, cloneNames.length - 1);
-      var pictureNamesIndex = window.getRandomInt(0, clonePictureNames.length - 1);
+      var nameIndex = window.getRandomInt(0, cloneOfNames.length - 1);
+      var pictureNamesIndex = window.getRandomInt(0, cloneOfPictureNames.length - 1);
 
-      cardsCollection.push(window.createCard(cloneNames[nameIndex], clonePictureNames[pictureNamesIndex]));
-      cloneNames.splice(nameIndex, 1);
-      clonePictureNames.splice(pictureNamesIndex, 1);
+      cardsCollection.push(window.createCard(cloneOfNames[nameIndex], cloneOfPictureNames[pictureNamesIndex]));
+      cloneOfNames.splice(nameIndex, 1);
+      cloneOfPictureNames.splice(pictureNamesIndex, 1);
     }
 
     return cardsCollection;

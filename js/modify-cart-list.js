@@ -29,13 +29,17 @@
   }
 
   function getCardsIndexes(cardClicked) {
-    var cartIndex = window.cartCards.map(function (it) {
-      return it.name;
-    }).indexOf(cardClicked);
+    var cartIndex = window.cartCards
+        .map(function (it) {
+          return it.name;
+        })
+        .indexOf(cardClicked);
 
-    var catalogIndex = window.catalogCards.map(function (it) {
-      return it.name;
-    }).indexOf(cardClicked);
+    var catalogIndex = window.catalogCards
+        .map(function (it) {
+          return it.name;
+        })
+        .indexOf(cardClicked);
 
     return {
       cartIndex: cartIndex,
@@ -54,7 +58,11 @@
       if (cardIndexes.cartIndex !== -1) {
         increaseCartItem(cardIndexes.cartIndex, cardIndexes.catalogIndex);
       } else {
-        window.cartCards.push(Object.assign({}, window.catalogCards[cardIndexes.catalogIndex], {count: 1, pricePerItem: window.catalogCards[cardIndexes.catalogIndex].price}));
+        window.cartCards.push(Object.assign({},
+            window.catalogCards[cardIndexes.catalogIndex],
+            {count: 1},
+            {pricePerItem: window.catalogCards[cardIndexes.catalogIndex].price}
+        ));
         window.catalogCards[cardIndexes.catalogIndex].amount -= 1;
       }
 
