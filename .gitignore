@@ -10,3 +10,4 @@ node_modules/
 npm-debug.log*
 Thumbs.db
 js/filesParser.js
+js/goods.js
