@@ -56,11 +56,11 @@
     },
 
     renderCards: function (template) {
-      var listener = window.onCatalogCardClick;
+      var listener = window.eventManager.onCatalogCardClick;
       var data = window.catalogCards;
 
       if (template === cartTemplate) {
-        listener = window.onCartCardClick;
+        listener = window.eventManager.onCartCardClick;
         data = window.cartCards.cartCards;
       }
 

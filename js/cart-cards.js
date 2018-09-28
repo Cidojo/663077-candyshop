@@ -14,7 +14,7 @@
     if (window.catalogCards[indexInCatalog].amount > window.cartCards.cartCards[indexInCart].count) {
       window.cartCards.cartCards[indexInCart].count++;
       window.catalogCards[indexInCatalog].amount--;
-      window.cartCards.cartCards[indexInCart].price = window.cartCards.cartCards[indexInCart].count * window.cartCards.cartCards[indexInCart].pricePerItem;
+      getTotalPrice(indexInCart);
     }
   }
 
@@ -22,10 +22,14 @@
     if (window.cartCards.cartCards[indexInCart].count > 1) {
       window.cartCards.cartCards[indexInCart].count--;
       window.catalogCards[indexInCatalog].amount++;
-      window.cartCards.cartCards[indexInCart].price = window.cartCards.cartCards[indexInCart].count * window.cartCards.cartCards[indexInCart].pricePerItem;
+      getTotalPrice(indexInCart);
     } else if (window.cartCards.cartCards[indexInCart].count === 1) {
       delCartItem(indexInCart, indexInCatalog);
     }
+  }
+
+  function getTotalPrice(index) {
+    window.cartCards.cartCards[index].price = window.cartCards.cartCards[index].count * window.cartCards.cartCards[index].pricePerItem;
   }
 
   function getCardsIndexes(cardClicked) {
@@ -48,7 +52,7 @@
   }
 
   window.cartCards = {
-    modifyCartCards: function (evt) {
+    renderCartCards: function (evt) {
       var catalog = evt.currentTarget.querySelector('.card__title');
       var cart = evt.currentTarget.querySelector('.card-order__title');
 
