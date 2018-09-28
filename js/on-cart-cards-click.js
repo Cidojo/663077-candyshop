@@ -4,8 +4,8 @@
   window.onCartCardClick = function (evt) {
     evt.preventDefault();
 
-    window.modifyCartList(evt);
-    window.fillCards.renderCartCards();
+    window.cartCards.modifyCartCards(evt);
+    window.renderCards.renderCartCards();
     window.checkCart();
   };
 })();

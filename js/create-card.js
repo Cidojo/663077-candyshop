@@ -47,9 +47,7 @@
     var tries = window.getRandomInt(1, contentsCustom.length - 1);
 
     for (var i = 0; i < tries; i++) {
-      var randomIndex = window.getRandomInt(0, contentsCustom.length - 1);
-
-      contentsCustom.splice(randomIndex, 1);
+      contentsCustom.splice(window.getRandomInt(0, contentsCustom.length - 1), 1);
     }
 
     return {
