@@ -6,7 +6,7 @@
     template: '#card',
     nest: '.catalog__card',
     title: '.card__title',
-    pictureRef: '.card__img',
+    img: '.card__img',
     price: '.card__price',
     weight: '.card__weight',
     stars: '.stars__rating',
@@ -20,7 +20,7 @@
     template: '#card-order',
     nest: '.card-order',
     title: '.card-order__title',
-    pictureRef: '.card-order__img',
+    img: '.card-order__img',
     price: '.card-order__price',
     count: '.card-order__count'
   });
@@ -48,20 +48,22 @@
   window.renderCards = {
     renderCatalogCards: function () {
       clearEmptyCatalogMessage();
-      this.renderCards(catalogTemplate);
+      this.renderCards(catalogTemplate, window.catalogCards);
     },
 
     renderCartCards: function () {
-      this.renderCards(cartTemplate);
+      this.renderCards(cartTemplate, window.cartCards.cartCards);
     },
 
-    renderCards: function (template) {
+    renderFilteredCatalog: function () {
+      this.renderCards(catalogTemplate, window.filteredCatalog);
+    },
+
+    renderCards: function (template, data) {
       var listener = window.eventManager.onCatalogCardClick;
-      var data = window.catalogCards;
 
       if (template === cartTemplate) {
         listener = window.eventManager.onCartCardClick;
-        data = window.cartCards.cartCards;
       }
 
       var parent = template.parent;

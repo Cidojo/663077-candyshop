@@ -5,13 +5,14 @@
 
   var STARS_LITERALS = ['one', 'two', 'three', 'four', 'five'];
 
-  var PICTURES_PATH = 'img/cards/';
+  var IMG_PATH = 'img/cards/';
 
   // заполняет свойство src значением из соответствующего свойства переданного объекта (карточки)
 
 
-  function fillSource(owner, src) {
-    owner.src = src;
+  function fillImg(owner, card) {
+    owner.src = IMG_PATH + card.img;
+    owner.alt = card.name;
   }
 
   // заполняет цену
@@ -58,7 +59,7 @@
     obj.getNest();
 
     window.fillTextContent(obj.getDomElement(obj.title), data.name);
-    fillSource(obj.getDomElement(obj.pictureRef), PICTURES_PATH + data.picture);
+    fillImg(obj.getDomElement(obj.img), data);
     fillPrice(obj.getDomElement(obj.price).firstChild, data.price);
     fillAmount(obj.fragment, data.amount);
 

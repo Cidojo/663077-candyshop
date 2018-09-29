@@ -62,7 +62,7 @@
   window.createCard = function (name, imgLink) {
     return {
       name: name,
-      picture: imgLink,
+      img: imgLink,
       amount: window.getRandomInt(AMOUNT.min, AMOUNT.max),
       price: window.getRandomInt(PRICE.min, PRICE.max, PRICE.round),
       weight: window.getRandomInt(WEIGHT.min, WEIGHT.max),

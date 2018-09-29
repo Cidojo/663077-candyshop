@@ -17,7 +17,7 @@
         targetClassList.toggle(FAVORITE_SELECTED_CLASS);
         evt.target.blur();
       } else if (targetClassList.contains(ADD_TO_CART_BUTTON_CLASS)) {
-        window.cartCards.renderCartCards(evt);
+        window.cartCards.modifyCartCards(evt);
         window.renderCards.renderCartCards();
         window.checkCart();
       }
@@ -28,7 +28,7 @@
     onCartCardClick: function (evt) {
       evt.preventDefault();
 
-      window.cartCards.renderCartCards(evt);
+      window.cartCards.modifyCartCards(evt);
       window.renderCards.renderCartCards();
       window.checkCart();
     }

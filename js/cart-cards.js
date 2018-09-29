@@ -32,18 +32,17 @@
     window.cartCards.cartCards[index].price = window.cartCards.cartCards[index].count * window.cartCards.cartCards[index].pricePerItem;
   }
 
-  function getCardsIndexes(cardClicked) {
-    var cartIndex = window.cartCards.cartCards
-        .map(function (it) {
-          return it.name;
-        })
-        .indexOf(cardClicked);
+  function getCardIndex(list, _name) {
+    return list.map(function (it) {
+      return it.name;
+    })
+    .indexOf(_name);
+  }
 
-    var catalogIndex = window.catalogCards
-        .map(function (it) {
-          return it.name;
-        })
-        .indexOf(cardClicked);
+  function getCardsIndexes(name) {
+    var cartIndex = getCardIndex(window.cartCards.cartCards, name);
+
+    var catalogIndex = getCardIndex(window.catalogCards, name);
 
     return {
       cartIndex: cartIndex,
@@ -52,7 +51,7 @@
   }
 
   window.cartCards = {
-    renderCartCards: function (evt) {
+    modifyCartCards: function (evt) {
       var catalog = evt.currentTarget.querySelector('.card__title');
       var cart = evt.currentTarget.querySelector('.card-order__title');
 
