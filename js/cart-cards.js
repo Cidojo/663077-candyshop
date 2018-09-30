@@ -58,18 +58,15 @@
       var cardClicked = catalog || cart;
 
       var cardIndexes = getCardsIndexes(cardClicked.textContent);
-      if (catalog) {
-        if (cardIndexes.cartIndex !== -1) {
-          increaseCartItem(cardIndexes.cartIndex, cardIndexes.catalogIndex);
-        } else if (window.catalogCards[cardIndexes.catalogIndex].amount) {
-          this.cartCards.push(Object.assign({},
-              window.catalogCards[cardIndexes.catalogIndex],
-              {count: 1},
-              {pricePerItem: window.catalogCards[cardIndexes.catalogIndex].price}
-          ));
-          window.catalogCards[cardIndexes.catalogIndex].amount -= 1;
-        }
-
+      if (catalog && cardIndexes.cartIndex !== -1) {
+        increaseCartItem(cardIndexes.cartIndex, cardIndexes.catalogIndex);
+      } else if (catalog && window.catalogCards[cardIndexes.catalogIndex].amount) {
+        this.cartCards.push(Object.assign({},
+            window.catalogCards[cardIndexes.catalogIndex],
+            {count: 1},
+            {pricePerItem: window.catalogCards[cardIndexes.catalogIndex].price}
+        ));
+        window.catalogCards[cardIndexes.catalogIndex].amount -= 1;
       } else {
         switch (true) {
           case (evt.target.classList.contains(DELETE_FROM_CART_BUTTON)):

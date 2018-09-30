@@ -59,10 +59,10 @@
 
   //  возвращает объект - карточку товара из каталога
 
-  window.createCard = function (name, imgLink) {
+  window.createCard = function (name, pictureSrc) {
     return {
       name: name,
-      img: imgLink,
+      picture: pictureSrc,
       amount: window.getRandomInt(AMOUNT.min, AMOUNT.max),
       price: window.getRandomInt(PRICE.min, PRICE.max, PRICE.round),
       weight: window.getRandomInt(WEIGHT.min, WEIGHT.max),

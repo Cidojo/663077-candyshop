@@ -84,5 +84,20 @@
     }
   };
 
-  window.renderCards.renderCatalogCards();
+  // window.renderCards.renderCatalogCards();
+
+  function successHandler(loadData) {
+    window.catalogCards = loadData;
+    window.renderCards.renderCatalogCards();
+  }
+
+  function errorHandler(status) {
+    var errorPopup = document.querySelector('.modal--error');
+    var message = errorPopup.querySelector('.modal__message');
+
+    window.fillTextContent(message, 'Код ошибки: ' + status + '.');
+    errorPopup.classList.remove('modal--hidden');
+  }
+
+  window.load(successHandler, errorHandler);
 })();
