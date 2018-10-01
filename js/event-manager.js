@@ -90,7 +90,7 @@
   var rangePriceMax = document.querySelector('.range__price--max');
   var priceBarLength = document.querySelector('.range__filter').offsetWidth;
 
-  var handlerHalfWidth = priceHandlerLeft.offsetWidth / 2;
+  var handlerWidth = priceHandlerLeft.offsetWidth;
   var maxPrice = Math.max.apply(null, window.catalogCards.map(function (current) {
     return current.price;
   }));
@@ -114,8 +114,14 @@
       jump = (jump < 0) ? 0 : jump;
       jump = (jump > priceHandlerRight.offsetLeft) ? priceHandlerRight.offsetLeft : jump;
 
+      if (jump > priceHandlerRight.offsetLeft - handlerWidth) {
+        priceHandlerLeft.setAttribute('style', 'z-index: 2;');
+      } else {
+        priceHandlerLeft.setAttribute('style', 'z-index: 1;');
+      }
+
       priceHandlerLeft.style.left = jump + 'px';
-      priceFillLine.style.left = handlerHalfWidth + jump + 'px';
+      priceFillLine.style.left = handlerWidth + jump + 'px';
       rangePriceMin.textContent = Math.round(jump * priceBarScale);
     }
 
@@ -149,7 +155,7 @@
       jump = (jump < priceHandlerLeft.offsetLeft) ? priceHandlerLeft.offsetLeft : jump;
 
       priceHandlerRight.style.left = jump + 'px';
-      priceFillLine.style.right = priceBarLength - jump - handlerHalfWidth + 'px';
+      priceFillLine.style.right = priceBarLength - jump - handlerWidth + 'px';
       rangePriceMax.textContent = Math.round(jump * priceBarScale);
     }
 
@@ -165,6 +171,6 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  rangePriceMin.textContent = Math.round((priceHandlerLeft.offsetLeft - handlerHalfWidth) * priceBarScale);
-  rangePriceMax.textContent = Math.round((priceHandlerRight.offsetLeft - handlerHalfWidth) * priceBarScale);
+  rangePriceMin.textContent = Math.round((priceHandlerLeft.offsetLeft) * priceBarScale);
+  rangePriceMax.textContent = Math.round((priceHandlerRight.offsetLeft) * priceBarScale);
 })();
