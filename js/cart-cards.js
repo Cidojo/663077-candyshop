@@ -14,7 +14,7 @@
     if (window.catalogCards[indexInCatalog].amount > window.cartCards.cartCards[indexInCart].count) {
       window.cartCards.cartCards[indexInCart].count++;
       window.catalogCards[indexInCatalog].amount--;
-      getTotalPrice(indexInCart);
+      updateTotalPrice(indexInCart);
     }
   }
 
@@ -22,21 +22,20 @@
     if (window.cartCards.cartCards[indexInCart].count > 1) {
       window.cartCards.cartCards[indexInCart].count--;
       window.catalogCards[indexInCatalog].amount++;
-      getTotalPrice(indexInCart);
+      updateTotalPrice(indexInCart);
     } else if (window.cartCards.cartCards[indexInCart].count === 1) {
       delCartItem(indexInCart, indexInCatalog);
     }
   }
 
-  function getTotalPrice(index) {
+  function updateTotalPrice(index) {
     window.cartCards.cartCards[index].price = window.cartCards.cartCards[index].count * window.cartCards.cartCards[index].pricePerItem;
   }
 
   function getCardIndex(list, _name) {
-    return list.map(function (it) {
-      return it.name;
-    })
-    .indexOf(_name);
+    return list.findIndex(function (it) {
+      return it.name === _name;
+    });
   }
 
   function getCardsIndexes(name) {
@@ -67,15 +66,16 @@
             {pricePerItem: window.catalogCards[cardIndexes.catalogIndex].price}
         ));
         window.catalogCards[cardIndexes.catalogIndex].amount -= 1;
-      } else {
+      } else if (cardIndexes.catalogIndex !== -1) {
+        var targetClassList = evt.target.classList;
         switch (true) {
-          case (evt.target.classList.contains(DELETE_FROM_CART_BUTTON)):
+          case (targetClassList.contains(DELETE_FROM_CART_BUTTON)):
             delCartItem(cardIndexes.cartIndex, cardIndexes.catalogIndex);
             break;
-          case (evt.target.classList.contains(CART_INCREASE_BUTTON)):
+          case (targetClassList.contains(CART_INCREASE_BUTTON)):
             increaseCartItem(cardIndexes.cartIndex, cardIndexes.catalogIndex);
             break;
-          case (evt.target.classList.contains(CART_DECREASE_BUTTON)):
+          case (targetClassList.contains(CART_DECREASE_BUTTON)):
             decreaseCartItem(cardIndexes.cartIndex, cardIndexes.catalogIndex);
             break;
         }
