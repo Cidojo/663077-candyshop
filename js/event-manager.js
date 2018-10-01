@@ -121,7 +121,7 @@
       }
 
       priceHandlerLeft.style.left = jump + 'px';
-      priceFillLine.style.left = handlerWidth + jump + 'px';
+      priceFillLine.style.left = handlerWidth / 2 + jump + 'px';
       rangePriceMin.textContent = Math.round(jump * priceBarScale);
     }
 
@@ -155,7 +155,7 @@
       jump = (jump < priceHandlerLeft.offsetLeft) ? priceHandlerLeft.offsetLeft : jump;
 
       priceHandlerRight.style.left = jump + 'px';
-      priceFillLine.style.right = priceBarLength - jump - handlerWidth + 'px';
+      priceFillLine.style.right = priceBarLength - jump - handlerWidth / 2 + 'px';
       rangePriceMax.textContent = Math.round(jump * priceBarScale);
     }
 
