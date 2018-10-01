@@ -29,7 +29,7 @@
           <ul class="catalog__filter">
             <li class="input-btn">
               <input class="input-btn__input visually-hidden input-btn__input--checkbox" name="food-type" value="icecream" type="checkbox" id="filter-icecream" >
-              <label class="input-btn__label input-btn__label--checkbox" for="filter-icecream">Мороженное</label>
+              <label class="input-btn__label input-btn__label--checkbox" for="filter-icecream">Мороженое</label>
               <span class="input-btn__item-count">(7)</span>
             </li>
 
@@ -401,7 +401,7 @@
     </div>
   </footer>
 
-  <section class="modal modal--hidden">
+  <section class="modal modal--error modal--hidden">
     <div class="modal__inner">
       <button class="modal__close" type="button">Закрыть окно</button>
       <h3 class="modal__title">Произошла ошибка!</h3>
@@ -410,7 +410,7 @@
     </div>
   </section>
 
-  <section class="modal modal--hidden">
+  <section class="modal modal--success modal--hidden">
     <div class="modal__inner">
       <button class="modal__close" type="button">Закрыть окно</button>
       <h3 class="modal__title">Данные успешно отправлены!</h3>
@@ -421,7 +421,7 @@
     <article class="catalog__card card card--in-stock">
       <header class="card__header">
         <h3 class="card__title">Чесночные сливки</h3>
-        <img class="card__img" src="img/cards/ice-garlic.jpg" alt="Мороженное со вкусом чеснока" width="265" height="264">
+        <img class="card__img" src="img/cards/ice-garlic.jpg" alt="Мороженое со вкусом чеснока" width="265" height="264">
         <span class="card__price">230 <span class="card__currency">₽</span><span class="card__weight">/ 70 Г</span></span>
       </header>
       <div class="card__main">
@@ -482,6 +482,20 @@
       <p>Попробуй ещё раз, нажав <span class="catalog__show-all">«Показать всё»</span> или посмотри что мы предлагаем тебе попробовать.</p>
     </div>
   </template>
-  <script src="js/goods.js"></script>
+  <script src="js/load.js"></script>
+  <script src="js/get-random-int.js"></script>
+  <script src="js/create-card.js"></script>
+  <script src="js/collect-cards.js"></script>
+  <script src="js/fill-text-content.js"></script>
+  <script src="js/get-string-ending.js"></script>
+  <script src="js/get-card-fragment.js"></script>
+  <script src="js/event-manager.js"></script>
+  <script src="js/removeDomChild.js"></script>
+  <script src="js/render-cards.js"></script>
+  <script src="js/cart-cards.js"></script>
+  <script src="js/disable-input-toggle.js"></script>
+  <script src="js/check-cart.js"></script>
+  <script src="js/get-luhn-validation.js"></script>
+  <script src="js/filter.js"></script>
 </body>
 </html>
