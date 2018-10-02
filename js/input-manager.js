@@ -23,16 +23,16 @@
     }
   ];
 
-  function getFormNodes(obj) {
-    obj.block = document.querySelector(obj.fieldSelector);
-    obj.inputs = obj.block.querySelectorAll(obj.inputsSelector);
+  function initFormNodes(inputsByBlock) {
+    inputsByBlock.forEach(function (elem) {
+      elem.block = document.querySelector(elem.fieldSelector);
+      elem.inputs = elem.block.querySelectorAll(elem.inputsSelector);
+    });
   }
 
-  formInputsByBlock.forEach(function (elem) {
-    getFormNodes(elem);
-  });
+  initFormNodes(formInputsByBlock);
 
-  window.disableInputToggle = {
+  window.inputManager = {
     disableInputToggle: function () {
       this.formInputsByBlock.forEach(function (elem) {
         if (elem.block.classList.contains('visually-hidden') || !window.cartCards.cartCards.length) {

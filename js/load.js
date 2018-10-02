@@ -4,8 +4,31 @@
   var URL = 'https://js.dump.academy/candyshop/data';
   var STATUS_OK = 200;
   var TIMEOUT = 10000;
+  var ERR_BAD_CONNECTION = 'Ошибка соединения';
 
-  var ERR_BAD_CONNECTION = 'Произошла ошибка соединения';
+  var errorPopup = document.querySelector('.modal--error');
+  var errorPopupClose = errorPopup.querySelector('.modal__close');
+  var message = errorPopup.querySelector('.modal__message');
+
+  function successHandler(loadData) {
+    window.catalogCards = loadData;
+    window.checkCart();
+    window.renderCards.renderCatalogCards();
+    window.initPriceFilter();
+  }
+
+
+  function onClickCloseError(evt) {
+    errorPopup.classList.add('modal--hidden');
+    evt.target.removeEventListener('click', onClickCloseError);
+  }
+
+  function errorHandler(status) {
+
+    window.domManager.fillTextContent(message, status);
+    errorPopup.classList.remove('modal--hidden');
+    errorPopupClose.addEventListener('click', onClickCloseError);
+  }
 
   window.load = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
@@ -15,7 +38,7 @@
       if (xhr.status === STATUS_OK) {
         onSuccess(xhr.response);
       } else {
-        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
+        onError('Код ошибки: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
 
@@ -31,4 +54,6 @@
     xhr.open('GET', URL);
     xhr.send();
   };
+
+  window.load(successHandler, errorHandler);
 })();

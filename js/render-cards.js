@@ -28,7 +28,7 @@
   var CATALOG_LOAD_BLOCK = document.querySelector('.catalog__load');
 
   function clearEmptyCatalogMessage() {
-    CATALOG_LOAD_BLOCK.classList.toggle('visually-hidden', window.catalogCards.length ? true : false);
+    CATALOG_LOAD_BLOCK.classList.toggle('visually-hidden', window.catalogCards.length);
   }
 
   function BuildTemplate(Obj) {
@@ -69,7 +69,7 @@
       var parent = template.parent;
       var fragment = document.createDocumentFragment();
 
-      window.removeDomChild(parent, 2);
+      window.domManager.removeDomChild(parent, 2);
 
       data.forEach(function (elem) {
         var card = window.getCardFragment(template, elem);
@@ -83,21 +83,4 @@
       parent.appendChild(fragment);
     }
   };
-
-  // window.renderCards.renderCatalogCards();
-
-  function successHandler(loadData) {
-    window.catalogCards = loadData;
-    window.renderCards.renderCatalogCards();
-  }
-
-  function errorHandler(status) {
-    var errorPopup = document.querySelector('.modal--error');
-    var message = errorPopup.querySelector('.modal__message');
-
-    window.fillTextContent(message, 'Код ошибки: ' + status + '.');
-    errorPopup.classList.remove('modal--hidden');
-  }
-
-  window.load(successHandler, errorHandler);
 })();
