@@ -10,59 +10,60 @@
 
   var contents = {
     inputs: document.querySelectorAll('input[name="food-property"]'),
-    criteries: [true, true, true]
+    criteries: ['sugar', 'vegetarian', 'gluten']
   };
 
-  function filterByCriteria(arrayToFilter, property, criteria) {
-    return arrayToFilter.filter(function (elem) {
-      return elem[property] === criteria;
-    });
-  }
+  var prices = {
+    min: document.querySelector('.range__price--min'),
+    max: document.querySelector('.range__price--max'),
+    handlerLeft: document.querySelector('.range__btn--left'),
+    handlerRight: document.querySelector('.range__btn--right')
+  };
 
-  function getCheckedInputs(_nodeList, criteriaIndex) {
-    return Array.from(_nodeList).map(function (filter, index) {
-      return filter.checked ? index : -1;
-    })
-    .filter(function (status) {
-      return status !== -1;
-    })
-    .some(function (criteria) {
-      return criteria === criteriaIndex;
-    });
-  }
-
-  function buildFilteredCards(criteriaArray, property, nodeList) {
-    // var checkedInputsKeys = getCheckedInputs(types.inputs);
-    criteriaArray.forEach(function (_status, _criteriaIndex) {
-      if (getCheckedInputs(nodeList, _criteriaIndex) && !window.filteredCards.length) {
-        filterByCriteria(window.mappedCatalog, property, _status).forEach(function (elem) {
-          window.filteredCards.push(window.catalogCards[elem.indexInCatalog]);
-          // debugger
+  function filterType(array, matrix) {
+    if (matrix.length) {
+      window.toShow = array.filter(function (card) {
+        return matrix.some(function (it) {
+          return it === card.kind;
         });
-      }
-      // else {
-      //   filterByCriteria(window.mappedCatalog, property, _status).forEach(function (elem) {
-      //       window.filteredCards.filter(function (_element) {
-      //       return _element === window.catalogCards[elem.indexInCatalog]
-      //     });
-      //   });
-      // }
+      });
+    }
+  }
+
+  function filterContents(array, matrix) {
+    if (matrix.length) {
+      window.toShow = array.filter(function (card) {
+        return matrix.every(function (it) {
+          return (card.nutritionFacts[it] === false && it === 'sugar') || (card.nutritionFacts[it] === true && it === 'vegetarian') || (card.nutritionFacts[it] === false && it === 'gluten');
+        });
+      });
+    }
+  }
+
+  function filterPrice(array, matrix) {
+    window.toShow = array.filter(function (card) {
+      return matrix.every(function (it) {
+        return (card.price >= it.textContent && it === prices.min) || (card.price <= it.textContent && it === prices.max);
+      });
     });
   }
 
-
-  function filterByType() {
-    window.filteredCards = [];
-    buildFilteredCards(types.criteries, 'kind', types.inputs);
-    buildFilteredCards(contents.criteries, 'vegetarian', contents.inputs);
-    buildFilteredCards(contents.criteries, 'sugar', contents.inputs);
-    buildFilteredCards(contents.criteries, 'vegetarian', contents.inputs);
-
-    window.filteredCards = window.filteredCards.filter(function (it, index) {
-      return window.filteredCards.indexOf(it) === index;
+  function getActiveCriteries(myObject) {
+    return Array.from(myObject.inputs).map(function (inputEach, index) {
+      return inputEach.checked ? myObject.criteries[index] : -1;
+    })
+    .filter(function (it) {
+      return it !== -1;
     });
+  }
 
-    if (window.filteredCards.length) {
+  function onFilterChange() {
+    window.toShow = window.catalogCards.slice(0);
+    filterType(window.toShow, getActiveCriteries(types));
+    filterContents(window.toShow, getActiveCriteries(contents));
+    filterPrice(window.toShow, [prices.min, prices.max]);
+
+    if (window.toShow.length) {
       window.renderCards.renderFilter();
     } else {
       window.renderCards.renderCatalog();
@@ -70,82 +71,25 @@
   }
 
   types.inputs.forEach(function (elem) {
-    elem.addEventListener('change', filterByType);
+    elem.addEventListener('change', onFilterChange);
   });
+
   contents.inputs.forEach(function (elem) {
-    elem.addEventListener('change', filterByType);
+    elem.addEventListener('change', onFilterChange);
   });
-  // function initFormNodes(inputsByBlock) {
-  //   inputsByBlock.forEach(function (elem) {
-  //     elem.block = document.querySelector(elem.fieldSelector);
-  //     elem.inputs = elem.block.querySelectorAll(elem.inputsSelector);
-  //     elem.criteria = Array.from(elem.block.querySelectorAll(elem.stringsSelector)).map(function (it) {
-  //       return it.textContent;
-  //     });
-  //   });
-  // }
-  //
-  // initFormNodes(window.filterCheckboxesByBlock);
-  //
-  // function filterType(catalog) {
-  //   catalog.filter(function (elem) {
-  //     return window.filterCheckboxesByBlock[0].string.some(function (_elem) {
-  //       return _elem === elem;
-  //     });
-  //   });
-  // }
-  // debugger
-  //
-  //
-  // function getCriteria(obj) {
-  //   // debugger
-  //   var myArray = [];
-  //   obj.inputs.forEach(function (input, index) {
-  //     if (input.checked) {
-  //       myArray.push(obj.strings[index].textContent);
-  //     }
-  //   });
-  //   return myArray;
-  // }
-  //
-  // function filterByType(typeCriteria) {
-  //   window.filteredCards.concat(window.catalogCards.filter(function (elem) {
-  //     return typeCriteria.some(function (_elem) {
-  //       return elem.kind === _elem;
-  //     });
-  //   }));
-  // }
-  //
-  // window.filterCheckboxesByBlock[0].inputs.forEach(function (elem) {
-  //   elem.addEventListener('change', function () {
-  //     filterByType(getCriteria(window.filterCheckboxesByBlock[0]));
-  //   });
-  // });
 
+  function onMouseUp(upEvt) {
+    upEvt.preventDefault();
+    onFilterChange();
+    document.removeEventListener('mouseup', onMouseUp);
+  }
 
-  //
-  // function getCheckList(array, keys) {
-  //   array.filter(function(elem) {
-  //     keys.some(index);
-  //   });
-  // }
-  //
-  // initFormNodes(window.filterCheckboxesByBlock);
-  //
-  // window.checkFilter = function () {
-  //   window.filterCheckboxesByBlock.forEach(function (elem) {
-  //     var myArray = getNodelistMapped(elem.inputs);
-  //     var myStrings = Array.from(elem.strings).map(function (elem) {
-  //       elem.textContent;
-  //     });
-  //
-  //     window.catalogCards.forEach(function(elem) {
-  //       debugger
-  //         if (elem.kind === myStrings[index]) {
-  //           window.filteredCards.push(elem);
-  //         }
-  //       });
-  //   });
-  // };
-
+  prices.handlerLeft.addEventListener('mousedown', function (downEvt) {
+    downEvt.preventDefault();
+    document.addEventListener('mouseup', onMouseUp);
+  });
+  prices.handlerRight.addEventListener('mousedown', function (downEvt) {
+    downEvt.preventDefault();
+    document.addEventListener('mouseup', onMouseUp);
+  });
 })();

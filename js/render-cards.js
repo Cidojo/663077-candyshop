@@ -141,8 +141,8 @@
     },
 
     renderFilter: function () {
-      toggleEmptyCatalogMessage(window.filteredCards.length);
-      this.renderCards(catalogTemplate, window.filteredCards);
+      toggleEmptyCatalogMessage(window.toShow.length);
+      this.renderCards(catalogTemplate, window.toShow);
     },
 
     renderCards: function (template, data) {
