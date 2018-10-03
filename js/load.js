@@ -16,8 +16,17 @@
     window.cart.checkCart();
     window.renderCards.renderCatalog();
     window.initPriceFilter();
+    window.mappedCatalog = window.catalogCards.map(function (card, index) {
+      return {
+        kind: card.kind,
+        gluten: card.nutritionFacts.gluten,
+        vegetarian: card.nutritionFacts.vegetarian,
+        sugar: card.nutritionFacts.sugar,
+        price: card.price,
+        indexInCatalog: index
+      };
+    });
   }
-
 
   function onClickCloseError(evt) {
     errorPopup.classList.add('modal--hidden');

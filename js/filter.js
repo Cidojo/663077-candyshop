@@ -1,23 +1,6 @@
 'use strict';
 
 (function () {
-  var mappedCatalog = window.catalogCards.map(function (card, index) {
-    return {
-      kind: card.kind,
-      gluten: card.nutritionFacts.gluten,
-      vegetarian: card.nutritionFacts.vegetarian,
-      sugar: card.nutritionFacts.sugar,
-      price: card.price,
-      indexInCatalog: index
-    };
-  });
-debugger
-
-
-
-
-
-
 
 
   var types = {
@@ -51,9 +34,19 @@ debugger
   function buildFilteredCards(criteriaArray, property, nodeList) {
     // var checkedInputsKeys = getCheckedInputs(types.inputs);
     criteriaArray.forEach(function (_status, _criteriaIndex) {
-      if (getCheckedInputs(nodeList, _criteriaIndex)) {
-        window.filteredCards = window.filteredCards.concat(filterByCriteria(window.catalogCards, property, _status));
+      if (getCheckedInputs(nodeList, _criteriaIndex) && !window.filteredCards.length) {
+        filterByCriteria(window.mappedCatalog, property, _status).forEach(function (elem) {
+          window.filteredCards.push(window.catalogCards[elem.indexInCatalog]);
+          // debugger
+        });
       }
+      // else {
+      //   filterByCriteria(window.mappedCatalog, property, _status).forEach(function (elem) {
+      //       window.filteredCards.filter(function (_element) {
+      //       return _element === window.catalogCards[elem.indexInCatalog]
+      //     });
+      //   });
+      // }
     });
   }
 
@@ -61,6 +54,13 @@ debugger
   function filterByType() {
     window.filteredCards = [];
     buildFilteredCards(types.criteries, 'kind', types.inputs);
+    buildFilteredCards(contents.criteries, 'vegetarian', contents.inputs);
+    buildFilteredCards(contents.criteries, 'sugar', contents.inputs);
+    buildFilteredCards(contents.criteries, 'vegetarian', contents.inputs);
+
+    window.filteredCards = window.filteredCards.filter(function (it, index) {
+      return window.filteredCards.indexOf(it) === index;
+    });
 
     if (window.filteredCards.length) {
       window.renderCards.renderFilter();
