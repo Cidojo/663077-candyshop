@@ -12,6 +12,7 @@
 
   function successHandler(loadData) {
     window.catalogCards = loadData;
+    window.filteredList = window.catalogCards.slice(0);
     window.cart.checkCart();
     window.renderCards.renderCatalog();
     window.initPriceFilter();

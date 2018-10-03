@@ -112,8 +112,8 @@
     return obj.fragment;
   }
 
-  function clearEmptyCatalogMessage() {
-    CATALOG_LOAD_BLOCK.classList.toggle('visually-hidden', window.catalogCards.length);
+  function toggleEmptyCatalogMessage(flag) {
+    CATALOG_LOAD_BLOCK.classList.toggle('visually-hidden', flag);
   }
 
   function BuildTemplate(Obj) {
@@ -132,7 +132,7 @@
 
   window.renderCards = {
     renderCatalog: function () {
-      clearEmptyCatalogMessage();
+      toggleEmptyCatalogMessage(window.catalogCards.length);
       this.renderCards(catalogTemplate, window.catalogCards);
     },
 
@@ -140,25 +140,31 @@
       this.renderCards(cartTemplate, window.cart.items);
     },
 
-    renderFilteredCatalog: function () {
-      this.renderCards(catalogTemplate, window.filteredCatalog);
+    renderFilter: function () {
+      toggleEmptyCatalogMessage(window.filteredCards.length);
+      this.renderCards(catalogTemplate, window.filteredCards);
     },
 
     renderCards: function (template, data) {
       var parent = template.parent;
-      var fragment = document.createDocumentFragment();
 
-      window.domManager.removeDomChild(parent, 2);
+      if (data) {
+        var fragment = document.createDocumentFragment();
 
-      data.forEach(function (elem) {
-        var card = getCardFragment(template, elem);
+        window.domManager.removeDomChild(parent, 2);
 
-        card.addEventListener('click', window.eventManager.onCardClick);
+        data.forEach(function (elem) {
+          var card = getCardFragment(template, elem);
 
-        fragment.appendChild(card);
-      });
+          card.addEventListener('click', window.eventManager.onCardClick);
 
-      parent.appendChild(fragment);
+          fragment.appendChild(card);
+        });
+
+        parent.appendChild(fragment);
+      } else {
+        toggleEmptyCatalogMessage();
+      }
     }
   };
 })();
