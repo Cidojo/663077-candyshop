@@ -12,8 +12,8 @@
 
   function successHandler(loadData) {
     window.catalogCards = loadData;
-    window.checkCart();
-    window.renderCards.renderCatalogCards();
+    window.cart.checkCart();
+    window.renderCards.renderCatalog();
     window.initPriceFilter();
   }
 

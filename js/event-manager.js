@@ -4,33 +4,19 @@
   // Клик по карточке каталога
   var FAVORITE_BUTTON_CLASS = 'card__btn-favorite';
   var FAVORITE_SELECTED_CLASS = FAVORITE_BUTTON_CLASS + '--selected';
-  var ADD_TO_CART_BUTTON_CLASS = 'card__btn';
 
 
   window.eventManager = {
-  // Клик по карточке каталога
-    onCatalogCardClick: function (evt) {
+    onCardClick: function (evt) {
       evt.preventDefault();
       var targetClassList = evt.target.classList;
 
       if (targetClassList.contains(FAVORITE_BUTTON_CLASS)) {
         targetClassList.toggle(FAVORITE_SELECTED_CLASS);
         evt.target.blur();
-      } else if (targetClassList.contains(ADD_TO_CART_BUTTON_CLASS)) {
-        window.cartCards.modifyCartCards(evt);
-        window.renderCards.renderCartCards();
-        window.checkCart();
+      } else {
+        window.cart.modify(evt);
       }
-    },
-
-    // Клик по карточке корзины
-
-    onCartCardClick: function (evt) {
-      evt.preventDefault();
-
-      window.cartCards.modifyCartCards(evt);
-      window.renderCards.renderCartCards();
-      window.checkCart();
     }
   };
 
@@ -48,10 +34,14 @@
       myArray.reverse();
     }
 
-    myArray[0].classList.remove('visually-hidden');
-    myArray[1].classList.add('visually-hidden');
+    ['remove', 'add'].forEach(function (method, index) {
+      myArray[index].classList[method]('visually-hidden');
+    }); // это работает!))
 
-    window.checkCart();
+    // myArray[0].classList.remove('visually-hidden');
+    // myArray[1].classList.add('visually-hidden');
+
+    window.cart.checkCart();
   }
 
   deliverStoreBtn.addEventListener('click', onClickDelivery);
@@ -74,7 +64,7 @@
     myArray[0].classList.remove('visually-hidden');
     myArray[1].classList.add('visually-hidden');
 
-    window.checkCart();
+    window.cart.checkCart();
   }
 
   paymentCardBtn.addEventListener('click', onClickPayment);
@@ -113,6 +103,19 @@
     if (formSubmitBtn.checkValidity() && paymentStatus.textContent === PAYMENT_STATUS_APPROVED) {
       evt.preventDefault();
     }
+  });
+
+  var mapImg = document.querySelector('.deliver__store-map-wrap img');
+  var selfCarryInputs = document.querySelectorAll('input[name="store"]');
+  var selfCarryLabels = document.querySelectorAll('input[name="store"] + label');
+
+  selfCarryInputs.forEach(function (button, buttonIndex) {
+    button.addEventListener('change', function (evt) {
+      if (evt.currentTarget.checked) {
+        mapImg.setAttribute('src', 'img/map/' + evt.currentTarget.value + '.jpg');
+        mapImg.setAttribute('alt', selfCarryLabels[buttonIndex].textContent);
+      }
+    });
   });
 
 })();

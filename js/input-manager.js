@@ -35,7 +35,7 @@
   window.inputManager = {
     disableInputToggle: function () {
       this.formInputsByBlock.forEach(function (elem) {
-        if (elem.block.classList.contains('visually-hidden') || !window.cartCards.cartCards.length) {
+        if (elem.block.classList.contains('visually-hidden') || !window.cart.items.length) {
           elem.inputs.forEach(function (it) {
             it.disabled = 'true';
           });
