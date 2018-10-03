@@ -1,6 +1,25 @@
 'use strict';
 
 (function () {
+  var mappedCatalog = window.catalogCards.map(function (card, index) {
+    return {
+      kind: card.kind,
+      gluten: card.nutritionFacts.gluten,
+      vegetarian: card.nutritionFacts.vegetarian,
+      sugar: card.nutritionFacts.sugar,
+      price: card.price,
+      indexInCatalog: index
+    };
+  });
+debugger
+
+
+
+
+
+
+
+
   var types = {
     inputs: document.querySelectorAll('input[name="food-type"]'),
     criteries: ['Мороженое', 'Газировка', 'Жевательная резинка', 'Мармелад', 'Зефир'],
