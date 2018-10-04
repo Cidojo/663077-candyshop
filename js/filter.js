@@ -38,6 +38,11 @@
     }
   };
 
+  var sorter = {
+    inputs: document.querySelectorAll('input[name="sort"]'),
+    criteries: ['number', 'price', 'priceReverse', 'value']
+  };
+
   var availabilityInput = document.querySelector('#filter-availability');
   var showAll = document.querySelector('button.catalog__submit');
 
@@ -103,11 +108,12 @@
     filterContents(window.toShow, getActiveCriteries(contents));
     filterPrice(window.toShow, [prices.min, prices.max]);
 
-    window.renderCards.renderFilter();
+    onSorterGroupChange();
+    // window.renderCards.renderFilter();
 
-    if (!window.toShow.length) {
-      window.domManager.getEmptyFilterMessage();
-    }
+    // if (!window.toShow.length) {
+    //   window.domManager.getEmptyFilterMessage();
+    // }
   }
 
   function onMarkChange(evt) {
@@ -120,12 +126,48 @@
       favorite.input.checked = false;
     }
 
+    onSorterGroupChange();
+    // window.renderCards.renderFilter();
+
+    if (!evt.currentTarget.checked) {
+      window.renderCards.renderCatalog();
+    }
+  }
+
+  function sortCatalog(array, matrix) {
+    switch (true) {
+      case (matrix[0] === 'number'):
+        window.toShow.sort(function (a, b) {
+          return a.rating.number - b.rating.number;
+        }).reverse();
+        break;
+      case (matrix[0] === 'price'):
+        window.toShow.sort(function (a, b) {
+          return a.price - b.price;
+        })
+        .reverse();
+        break;
+      case (matrix[0] === 'priceReverse'):
+        window.toShow.sort(function (a, b) {
+          return a.price - b.price;
+        });
+        break;
+      case (matrix[0] === 'value'):
+        window.toShow.sort(function (a, b) {
+          return a.rating.value > b.rating.value;
+        })
+        .reverse();
+        break;
+    }
+  }
+
+  function onSorterGroupChange() {
+    sortCatalog(window.toShow, getActiveCriteries(sorter));
+
     window.renderCards.renderFilter();
 
-    if (!window.toShow.length && evt.currentTarget.checked) {
+    if (!window.toShow.length) {
       window.domManager.getEmptyFilterMessage();
-    } else if (!evt.currentTarget.checked) {
-      window.renderCards.renderCatalog();
     }
   }
 
@@ -134,6 +176,10 @@
     onFilterGroupChange();
     document.removeEventListener('mouseup', onMouseUp);
   }
+
+  sorter.inputs.forEach(function (elem) {
+    elem.addEventListener('change', onSorterGroupChange);
+  });
 
   types.inputs.forEach(function (elem) {
     elem.addEventListener('change', onFilterGroupChange);
