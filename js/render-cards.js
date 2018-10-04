@@ -27,8 +27,6 @@
 
   var CATALOG_LOAD_BLOCK = document.querySelector('.catalog__load');
 
-  var MAX_AMOUNT = 5;
-
   var STARS_LITERALS = ['one', 'two', 'three', 'four', 'five'];
 
   var PICTURE_PATH = 'img/cards/';
@@ -49,18 +47,6 @@
     myString = myString.join(' ');
 
     window.domManager.fillTextContent(owner, myString);
-  }
-
-  // добавляет класс DOM/fragment элементу в зависимости от количества
-
-  function fillAmount(owner, amount) {
-    if (amount > MAX_AMOUNT) {
-      return;
-    }
-
-    owner.classList.remove('card--in-stock');
-
-    owner.classList.add(amount ? 'card--little' : 'card--soon');
   }
 
   // добавляет класс DOM/fragment элементу + меняет текст(окончание) в зависимости от количества звезд
@@ -87,7 +73,7 @@
     window.domManager.fillTextContent(obj.getDomElement(obj.title), data.name);
     fillPicture(obj.getDomElement(obj.img), data);
     fillPrice(obj.getDomElement(obj.price).firstChild, data.price);
-    fillAmount(obj.fragment, data.amount);
+    window.domManager.fillAmount(obj.fragment, data.amount);
 
     if (obj.stars) {
       obj.getDomElement(obj.stars).classList.remove('stars__rating--five');
@@ -112,8 +98,8 @@
     return obj.fragment;
   }
 
-  function toggleEmptyCatalogMessage(flag) {
-    CATALOG_LOAD_BLOCK.classList.toggle('visually-hidden', flag);
+  function toggleEmptyCatalogMessage() {
+    CATALOG_LOAD_BLOCK.classList.toggle('visually-hidden', window.catalogCards.length);
   }
 
   function BuildTemplate(Obj) {
@@ -132,7 +118,7 @@
 
   window.renderCards = {
     renderCatalog: function () {
-      toggleEmptyCatalogMessage(window.catalogCards.length);
+      toggleEmptyCatalogMessage();
       this.renderCards(catalogTemplate, window.catalogCards);
     },
 
@@ -141,30 +127,25 @@
     },
 
     renderFilter: function () {
-      toggleEmptyCatalogMessage(window.toShow.length);
       this.renderCards(catalogTemplate, window.toShow);
     },
 
     renderCards: function (template, data) {
       var parent = template.parent;
 
-      if (data) {
-        var fragment = document.createDocumentFragment();
+      var fragment = document.createDocumentFragment();
 
-        window.domManager.removeDomChild(parent, 2);
+      window.domManager.removeDomChild(parent, 2);
 
-        data.forEach(function (elem) {
-          var card = getCardFragment(template, elem);
+      data.forEach(function (elem) {
+        var card = getCardFragment(template, elem);
 
-          card.addEventListener('click', window.eventManager.onCardClick);
+        card.addEventListener('click', window.eventManager.onCardClick);
 
-          fragment.appendChild(card);
-        });
+        fragment.appendChild(card);
+      });
 
-        parent.appendChild(fragment);
-      } else {
-        toggleEmptyCatalogMessage();
-      }
+      parent.appendChild(fragment);
     }
   };
 })();

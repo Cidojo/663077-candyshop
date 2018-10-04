@@ -2,19 +2,22 @@
 
 (function () {
   // Клик по карточке каталога
-  var FAVORITE_BUTTON_CLASS = 'card__btn-favorite';
-  var FAVORITE_SELECTED_CLASS = FAVORITE_BUTTON_CLASS + '--selected';
-
+  var FAVORITE_BUTTON_FAVORITE_CLASS = 'card__btn-favorite';
+  var FAVORITE_BUTTON_ADD_CLASS = 'card__btn';
+  var FAVORITE_SELECTED_CLASS = FAVORITE_BUTTON_FAVORITE_CLASS + '--selected';
+  var COMPOSITION_BUTTON_CLASS = 'card__btn-composition';
 
   window.eventManager = {
     onCardClick: function (evt) {
       evt.preventDefault();
       var targetClassList = evt.target.classList;
 
-      if (targetClassList.contains(FAVORITE_BUTTON_CLASS)) {
+      if (targetClassList.contains(FAVORITE_BUTTON_FAVORITE_CLASS)) {
         targetClassList.toggle(FAVORITE_SELECTED_CLASS);
         evt.target.blur();
-      } else {
+      } else if (targetClassList.contains(COMPOSITION_BUTTON_CLASS)) {
+        evt.currentTarget.querySelector('.card__composition').classList.toggle('card__composition--hidden');
+      } else if (targetClassList.contains(FAVORITE_BUTTON_ADD_CLASS)) {
         window.cart.modify(evt);
       }
     }

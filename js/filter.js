@@ -20,6 +20,36 @@
     handlerRight: document.querySelector('.range__btn--right')
   };
 
+  var favorite = {
+    input: document.querySelector('#filter-favorite'),
+    cardNode: document.querySelectorAll('.catalog__card'),
+    cardNodeSelector: '.catalog__card',
+
+    getCardNode: function () {
+      return document.querySelectorAll(this.cardNodeSelector);
+    },
+    getCriteria: function () {
+      return Array.from(favorite.getCardNode()).map(function (it, index) {
+        return it.querySelector('.card__btn-favorite--selected') ? index : -1;
+      })
+      .filter(function (_it) {
+        return _it !== -1;
+      });
+    }
+  };
+
+  var availabilityInput = document.querySelector('#filter-availability');
+  var showAll = document.querySelector('button.catalog__submit');
+
+  function getActiveCriteries(myObject) {
+    return Array.from(myObject.inputs).map(function (inputEach, index) {
+      return inputEach.checked ? myObject.criteries[index] : -1;
+    })
+    .filter(function (it) {
+      return it !== -1;
+    });
+  }
+
   function filterType(array, matrix) {
     if (matrix.length) {
       window.toShow = array.filter(function (card) {
@@ -48,41 +78,79 @@
     });
   }
 
-  function getActiveCriteries(myObject) {
-    return Array.from(myObject.inputs).map(function (inputEach, index) {
-      return inputEach.checked ? myObject.criteries[index] : -1;
-    })
-    .filter(function (it) {
-      return it !== -1;
+  function filterAvailability(array) {
+    window.toShow = array.filter(function (card) {
+      return card.amount > 0;
     });
   }
 
-  function onFilterChange() {
+  function filterFavorite(array, matrix) {
+    if (matrix.length) {
+      window.toShow = array.filter(function (card, indexInCatalog) {
+        return matrix.some(function (chosenIndex) {
+          return chosenIndex === indexInCatalog;
+        });
+      });
+    } else {
+      window.toShow = [];
+    }
+  }
+
+  function onFilterGroupChange() {
     window.toShow = window.catalogCards.slice(0);
+
     filterType(window.toShow, getActiveCriteries(types));
     filterContents(window.toShow, getActiveCriteries(contents));
     filterPrice(window.toShow, [prices.min, prices.max]);
 
-    if (window.toShow.length) {
-      window.renderCards.renderFilter();
-    } else {
+    window.renderCards.renderFilter();
+
+    if (!window.toShow.length) {
+      window.domManager.getEmptyFilterMessage();
+    }
+  }
+
+  function onMarkChange(evt) {
+    window.toShow = window.catalogCards.slice(0);
+    if (evt.currentTarget === favorite.input) {
+      filterFavorite(window.toShow, favorite.getCriteria());
+      availabilityInput.checked = false;
+    } else if (evt.currentTarget === availabilityInput) {
+      filterAvailability(window.toShow);
+      favorite.input.checked = false;
+    }
+
+    window.renderCards.renderFilter();
+
+    if (!window.toShow.length && evt.currentTarget.checked) {
+      window.domManager.getEmptyFilterMessage();
+    } else if (!evt.currentTarget.checked) {
       window.renderCards.renderCatalog();
     }
   }
 
+  function onMouseUp(upEvt) {
+    upEvt.preventDefault();
+    onFilterGroupChange();
+    document.removeEventListener('mouseup', onMouseUp);
+  }
+
   types.inputs.forEach(function (elem) {
-    elem.addEventListener('change', onFilterChange);
+    elem.addEventListener('change', onFilterGroupChange);
   });
 
   contents.inputs.forEach(function (elem) {
-    elem.addEventListener('change', onFilterChange);
+    elem.addEventListener('change', onFilterGroupChange);
   });
 
-  function onMouseUp(upEvt) {
-    upEvt.preventDefault();
-    onFilterChange();
-    document.removeEventListener('mouseup', onMouseUp);
-  }
+  favorite.input.addEventListener('click', onMarkChange);
+  availabilityInput.addEventListener('click', onMarkChange);
+
+  showAll.setAttribute('style', 'cursor: pointer;');
+  showAll.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    window.renderCards.renderCatalog();
+  });
 
   prices.handlerLeft.addEventListener('mousedown', function (downEvt) {
     downEvt.preventDefault();

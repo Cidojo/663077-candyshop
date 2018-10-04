@@ -76,6 +76,14 @@
     }
   }
 
+  function findCardInDom(cardTitle) {
+    var renderedCatalog = document.querySelectorAll('.catalog__card');
+    var indexFound = Array.from(renderedCatalog).findIndex(function (it) {
+      return it.querySelector('h3').textContent === cardTitle;
+    });
+    return renderedCatalog[indexFound];
+  }
+
   window.cart = {
     modify: function (evt) {
       var catalog = evt.currentTarget.querySelector('.card__title');
@@ -83,8 +91,10 @@
       var cardClicked = catalog || cart;
       var cardIndexes = getCardsIndexes(cardClicked.textContent);
 
+
       if (catalog) {
         addToCart(cardIndexes, this.items);
+        window.domManager.fillAmount(evt.currentTarget, window.catalogCards[cardIndexes.catalogIndex].amount);
       } else if (cardIndexes.catalogIndex !== -1) {
         var targetClassList = evt.target.classList;
         switch (true) {
@@ -98,6 +108,7 @@
             decreaseCartItem(cardIndexes.cartIndex, cardIndexes.catalogIndex);
             break;
         }
+        window.domManager.fillAmount(findCardInDom(cardClicked.textContent), window.catalogCards[cardIndexes.catalogIndex].amount);
       }
       window.renderCards.renderCart();
       this.checkCart();
