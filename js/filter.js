@@ -2,16 +2,85 @@
 
 (function () {
 
-
   var types = {
     inputs: document.querySelectorAll('input[name="food-type"]'),
+    quantities: document.querySelectorAll('input[name="food-type"] ~ span'),
     criteries: ['Мороженое', 'Газировка', 'Жевательная резинка', 'Мармелад', 'Зефир'],
+
+    filter: function (array, matrix) {
+      var combineArray = [];
+
+      matrix.forEach(function (it) {
+        if (it !== -1) {
+          combineArray = combineArray.concat(types.filterSingle(array, it))
+            .filter(function (element, position, self) {
+              return self.indexOf(element) === position;
+            });
+        }
+      });
+
+      return combineArray;
+    },
+
+    filterSingle: function (_array, criteria) {
+      return _array.filter(function (_it) {
+        return _it.kind === criteria;
+      });
+    },
+
+    getCurrentQuantity: function () {
+      this.criteries.forEach(function (element, position) {
+        var quantity = '(' + types.filterSingle(window.filteredCards, element).length + ')';
+
+        window.domManager.fillTextContent(types.quantities[position], quantity);
+      });
+    }
   };
 
   var contents = {
     inputs: document.querySelectorAll('input[name="food-property"]'),
-    criteries: ['sugar', 'vegetarian', 'gluten']
+    quantities: document.querySelectorAll('input[name="food-property"] ~ span'),
+    criteries: ['sugar', 'vegetarian', 'gluten'],
+
+    filter: function (array, matrix) {
+      // var combineArray = [];
+
+      matrix.forEach(function (it) {
+        if (it !== -1) {
+          array = contents.filterSingle(array, it)
+            .filter(function (element, position, self) {
+              return self.indexOf(element) === position;
+            });
+        }
+      });
+
+      return array;
+    },
+
+    filterSingle: function (_array, criteria) {
+      return _array.filter(function (_it) {
+        return (_it.nutritionFacts[criteria] === false && criteria === 'sugar') || (_it.nutritionFacts[criteria] === true && criteria === 'vegetarian') || (_it.nutritionFacts[criteria] === false && criteria === 'gluten');
+      });
+    },
+    getCurrentQuantity: function () {
+      this.criteries.forEach(function (element, position) {
+        var quantity = '(' + contents.filterSingle(window.filteredCards, element).length + ')';
+
+        window.domManager.fillTextContent(contents.quantities[position], quantity);
+      });
+    }
   };
+
+  // function filterContents(array, matrix) {
+  //   if (matrix.length) {
+  //     window.filteredCards = array.filter(function (card) {
+  //       return matrix.every(function (it) {
+  //         return (card.nutritionFacts[it] === false && it === 'sugar') || (card.nutritionFacts[it] === true && it === 'vegetarian') || (card.nutritionFacts[it] === false && it === 'gluten');
+  //       });
+  //     });
+  //   }
+  // }
+
 
   var prices = {
     min: document.querySelector('.range__price--min'),
@@ -43,117 +112,120 @@
     criteries: ['number', 'price', 'priceReverse', 'value']
   };
 
-  var availabilityInput = document.querySelector('#filter-availability');
+  // var availabilityInput = document.querySelector('#filter-availability');
   var showAll = document.querySelector('button.catalog__submit');
-
-  function getActiveCriteries(myObject) {
+  //
+  var getActiveCriteries = function (myObject) {
     return Array.from(myObject.inputs).map(function (inputEach, index) {
       return inputEach.checked ? myObject.criteries[index] : -1;
-    })
-    .filter(function (it) {
-      return it !== -1;
     });
-  }
+  };
 
-  function filterType(array, matrix) {
-    if (matrix.length) {
-      window.toShow = array.filter(function (card) {
-        return matrix.some(function (it) {
-          return it === card.kind;
-        });
-      });
-    }
-  }
-
-  function filterContents(array, matrix) {
-    if (matrix.length) {
-      window.toShow = array.filter(function (card) {
-        return matrix.every(function (it) {
-          return (card.nutritionFacts[it] === false && it === 'sugar') || (card.nutritionFacts[it] === true && it === 'vegetarian') || (card.nutritionFacts[it] === false && it === 'gluten');
-        });
-      });
-    }
-  }
-
-  function filterPrice(array, matrix) {
-    window.toShow = array.filter(function (card) {
-      return matrix.every(function (it) {
-        return (card.price >= it.textContent && it === prices.min) || (card.price <= it.textContent && it === prices.max);
-      });
-    });
-  }
-
-  function filterAvailability(array) {
-    window.toShow = array.filter(function (card) {
-      return card.amount > 0;
-    });
-  }
-
-  function filterFavorite(array, matrix) {
-    if (matrix.length) {
-      window.toShow = array.filter(function (card, indexInCatalog) {
-        return matrix.some(function (chosenIndex) {
-          return chosenIndex === indexInCatalog;
-        });
-      });
-    } else {
-      window.toShow = [];
-    }
-  }
+  // function filterType(array, matrix) {
+  //   if (matrix.length) {
+  //     window.filteredCards = array.filter(function (card) {
+  //       return matrix.some(function (it) {
+  //         return it === card.kind;
+  //       });
+  //     });
+  //   }
+  // }
+  //
+  // function filterContents(array, matrix) {
+  //   if (matrix.length) {
+  //     window.filteredCards = array.filter(function (card) {
+  //       return matrix.every(function (it) {
+  //         return (card.nutritionFacts[it] === false && it === 'sugar') || (card.nutritionFacts[it] === true && it === 'vegetarian') || (card.nutritionFacts[it] === false && it === 'gluten');
+  //       });
+  //     });
+  //   }
+  // }
+  //
+  // function filterPrice(array, matrix) {
+  //   window.filteredCards = array.filter(function (card) {
+  //     return matrix.every(function (it) {
+  //       return (card.price >= it.textContent && it === prices.min) || (card.price <= it.textContent && it === prices.max);
+  //     });
+  //   });
+  // }
+  //
+  // function filterAvailability(array) {
+  //   window.filteredCards = array.filter(function (card) {
+  //     return card.amount > 0;
+  //   });
+  // }
+  //
+  // function filterFavorite(array, matrix) {
+  //   if (matrix.length) {
+  //     window.filteredCards = array.filter(function (card, indexInCatalog) {
+  //       return matrix.some(function (chosenIndex) {
+  //         return chosenIndex === indexInCatalog;
+  //       });
+  //     });
+  //   } else {
+  //     window.filteredCards = [];
+  //   }
+  // }
 
   function onFilterGroupChange() {
-    window.toShow = window.catalogCards.slice(0);
+    window.filteredCards = window.catalogCards.slice(0);
 
-    filterType(window.toShow, getActiveCriteries(types));
-    filterContents(window.toShow, getActiveCriteries(contents));
-    filterPrice(window.toShow, [prices.min, prices.max]);
+    window.filteredCards = getActiveCriteries(types).some(function (a) {
+      return a !== -1;
+    }) ? types.filter(window.filteredCards, getActiveCriteries(types)) : window.filteredCards;
+    // debugger
+    window.filteredCards = contents.filter(window.filteredCards, getActiveCriteries(contents));
 
-    onSorterGroupChange();
-    // window.renderCards.renderFilter();
+    types.getCurrentQuantity();
+    contents.getCurrentQuantity();
 
-    // if (!window.toShow.length) {
-    //   window.domManager.getEmptyFilterMessage();
-    // }
-  }
+    // filterContents(window.filteredCards, getActiveCriteries(contents));
+    // filterPrice(window.filteredCards, [prices.min, prices.max]);
+    // onSorterGroupChange();
+    window.renderCards.renderFilter();
 
-  function onMarkChange(evt) {
-    window.toShow = window.catalogCards.slice(0);
-    if (evt.currentTarget === favorite.input) {
-      filterFavorite(window.toShow, favorite.getCriteria());
-      availabilityInput.checked = false;
-    } else if (evt.currentTarget === availabilityInput) {
-      filterAvailability(window.toShow);
-      favorite.input.checked = false;
-    }
-
-    onSorterGroupChange();
-    // window.renderCards.renderFilter();
-
-    if (!evt.currentTarget.checked) {
-      window.renderCards.renderCatalog();
+    if (!window.filteredCards.length) {
+      window.domManager.getEmptyFilterMessage();
     }
   }
+
+  // function onMarkChange(evt) {
+  //   window.filteredCards = window.catalogCards.slice(0);
+  //   if (evt.currentTarget === favorite.input) {
+  //     filterFavorite(window.filteredCards, favorite.getCriteria());
+  //     availabilityInput.checked = false;
+  //   } else if (evt.currentTarget === availabilityInput) {
+  //     filterAvailability(window.filteredCards);
+  //     favorite.input.checked = false;
+  //   }
+  //
+  //   onSorterGroupChange();
+  //
+  //   if (!evt.currentTarget.checked) {
+  //     window.renderCards.renderCatalog();
+  //   }
+  // }
 
   function sortCatalog(array, matrix) {
     switch (true) {
       case (matrix[0] === 'number'):
-        window.toShow.sort(function (a, b) {
+        window.filteredCards.sort(function (a, b) {
           return a.rating.number - b.rating.number;
         }).reverse();
         break;
       case (matrix[0] === 'price'):
-        window.toShow.sort(function (a, b) {
+        window.filteredCards.sort(function (a, b) {
           return a.price - b.price;
         })
         .reverse();
         break;
       case (matrix[0] === 'priceReverse'):
-        window.toShow.sort(function (a, b) {
+        window.filteredCards.sort(function (a, b) {
           return a.price - b.price;
         });
         break;
       case (matrix[0] === 'value'):
-        window.toShow.sort(function (a, b) {
+        window.filteredCards.sort(function (a, b) {
           return a.rating.value > b.rating.value;
         })
         .reverse();
@@ -162,11 +234,11 @@
   }
 
   function onSorterGroupChange() {
-    sortCatalog(window.toShow, getActiveCriteries(sorter));
+    sortCatalog(window.filteredCards, getActiveCriteries(sorter));
 
     window.renderCards.renderFilter();
 
-    if (!window.toShow.length) {
+    if (!window.filteredCards.length) {
       window.domManager.getEmptyFilterMessage();
     }
   }
@@ -189,8 +261,8 @@
     elem.addEventListener('change', onFilterGroupChange);
   });
 
-  favorite.input.addEventListener('click', onMarkChange);
-  availabilityInput.addEventListener('click', onMarkChange);
+  // favorite.input.addEventListener('click', onMarkChange);
+  // availabilityInput.addEventListener('click', onMarkChange);
 
   showAll.setAttribute('style', 'cursor: pointer;');
   showAll.addEventListener('click', function (evt) {
@@ -206,4 +278,19 @@
     downEvt.preventDefault();
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  window.initFilter = function () {
+    types.getCurrentQuantity();
+    contents.getCurrentQuantity();
+
+    // types.criteries.forEach(function (element) {
+    //   types.filterSingle(initArray, element);
+    // });
+    //
+    // contents.criteries.forEach(function (element, position) {
+    //   contents.filterSingle(initArray, contents.criteries[position], position);
+    // });
+  };
+
+
 })();

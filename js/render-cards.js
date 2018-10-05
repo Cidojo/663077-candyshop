@@ -127,7 +127,7 @@
     },
 
     renderFilter: function () {
-      this.renderCards(catalogTemplate, window.toShow);
+      this.renderCards(catalogTemplate, window.filteredCards);
     },
 
     renderCards: function (template, data) {
