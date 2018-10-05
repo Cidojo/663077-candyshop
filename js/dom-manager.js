@@ -27,7 +27,7 @@
 
       catalogBlock.appendChild(fragment);
     },
-    fillAmount: function (owner, amount) {
+    setAmountStyle: function (owner, amount) {
       if (owner) {
         owner.classList.toggle('card--in-stock', amount > MAX_AMOUNT);
         owner.classList.toggle('card--little', amount && amount < MAX_AMOUNT);

@@ -12,7 +12,8 @@
     stars: '.stars__rating',
     starsCount: '.star__count',
     characteristics: '.card__characteristic',
-    composition: '.card__composition-list'
+    composition: '.card__composition-list',
+    favorite: '.card__btn-favorite'
   });
 
   var cartTemplate = new BuildTemplate({
@@ -67,13 +68,17 @@
         data.nutritionFacts.energy + ' ккал';
   }
 
+  function favoriteStyle(owner, data) {
+    owner.classList.toggle('card__btn-favorite--selected', window.favorite.isFavorite(data));
+  }
+
   function getCardFragment(obj, data) {
     obj.getNest();
 
     window.domManager.fillTextContent(obj.getDomElement(obj.title), data.name);
     fillPicture(obj.getDomElement(obj.img), data);
     fillPrice(obj.getDomElement(obj.price).firstChild, data.price);
-    window.domManager.fillAmount(obj.fragment, data.amount);
+    window.domManager.setAmountStyle(obj.fragment, data.amount);
 
     if (obj.stars) {
       obj.getDomElement(obj.stars).classList.remove('stars__rating--five');
@@ -93,6 +98,9 @@
     }
     if (obj.count) {
       obj.getDomElement(obj.count).value = data.count;
+    }
+    if (obj.favorite) {
+      favoriteStyle(obj.getDomElement(obj.favorite), data);
     }
 
     return obj.fragment;

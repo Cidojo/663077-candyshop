@@ -32,23 +32,6 @@
     window.cart.items[index].price = window.cart.items[index].count * window.cart.items[index].pricePerItem;
   }
 
-  function getCardIndex(list, _name) {
-    return list.findIndex(function (it) {
-      return it.name === _name;
-    });
-  }
-
-  function getCardsIndexes(name) {
-    var cartIndex = getCardIndex(window.cart.items, name);
-
-    var catalogIndex = getCardIndex(window.catalogCards, name);
-
-    return {
-      cartIndex: cartIndex,
-      catalogIndex: catalogIndex
-    };
-  }
-
   var emptyCartHeader = document.querySelector('.main-header__basket');
   var emptyCartBottom = document.querySelector('.goods__card-empty');
 
@@ -63,53 +46,47 @@
     window.domManager.fillTextContent(emptyCartHeader, message);
   }
 
-  function addToCart(indexesObj, cartItems) {
-    if (indexesObj.cartIndex !== -1) {
-      increaseCartItem(indexesObj.cartIndex, indexesObj.catalogIndex);
-    } else if (window.catalogCards[indexesObj.catalogIndex].amount) {
+  function addToCart(indexes, cartItems) {
+    if (indexes.cart !== -1) {
+      increaseCartItem(indexes.cart, indexes.catalog);
+    } else if (window.catalogCards[indexes.catalog].amount) {
       cartItems.push(Object.assign({},
-          window.catalogCards[indexesObj.catalogIndex],
+          window.catalogCards[indexes.catalog],
           {count: 1},
-          {pricePerItem: window.catalogCards[indexesObj.catalogIndex].price}
+          {pricePerItem: window.catalogCards[indexes.catalog].price}
       ));
-      window.catalogCards[indexesObj.catalogIndex].amount -= 1;
+      window.catalogCards[indexes.catalog].amount -= 1;
     }
   }
 
-  function findCardInDom(cardTitle) {
-    var renderedCatalog = document.querySelectorAll('.catalog__card');
-    var indexFound = Array.from(renderedCatalog).findIndex(function (it) {
-      return it.querySelector('h3').textContent === cardTitle;
-    });
-    return renderedCatalog[indexFound];
-  }
-
   window.cart = {
-    modify: function (evt) {
-      var catalog = evt.currentTarget.querySelector('.card__title');
-      var cart = evt.currentTarget.querySelector('.card-order__title');
-      var cardClicked = catalog || cart;
-      var cardIndexes = getCardsIndexes(cardClicked.textContent);
+    modify: function (evt, thisCard) {
+      if (thisCard.isInCatalog) {
 
+        addToCart(thisCard.indexes, this.items);
 
-      if (catalog) {
-        addToCart(cardIndexes, this.items);
-        window.domManager.fillAmount(evt.currentTarget, window.catalogCards[cardIndexes.catalogIndex].amount);
-      } else if (cardIndexes.catalogIndex !== -1) {
+        window.domManager.setAmountStyle(evt.currentTarget, window.catalogCards[thisCard.indexes.catalog].amount);
+
+      } else if (thisCard.indexes.catalog !== -1) {
+
         var targetClassList = evt.target.classList;
+
         switch (true) {
           case (targetClassList.contains(DELETE_FROM_CART_BUTTON)):
-            deleteCartItem(cardIndexes.cartIndex, cardIndexes.catalogIndex);
+            deleteCartItem(thisCard.indexes.cart, thisCard.indexes.catalog);
             break;
           case (targetClassList.contains(CART_INCREASE_BUTTON)):
-            increaseCartItem(cardIndexes.cartIndex, cardIndexes.catalogIndex);
+            increaseCartItem(thisCard.indexes.cart, thisCard.indexes.catalog);
             break;
           case (targetClassList.contains(CART_DECREASE_BUTTON)):
-            decreaseCartItem(cardIndexes.cartIndex, cardIndexes.catalogIndex);
+            decreaseCartItem(thisCard.indexes.cart, thisCard.indexes.catalog);
             break;
         }
-        window.domManager.fillAmount(findCardInDom(cardClicked.textContent), window.catalogCards[cardIndexes.catalogIndex].amount);
+
+        window.domManager.setAmountStyle(thisCard.currentCatalogCardNode, window.catalogCards[thisCard.indexes.catalog].amount);
+
       }
+
       window.renderCards.renderCart();
       this.checkCart();
     },
