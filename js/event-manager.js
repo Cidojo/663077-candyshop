@@ -123,7 +123,7 @@
   var PAYMENT_STATUS_INVALID = 'Не определен';
 
   var cardNumberInput = document.querySelector('#payment__card-number');
-  var formSubmitBtn = document.querySelector('.buy__submit-btn');
+  // var formSubmitBtn = document.querySelector('.buy__submit-btn');
   var paymentStatus = document.querySelector('.payment__card-status');
 
 
@@ -147,9 +147,13 @@
     });
   });
 
-  formSubmitBtn.addEventListener('click', function (evt) {
-    if (formSubmitBtn.checkValidity() && paymentStatus.textContent === PAYMENT_STATUS_APPROVED) {
-      evt.preventDefault();
+  var form = document.querySelector('.buy form');
+
+
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    if (form.checkValidity()) {
+      window.backend.upload(new FormData(form));
     }
   });
 

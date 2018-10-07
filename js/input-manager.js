@@ -46,6 +46,15 @@
         }
       });
     },
+    resetFormNodes: function () {
+      formInputsByBlock.forEach(function (elem) {
+        elem.inputs.forEach(function (_elem) {
+          if (_elem.checked === true) {
+            _elem.value = '';
+          }
+        });
+      });
+    },
     formInputsByBlock: formInputsByBlock
   };
 })();
