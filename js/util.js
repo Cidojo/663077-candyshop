@@ -3,7 +3,7 @@
 (function () {
   var stringEndingCases = [2, 0, 1, 1, 1, 2];
   var ESC_KEYCODE = 27;
-  var DEBOUNCE_INTERVAL = 5000;
+  var DEBOUNCE_INTERVAL = 700;
 
 
   window.util = {
@@ -57,9 +57,7 @@
         lastTimeout = window.setTimeout(function () {
           action.apply(null, args);
         }, DEBOUNCE_INTERVAL);
-        window.util.currentInterval = lastTimeout;
       };
     },
-    currentInterval: 0
   };
 })();

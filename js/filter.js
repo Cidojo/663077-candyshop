@@ -215,8 +215,8 @@
 
   function onPriceFilterChange(upEvt) {
     upEvt.preventDefault();
-    document.removeEventListener('mouseup', onPriceFilterChange);
     onFilterGroupChange(upEvt);
+    document.removeEventListener('mouseup', onPriceFilterChange);
   }
 
 
@@ -262,7 +262,7 @@
   prices.handlers.forEach(function (it) {
     it.addEventListener('mousedown', function (downEvt) {
       downEvt.preventDefault();
-      document.addEventListener('mouseup', window.util.debounce(onPriceFilterChange));
+      document.addEventListener('mouseup', onPriceFilterChange);
     });
   });
 
@@ -270,6 +270,8 @@
   window.filter = {
     init: function () {
       window.filter.cards = window.backend.catalogCards.slice(0);
+      sortCatalog(window.filter.cards, getActiveCriteries(sorter));
+
       resetFilters(types.handlers);
       resetFilters(contents.handlers);
       resetFilters(favorite.handler);
@@ -282,8 +284,7 @@
       prices.setQuantity();
       inStock.setQuantity();
 
-      // window.clearTimeout(window.util.currentInterval);
-      window.renderCards.renderCatalog();
+      window.renderCards.renderFilter();
     },
     getInStockQuantity: function () {
       inStock.setQuantity();
