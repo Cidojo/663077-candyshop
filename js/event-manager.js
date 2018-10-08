@@ -121,6 +121,8 @@
     evt.preventDefault();
     if (form.checkValidity() && (cardNumberInput.disabled || window.util.getLuhnValidation(cardNumberInput.value))) {
       window.backend.upload(new FormData(form));
+    } else if (!cardNumberInput.disabled && !window.util.getLuhnValidation(cardNumberInput.value)) {
+      cardNumberInput.focus();
     }
   });
 
