@@ -90,7 +90,7 @@
             break;
         }
 
-        window.domManager.setAmountStyle(thisCard.currentCatalogCardNode, window.catalogCards[thisCard.indexes.catalog].amount);
+        window.domManager.setAmountStyle(thisCard.currentCatalogCardNode, window.backend.catalogCards[thisCard.indexes.catalog].amount);
       }
 
       window.filter.getInStockQuantity();

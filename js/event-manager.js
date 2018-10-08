@@ -111,6 +111,7 @@
       if (window.util.getLuhnValidation(cardNumberInput.value) && !getInvalidityOfGroup(window.inputManager.formInputsByBlock[1].inputs)) {
         cardStatus = PAYMENT_STATUS_APPROVED;
       }
+      cardNumberInput.customValidity = 'Неверно введен номер карты';
       paymentStatus.textContent = cardStatus;
     });
   });
@@ -118,7 +119,7 @@
 
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    if (form.checkValidity()) {
+    if (form.checkValidity() && (cardNumberInput.disabled || window.util.getLuhnValidation(cardNumberInput.value))) {
       window.backend.upload(new FormData(form));
     }
   });
