@@ -1,6 +1,10 @@
 'use strict';
 
 (function () {
+  var CATALOG_LOAD_BLOCK = document.querySelector('.catalog__load');
+  var STARS_LITERALS = ['one', 'two', 'three', 'four', 'five'];
+  var PICTURE_PATH = 'img/cards/';
+
   var catalogTemplate = new BuildTemplate({
     parent: document.querySelector('.catalog__cards'),
     template: '#card',
@@ -26,21 +30,12 @@
     count: '.card-order__count'
   });
 
-  var CATALOG_LOAD_BLOCK = document.querySelector('.catalog__load');
-
-  var STARS_LITERALS = ['one', 'two', 'three', 'four', 'five'];
-
-  var PICTURE_PATH = 'img/cards/';
-
-  // заполняет свойство src значением из соответствующего свойства переданного объекта (карточки)
-
 
   function fillPicture(owner, card) {
     owner.src = PICTURE_PATH + card.picture;
     owner.alt = card.name;
   }
 
-  // заполняет цену
 
   function fillPrice(owner, data) {
     var myString = owner.textContent.split(' ');
@@ -50,7 +45,6 @@
     window.domManager.fillTextContent(owner, myString);
   }
 
-  // добавляет класс DOM/fragment элементу + меняет текст(окончание) в зависимости от количества звезд
 
   function fillStars(owner, data) {
     var ratingText = 'Рейтинг: ' +
@@ -61,16 +55,17 @@
     return 'stars__rating--' + STARS_LITERALS[data.rating.value - 1];
   }
 
-  // проверяет содержит ли сахар и добавляет соответствующий текст
 
   function fillSugar(data) {
     return data.nutritionFacts.sugar ? 'Без сахара. ' : 'Содержит сахар. ' +
         data.nutritionFacts.energy + ' ккал';
   }
 
+
   function favoriteStyle(owner, data) {
     owner.classList.toggle('card__btn-favorite--selected', window.favorite.isFavorite(data));
   }
+
 
   function getCardFragment(obj, data) {
     obj.getNest();
@@ -106,9 +101,11 @@
     return obj.fragment;
   }
 
+
   function toggleEmptyCatalogMessage() {
-    CATALOG_LOAD_BLOCK.classList.toggle('visually-hidden', window.catalogCards.length);
+    CATALOG_LOAD_BLOCK.classList.toggle('visually-hidden', window.backend.catalogCards.length);
   }
+
 
   function BuildTemplate(Obj) {
     Object.assign(this, Obj);
@@ -124,10 +121,11 @@
     };
   }
 
+
   window.renderCards = {
     renderCatalog: function () {
       toggleEmptyCatalogMessage();
-      this.renderCards(catalogTemplate, window.catalogCards);
+      this.renderCards(catalogTemplate, window.backend.catalogCards);
     },
 
     renderCart: function () {
@@ -135,7 +133,7 @@
     },
 
     renderFilter: function () {
-      this.renderCards(catalogTemplate, window.filteredCards);
+      this.renderCards(catalogTemplate, window.filter.cards);
     },
 
     renderCards: function (template, data) {

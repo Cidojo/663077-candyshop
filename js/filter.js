@@ -1,11 +1,15 @@
 'use strict';
 
 (function () {
+  var TYPE_CRITERIES = ['Мороженое', 'Газировка', 'Жевательная резинка', 'Мармелад', 'Зефир'];
+  var CONTENT_CRITERIES = ['sugar', 'vegetarian', 'gluten'];
+  var SORTER_CRITERIES = ['number', 'price', 'priceReverse', 'value'];
+
 
   var types = {
-    inputs: document.querySelectorAll('input[name="food-type"]'),
-    quantities: document.querySelectorAll('input[name="food-type"] ~ span'),
-    criteries: ['Мороженое', 'Газировка', 'Жевательная резинка', 'Мармелад', 'Зефир'],
+    handlers: document.querySelectorAll('.catalog__filter:nth-of-type(1) input'),
+    quantities: document.querySelectorAll('.catalog__filter:nth-of-type(1) input ~ span'),
+    criteries: TYPE_CRITERIES,
 
     filter: function (array, matrix) {
       var combineArray = [];
@@ -31,9 +35,9 @@
 
 
   var contents = {
-    inputs: document.querySelectorAll('input[name="food-property"]'),
-    quantities: document.querySelectorAll('input[name="food-property"] ~ span'),
-    criteries: ['sugar', 'vegetarian', 'gluten'],
+    handlers: document.querySelectorAll('.catalog__filter:nth-of-type(2) input'),
+    quantities: document.querySelectorAll('.catalog__filter:nth-of-type(2) input ~ span'),
+    criteries: CONTENT_CRITERIES,
 
     filter: function (array, matrix) {
 
@@ -51,15 +55,15 @@
 
     filterSingle: function (_array, criteria) {
       return _array.filter(function (_it) {
-        return (_it.nutritionFacts[criteria] === false && criteria === 'sugar') || (_it.nutritionFacts[criteria] === true && criteria === 'vegetarian') || (_it.nutritionFacts[criteria] === false && criteria === 'gluten');
+        return (_it.nutritionFacts[criteria] === false && criteria === CONTENT_CRITERIES[0]) || (_it.nutritionFacts[criteria] === true && criteria === CONTENT_CRITERIES[1]) || (_it.nutritionFacts[criteria] === false && criteria === CONTENT_CRITERIES[2]);
       });
     }
   };
 
 
   var prices = {
-    inputs: [document.querySelector('.range__btn--left'), document.querySelector('.range__btn--right')],
-    quantities: document.querySelector('.range__price-count .range__count'),
+    handlers: [document.querySelector('.range__btn--left'), document.querySelector('.range__btn--right')],
+    quantity: document.querySelector('.range__price-count .range__count'),
     criteries: [document.querySelector('.range__price--min'), document.querySelector('.range__price--max')],
 
     filter: function (array, matrix) {
@@ -73,26 +77,29 @@
 
       return array;
     },
-
     filterSingle: function (_array, criteria) {
       return _array.filter(function (_it) {
         return _it.price >= criteria.textContent && criteria.classList.contains('range__price--min') ||
           _it.price <= criteria.textContent && criteria.classList.contains('range__price--max');
       });
+    },
+    setQuantity: function () {
+      var quantity = '(' + this.filter(window.filter.cards, this.criteries).length + ')';
+      window.domManager.fillTextContent(this.quantity, quantity);
     }
   };
 
 
   var favorite = {
-    input: document.querySelector('#filter-favorite'),
+    handler: document.querySelector('#filter-favorite'),
     cardNode: document.querySelectorAll('.catalog__card'),
     cardNodeSelector: '.catalog__card',
   };
 
 
   var inStock = {
-    input: document.querySelector('#filter-availability'),
-    quantities: document.querySelector('#filter-availability ~ span'),
+    handler: document.querySelector('#filter-availability'),
+    quantity: document.querySelector('#filter-availability ~ span'),
 
     filter: function (array) {
       return array.filter(function (card) {
@@ -100,14 +107,14 @@
       });
     },
     setQuantity: function () {
-      window.domManager.fillTextContent(this.quantities, this.filter(window.catalogCards).length);
+      window.domManager.fillTextContent(this.quantity, this.filter(window.backend.catalogCards).length);
     }
   };
 
 
   var sorter = {
-    inputs: document.querySelectorAll('input[name="sort"]'),
-    criteries: ['number', 'price', 'priceReverse', 'value']
+    handlers: document.querySelectorAll('.catalog__filter:nth-of-type(4) input'),
+    criteries: SORTER_CRITERIES
   };
 
 
@@ -115,52 +122,48 @@
 
 
   function getActiveCriteries(myObject) {
-    return Array.from(myObject.inputs).map(function (inputEach, index) {
-      return inputEach.checked ? myObject.criteries[index] : -1;
+    return Array.from(myObject.handlers).map(function (handlerEach, index) {
+      return handlerEach.checked ? myObject.criteries[index] : -1;
     });
   }
 
 
   function getCurrentQuantity(target) {
     target.criteries.forEach(function (element, position) {
-      var quantity = '(' + target.filterSingle(window.filteredCards, element).length + ')';
-      if (target.quantities[position]) {
-        window.domManager.fillTextContent(target.quantities[position], quantity);
-      } else {
-        window.domManager.fillTextContent(target.quantities, quantity);
-      }
+      var quantity = '(' + target.filterSingle(window.filter.cards, element).length + ')';
+      window.domManager.fillTextContent(target.quantities[position], quantity);
     });
   }
 
 
   function onFilterGroupChange(evt) {
-    window.filteredCards = window.catalogCards.slice(0);
+    window.filter.cards = window.backend.catalogCards.slice(0);
 
-    window.filteredCards = getActiveCriteries(types).some(function (a) {
+    window.filter.cards = getActiveCriteries(types).some(function (a) {
       return a !== -1;
-    }) ? types.filter(window.filteredCards, getActiveCriteries(types)) : window.filteredCards;
+    }) ? types.filter(window.filter.cards, getActiveCriteries(types)) : window.filter.cards;
 
-    window.filteredCards = contents.filter(window.filteredCards, getActiveCriteries(contents));
-    window.filteredCards = prices.filter(window.filteredCards, prices.criteries);
+    window.filter.cards = contents.filter(window.filter.cards, getActiveCriteries(contents));
+    window.filter.cards = prices.filter(window.filter.cards, prices.criteries);
 
-    if (evt.currentTarget === favorite.input && evt.currentTarget.checked) {
-      window.filteredCards = window.favorite.list;
-      inStock.input.checked = false;
+    if (evt.currentTarget === favorite.handler && evt.currentTarget.checked) {
+      window.filter.cards = window.favorite.list;
+      inStock.handler.checked = false;
     }
 
-    if (evt.currentTarget === inStock.input && evt.currentTarget.checked) {
-      window.filteredCards = inStock.filter(window.filteredCards);
-      favorite.input.checked = false;
+    if (evt.currentTarget === inStock.handler && evt.currentTarget.checked) {
+      window.filter.cards = inStock.filter(window.filter.cards);
+      favorite.handler.checked = false;
     }
 
     getCurrentQuantity(types);
     getCurrentQuantity(contents);
-    getCurrentQuantity(prices);
+    prices.setQuantity();
     inStock.setQuantity();
 
     window.renderCards.renderFilter();
 
-    if (!window.filteredCards.length) {
+    if (!window.filter.cards.length) {
       window.domManager.getEmptyFilterMessage();
     }
   }
@@ -173,24 +176,24 @@
     .join('');
 
     switch (true) {
-      case (bingo === 'number'):
-        window.filteredCards.sort(function (a, b) {
-          return window.util.getCardIndex(window.catalogCards, a.name) - window.util.getCardIndex(window.catalogCards, b.name);
-        }).reverse();
+      case (bingo === SORTER_CRITERIES[0]):
+        window.filter.cards.sort(function (a, b) {
+          return window.util.getCardIndex(window.backend.catalogCards, a.name) - window.util.getCardIndex(window.backend.catalogCards, b.name);
+        });
         break;
-      case (bingo === 'price'):
-        window.filteredCards.sort(function (a, b) {
+      case (bingo === SORTER_CRITERIES[1]):
+        window.filter.cards.sort(function (a, b) {
           return a.price - b.price;
         })
         .reverse();
         break;
-      case (bingo === 'priceReverse'):
-        window.filteredCards.sort(function (a, b) {
+      case (bingo === SORTER_CRITERIES[2]):
+        window.filter.cards.sort(function (a, b) {
           return a.price - b.price;
         });
         break;
-      case (bingo === 'value'):
-        window.filteredCards.sort(function (a, b) {
+      case (bingo === SORTER_CRITERIES[3]):
+        window.filter.cards.sort(function (a, b) {
           return a.rating.value === b.rating.value ? a.rating.number > b.rating.number : a.rating.value - b.rating.value;
         })
         .reverse();
@@ -200,11 +203,11 @@
 
 
   function onSorterGroupChange() {
-    sortCatalog(window.filteredCards, getActiveCriteries(sorter));
+    sortCatalog(window.filter.cards, getActiveCriteries(sorter));
 
     window.renderCards.renderFilter();
 
-    if (!window.filteredCards.length) {
+    if (!window.filter.cards.length) {
       window.domManager.getEmptyFilterMessage();
     }
   }
@@ -212,8 +215,8 @@
 
   function onPriceFilterChange(upEvt) {
     upEvt.preventDefault();
-    onFilterGroupChange(upEvt);
     document.removeEventListener('mouseup', onPriceFilterChange);
+    onFilterGroupChange(upEvt);
   }
 
 
@@ -227,52 +230,65 @@
     }
   }
 
-  sorter.inputs.forEach(function (elem) {
+
+  showAll.setAttribute('style', 'cursor: pointer;');
+
+
+  showAll.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    window.filter.init();
+  });
+
+
+  sorter.handlers.forEach(function (elem) {
     elem.addEventListener('change', onSorterGroupChange);
   });
 
 
-  types.inputs.forEach(function (elem) {
-    elem.addEventListener('change', onFilterGroupChange);
+  types.handlers.forEach(function (elem) {
+    elem.addEventListener('change', window.util.debounce(onFilterGroupChange));
   });
 
 
-  contents.inputs.forEach(function (elem) {
-    elem.addEventListener('change', onFilterGroupChange);
+  contents.handlers.forEach(function (elem) {
+    elem.addEventListener('change', window.util.debounce(onFilterGroupChange));
   });
 
 
-  favorite.input.addEventListener('click', onFilterGroupChange);
-  inStock.input.addEventListener('click', onFilterGroupChange);
+  favorite.handler.addEventListener('click', onFilterGroupChange);
+  inStock.handler.addEventListener('click', onFilterGroupChange);
 
 
-  showAll.setAttribute('style', 'cursor: pointer;');
-  showAll.addEventListener('click', function (evt) {
-    evt.preventDefault();
-    window.initFilter();
-    window.renderCards.renderCatalog();
-  });
-
-
-  prices.inputs.forEach(function (it) {
+  prices.handlers.forEach(function (it) {
     it.addEventListener('mousedown', function (downEvt) {
       downEvt.preventDefault();
-      document.addEventListener('mouseup', onPriceFilterChange);
+      document.addEventListener('mouseup', window.util.debounce(onPriceFilterChange));
     });
   });
 
 
-  window.initFilter = function () {
-    resetFilters(types.inputs);
-    resetFilters(contents.inputs);
-    resetFilters(favorite.input);
-    resetFilters(inStock.input);
+  window.filter = {
+    init: function () {
+      window.filter.cards = window.backend.catalogCards.slice(0);
+      resetFilters(types.handlers);
+      resetFilters(contents.handlers);
+      resetFilters(favorite.handler);
+      resetFilters(inStock.handler);
+      window.priceFilter.reset();
 
-    getCurrentQuantity(types);
-    getCurrentQuantity(contents);
-    prices.quantities.textContent = window.filteredCards.length;
-    window.favorite.setQuantity();
-    inStock.setQuantity();
+      getCurrentQuantity(types);
+      getCurrentQuantity(contents);
+      window.favorite.setQuantity();
+      prices.setQuantity();
+      inStock.setQuantity();
+
+      // window.clearTimeout(window.util.currentInterval);
+      window.renderCards.renderCatalog();
+    },
+    getInStockQuantity: function () {
+      inStock.setQuantity();
+    },
+    cards: []
   };
 
 })();

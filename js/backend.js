@@ -8,54 +8,74 @@
   var ERR_BAD_CONNECTION = 'Ошибка соединения';
 
   var successPopup = document.querySelector('.modal--success');
-  // var successPopupClose = successPopup.querySelector('.modal__close');
-
   var errorPopup = document.querySelector('.modal--error');
-  // var errorPopupClose = errorPopup.querySelector('.modal__close');
   var errorMessageNode = errorPopup.querySelector('.modal__message');
 
-  var ESC_KEYCODE = 27;
-  // var ENTER_KEYCODE = 13;
 
-  function setPopupCloseEvent(evt) {
-    errorPopup.classList.toggle('modal--hidden', evt.target.classList.contains('modal__close'));
-    evt.currentTarget.removeEventListener('click', setPopupCloseEvent);
-    document.removeEventListener('keydown', onEscButtonPress);
+  function onErrorCloseBtnClick(evt) {
+    if (evt.target.classList.contains('modal__close') || evt.target.classList.contains('modal--error')) {
+      errorPopup.classList.add('modal--hidden');
+      errorPopup.removeEventListener('click', onErrorCloseBtnClick);
+      document.removeEventListener('keydown', onErrorKeyPress);
+    }
   }
 
 
-  function onEscButtonPress(evt) {
-    errorPopup.classList.toggle('modal--hidden', evt.keyCode === ESC_KEYCODE);
+  function onSuccessCloseBtnClick(evt) {
+    if (evt.target.classList.contains('modal__close') || evt.target.classList.contains('modal--success')) {
+      successPopup.classList.add('modal--hidden');
+      successPopup.removeEventListener('click', onSuccessCloseBtnClick);
+      document.removeEventListener('keydown', onSuccessKeyPress);
+    }
   }
+
+
+  function onErrorKeyPress(evt) {
+    if (window.util.onKeyDownEvent(evt.keyCode, 'ESC')) {
+      errorPopup.classList.add('modal--hidden');
+      errorPopup.removeEventListener('click', onErrorCloseBtnClick);
+      document.removeEventListener('keydown', onErrorKeyPress);
+    }
+  }
+
+
+  function onSuccessKeyPress(evt) {
+    if (window.util.onKeyDownEvent(evt.keyCode, 'ESC')) {
+      successPopup.classList.add('modal--hidden');
+      successPopup.removeEventListener('click', onSuccessCloseBtnClick);
+      document.removeEventListener('keydown', onSuccessKeyPress);
+    }
+  }
+
 
   function errorHandler(status) {
-
     window.domManager.fillTextContent(errorMessageNode, status);
     errorPopup.classList.remove('modal--hidden');
-    document.addEventListener('keydown', onEscButtonPress);
-    errorPopup.addEventListener('click', setPopupCloseEvent);
+
+    document.addEventListener('keydown', onErrorKeyPress);
+    errorPopup.addEventListener('click', onErrorCloseBtnClick);
   }
 
 
   function successUploadHandler() {
     successPopup.classList.remove('modal--hidden');
-    successPopup.addEventListener('click', setPopupCloseEvent);
+    document.addEventListener('keydown', onSuccessKeyPress);
+    successPopup.addEventListener('click', onSuccessCloseBtnClick);
 
     window.inputManager.resetFormNodes();
   }
 
 
   function successLoadHandler(loadData) {
-    window.catalogCards = loadData;
-    window.filteredCards = window.catalogCards.slice(0);
-    window.initFilter();
+    window.backend.catalogCards = loadData;
+    window.filter.init();
+    window.priceFilter.init();
     window.cart.checkCart();
     window.renderCards.renderCatalog();
-    window.initPriceFilter();
   }
 
 
-  function setXhrERequest(request, onSuccess) {
+  function setXhrRequest(request, onSuccess) {
     request.responseType = 'json';
 
     request.addEventListener('load', function () {
@@ -76,23 +96,25 @@
     request.timeout = TIMEOUT;
   }
 
+
   window.backend = {
     load: function () {
       var xhr = new XMLHttpRequest();
-      setXhrERequest(xhr, successLoadHandler);
+      setXhrRequest(xhr, successLoadHandler);
 
       xhr.open('GET', URL_LOAD);
       xhr.send();
     },
     upload: function (data) {
       var xhr = new XMLHttpRequest();
-      setXhrERequest(xhr, successUploadHandler);
+      setXhrRequest(xhr, successUploadHandler);
 
       xhr.open('POST', URL_UPLOAD);
       xhr.send(data);
-    }
+    },
+    catalogCards: []
   };
 
-  window.backend.load();
 
+  window.backend.load();
 })();

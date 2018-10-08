@@ -5,6 +5,13 @@
   var emptyFilterTemplate = document.querySelector('#empty-filters');
   var catalogBlock = document.querySelector('.catalog__cards');
 
+
+  function onShowAllButtonClick(evt) {
+    window.filter.init();
+    evt.target.removeEventListener('click', onShowAllButtonClick);
+  }
+
+
   window.domManager = {
     fillTextContent: function (owner, text) {
       owner.textContent = text;
@@ -21,9 +28,7 @@
 
       var showAllButton = fragment.querySelector('.catalog__show-all');
       showAllButton.setAttribute('style', 'cursor: pointer;');
-      showAllButton.addEventListener('click', function () {
-        window.renderCards.renderCatalog();
-      });
+      showAllButton.addEventListener('click', onShowAllButtonClick);
 
       catalogBlock.appendChild(fragment);
     },

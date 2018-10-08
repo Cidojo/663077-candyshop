@@ -2,6 +2,9 @@
 
 (function () {
   var stringEndingCases = [2, 0, 1, 1, 1, 2];
+  var ESC_KEYCODE = 27;
+  var DEBOUNCE_INTERVAL = 5000;
+
 
   window.util = {
     getLuhnValidation: function getLuhnValidation(string) {
@@ -32,6 +35,31 @@
       return list.findIndex(function (it) {
         return it.name === _name;
       });
-    }
+    },
+    onKeyDownEvent: function (key, flag) {
+      switch (flag) {
+        case 'ESC':
+          if (key === ESC_KEYCODE) {
+            return true;
+          }
+          break;
+      }
+      return false;
+    },
+    debounce: function (action) {
+      var lastTimeout = null;
+
+      return function () {
+        var args = arguments;
+        if (lastTimeout) {
+          window.clearTimeout(lastTimeout);
+        }
+        lastTimeout = window.setTimeout(function () {
+          action.apply(null, args);
+        }, DEBOUNCE_INTERVAL);
+        window.util.currentInterval = lastTimeout;
+      };
+    },
+    currentInterval: 0
   };
 })();
