@@ -270,6 +270,7 @@
   window.filter = {
     init: function () {
       window.filter.cards = window.backend.catalogCards.slice(0);
+      window.renderCards.renderFilter();
       sortCatalog(window.filter.cards, getActiveCriteries(sorter));
 
       resetFilters(types.handlers);
@@ -284,7 +285,8 @@
       prices.setQuantity();
       inStock.setQuantity();
 
-      window.renderCards.renderFilter();
+      sorter.handlers[0].checked = true;
+
     },
     getInStockQuantity: function () {
       inStock.setQuantity();
