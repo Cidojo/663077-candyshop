@@ -107,7 +107,7 @@
       });
     },
     setQuantity: function () {
-      window.domManager.fillTextContent(this.quantity, this.filter(window.backend.catalogCards).length);
+      window.domManager.fillTextContent(this.quantity, '(' + this.filter(window.backend.catalogCards).length + ')');
     }
   };
 
@@ -147,19 +147,24 @@
     window.filter.cards = prices.filter(window.filter.cards, prices.criteries);
 
     if (evt.currentTarget === favorite.handler && evt.currentTarget.checked) {
+      resetFilters(types.handlers);
+      resetFilters(contents.handlers);
+      resetFilters(inStock.handler);
+
+      window.priceFilter.reset();
       window.filter.cards = window.favorite.list;
-      inStock.handler.checked = false;
     }
 
     if (evt.currentTarget === inStock.handler && evt.currentTarget.checked) {
-      window.filter.cards = inStock.filter(window.filter.cards);
-      favorite.handler.checked = false;
+      resetFilters(types.handlers);
+      resetFilters(contents.handlers);
+      resetFilters(favorite.handler);
+      window.priceFilter.reset();
+
+      window.filter.cards = inStock.filter(window.backend.catalogCards);
     }
 
-    getCurrentQuantity(types);
-    getCurrentQuantity(contents);
-    prices.setQuantity();
-    inStock.setQuantity();
+    setAllQuantities();
 
     window.renderCards.renderFilter();
 
@@ -213,9 +218,9 @@
   }
 
 
-  function onPriceFilterChange(upEvt) {
-    upEvt.preventDefault();
-    onFilterGroupChange(upEvt);
+  function onPriceFilterChange(evt) {
+    evt.preventDefault();
+    onFilterGroupChange(evt);
     document.removeEventListener('mouseup', onPriceFilterChange);
   }
 
@@ -228,6 +233,23 @@
     } else {
       inputs.checked = false;
     }
+  }
+
+
+  function resetAllFilters() {
+    resetFilters(types.handlers);
+    resetFilters(contents.handlers);
+    resetFilters(favorite.handler);
+    resetFilters(inStock.handler);
+    window.priceFilter.reset();
+  }
+
+  function setAllQuantities() {
+    getCurrentQuantity(types);
+    getCurrentQuantity(contents);
+    window.favorite.setQuantity();
+    prices.setQuantity();
+    inStock.setQuantity();
   }
 
 
@@ -273,20 +295,10 @@
       window.renderCards.renderFilter();
       sortCatalog(window.filter.cards, getActiveCriteries(sorter));
 
-      resetFilters(types.handlers);
-      resetFilters(contents.handlers);
-      resetFilters(favorite.handler);
-      resetFilters(inStock.handler);
-      window.priceFilter.reset();
-
-      getCurrentQuantity(types);
-      getCurrentQuantity(contents);
-      window.favorite.setQuantity();
-      prices.setQuantity();
-      inStock.setQuantity();
+      resetAllFilters();
+      setAllQuantities();
 
       sorter.handlers[0].checked = true;
-
     },
     getInStockQuantity: function () {
       inStock.setQuantity();

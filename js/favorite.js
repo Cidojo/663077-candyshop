@@ -28,7 +28,7 @@
       });
     },
     setQuantity: function () {
-      window.domManager.fillTextContent(quantityField, this.list.length);
+      window.domManager.fillTextContent(quantityField, '(' + this.list.length + ')');
     },
     list: []
   };

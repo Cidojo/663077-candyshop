@@ -48,7 +48,6 @@
     },
     debounce: function (action) {
       var lastTimeout = null;
-
       return function () {
         var args = arguments;
         if (lastTimeout) {
