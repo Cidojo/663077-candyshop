@@ -11,6 +11,8 @@
   var CART_CARD_CLASS = 'card-order';
   var PAYMENT_STATUS_APPROVED = 'Одобрено';
   var PAYMENT_STATUS_INVALID = 'Не определен';
+  var INVALID_CARD_NUMBER = 'Неверно введен номер карты';
+
 
   var deliverStoreBtn = document.querySelector('#deliver__store');
   var deliverCourierBtn = document.querySelector('#deliver__courier');
@@ -89,11 +91,16 @@
   deliverCourierBtn.addEventListener('click', onClickDelivery);
 
 
-  function getInvalidityOfGroup(fields) {
+  function getCardPaymentInvalidity(fields) {
+    if (!cardNumberInput.disabled && !window.util.getLuhnValidation(cardNumberInput.value)) {
+      return true;
+    }
+
     var myArr = [];
     fields.forEach(function (field) {
       myArr.push(field.checkValidity());
     });
+
     return myArr.some(function (status) {
       return status === false;
     });
@@ -103,10 +110,10 @@
   window.inputManager.formInputsByBlock[1].inputs.forEach(function (field) {
     field.addEventListener('input', function () {
       var cardStatus = PAYMENT_STATUS_INVALID;
-      if (window.util.getLuhnValidation(cardNumberInput.value) && !getInvalidityOfGroup(window.inputManager.formInputsByBlock[1].inputs)) {
+      if (!getCardPaymentInvalidity(window.inputManager.formInputsByBlock[1].inputs)) {
         cardStatus = PAYMENT_STATUS_APPROVED;
       }
-      cardNumberInput.customValidity = 'Неверно введен номер карты';
+      cardNumberInput.customValidity = INVALID_CARD_NUMBER;
       paymentStatus.textContent = cardStatus;
     });
   });
@@ -114,11 +121,17 @@
 
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    if (form.checkValidity() && window.cart.items.length && (cardNumberInput.disabled || window.util.getLuhnValidation(cardNumberInput.value))) {
-      window.backend.upload(new FormData(form));
-    } else if (!cardNumberInput.disabled && !window.util.getLuhnValidation(cardNumberInput.value)) {
-      cardNumberInput.focus();
+
+    if (!form.checkValidity() || window.inputManager.formInputsByBlock[0].inputs[0].disabled) {
+      return;
     }
+
+    if (getCardPaymentInvalidity(window.inputManager.formInputsByBlock[1].inputs)) {
+      cardNumberInput.focus();
+      return;
+    }
+
+    window.backend.upload(new FormData(form));
   });
 
 

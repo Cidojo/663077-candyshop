@@ -219,9 +219,15 @@
 
 
   function onPriceFilterChange(evt) {
-    evt.preventDefault();
-    onFilterGroupChange(evt);
     document.removeEventListener('mouseup', onPriceFilterChange);
+    evt.preventDefault();
+    window.util.debounce(function () {
+      return onFilterGroupChange(arguments);
+    }.apply(null, evt));
+
+    // window.setTimeout(function () {
+    //   onFilterGroupChange(evt);
+    // }, 1500);
   }
 
 

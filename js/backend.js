@@ -31,7 +31,7 @@
 
 
   function onErrorKeyPress(evt) {
-    if (window.util.onKeyDownEvent(evt.keyCode, 'ESC')) {
+    if (window.util.testKeyPressed(evt.keyCode, 'ESC')) {
       errorPopup.classList.add('modal--hidden');
       errorPopup.removeEventListener('click', onErrorCloseBtnClick);
       document.removeEventListener('keydown', onErrorKeyPress);
@@ -40,7 +40,7 @@
 
 
   function onSuccessKeyPress(evt) {
-    if (window.util.onKeyDownEvent(evt.keyCode, 'ESC')) {
+    if (window.util.testKeyPressed(evt.keyCode, 'ESC')) {
       successPopup.classList.add('modal--hidden');
       successPopup.removeEventListener('click', onSuccessCloseBtnClick);
       document.removeEventListener('keydown', onSuccessKeyPress);

@@ -2,8 +2,12 @@
 
 (function () {
   var stringEndingCases = [2, 0, 1, 1, 1, 2];
-  var ESC_KEYCODE = 27;
-  var DEBOUNCE_INTERVAL = 700;
+
+  var KEYS = {
+    'ESC': 27
+  };
+
+  var DEBOUNCE_INTERVAL = 500;
 
 
   window.util = {
@@ -36,13 +40,10 @@
         return it.name === _name;
       });
     },
-    onKeyDownEvent: function (key, flag) {
+    testKeyPressed: function (key, flag) {
       switch (flag) {
         case 'ESC':
-          if (key === ESC_KEYCODE) {
-            return true;
-          }
-          break;
+          return key === KEYS[flag];
       }
       return false;
     },
@@ -57,6 +58,6 @@
           action.apply(null, args);
         }, DEBOUNCE_INTERVAL);
       };
-    },
+    }
   };
 })();
