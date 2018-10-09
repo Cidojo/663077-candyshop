@@ -85,7 +85,7 @@
     },
     setQuantity: function () {
       var quantity = '(' + this.filter(window.filter.cards, this.criteries).length + ')';
-      window.domManager.fillTextContent(this.quantity, quantity);
+      window.domManager.setElementText(this.quantity, quantity);
     }
   };
 
@@ -107,7 +107,7 @@
       });
     },
     setQuantity: function () {
-      window.domManager.fillTextContent(this.quantity, '(' + this.filter(window.backend.catalogCards).length + ')');
+      window.domManager.setElementText(this.quantity, '(' + this.filter(window.backend.catalogCards).length + ')');
     }
   };
 
@@ -131,7 +131,7 @@
   function getCurrentQuantity(target) {
     target.criteries.forEach(function (element, position) {
       var quantity = '(' + target.filterSingle(window.filter.cards, element).length + ')';
-      window.domManager.fillTextContent(target.quantities[position], quantity);
+      window.domManager.setElementText(target.quantities[position], quantity);
     });
   }
 
@@ -166,7 +166,7 @@
 
     setAllQuantities();
 
-    window.renderCards.renderFilter();
+    window.render.filter();
 
     if (!window.filter.cards.length) {
       window.domManager.getEmptyFilterMessage();
@@ -210,7 +210,7 @@
   function onSorterGroupChange() {
     sortCatalog(window.filter.cards, getActiveCriteries(sorter));
 
-    window.renderCards.renderFilter();
+    window.render.filter();
 
     if (!window.filter.cards.length) {
       window.domManager.getEmptyFilterMessage();
@@ -292,7 +292,7 @@
   window.filter = {
     init: function () {
       window.filter.cards = window.backend.catalogCards.slice(0);
-      window.renderCards.renderFilter();
+      window.render.filter();
       sortCatalog(window.filter.cards, getActiveCriteries(sorter));
 
       resetAllFilters();

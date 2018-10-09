@@ -6,7 +6,7 @@
 
 
   var FAVORITE_BUTTON_CLASS = 'card__btn-favorite';
-  var FAVORITE_BUTTON_ADD_CLASS = 'card__btn';
+  var ADD_BUTTON_CLASS = 'card__btn';
   var COMPOSITION_BUTTON_CLASS = 'card__btn-composition';
   var CART_CARD_CLASS = 'card-order';
   var PAYMENT_STATUS_APPROVED = 'Одобрено';
@@ -28,7 +28,7 @@
   var selfCarryLabels = document.querySelectorAll('input[name="store"] + label');
 
 
-  function getCurrentCatalogCardNode(cardTitle) {
+  function findCardElement(cardTitle) {
     var renderedCatalog = document.querySelectorAll('.catalog__card');
     var indexFound = Array.from(renderedCatalog).findIndex(function (it) {
       return it.querySelector('h3').textContent === cardTitle;
@@ -51,43 +51,42 @@
       isInCatalog: evt.currentTarget.classList.contains('catalog__card')
     };
 
-    card.currentCatalogCardNode = getCurrentCatalogCardNode(card.name);
+    card.currentCatalogCardNode = findCardElement(card.name);
     card.indexes = getCardsIndexes(card.name);
 
     return card;
   }
 
 
-  function onClickDelivery(evt) {
-    var myArray = [deliverStoreBlock, deliverCourierBlock];
+  // Переключение табов способа доставки и оплаты
 
-    if (evt.target === deliverCourierBtn) {
-      myArray.reverse();
+  function toggleTabs(target, tabs, hiddenBlockTab) {
+    if (target === hiddenBlockTab) {
+      tabs.reverse();
     }
 
     ['remove', 'add'].forEach(function (method, index) {
-      myArray[index].classList[method]('visually-hidden');
+      tabs[index].classList[method]('visually-hidden');
     });
 
-    window.cart.checkCart();
+    window.cart.check();
+  }
+
+
+  function onClickDelivery(evt) {
+    toggleTabs(evt.target, [deliverStoreBlock, deliverCourierBlock], deliverCourierBtn);
   }
 
 
   function onClickPayment(evt) {
-    var myArray = [paymentCardBlock, paymentCashBlock];
-
-    if (evt.target === paymentCashBtn) {
-      myArray.reverse();
-    }
-
-    myArray[0].classList.remove('visually-hidden');
-    myArray[1].classList.add('visually-hidden');
-
-    window.cart.checkCart();
+    toggleTabs(evt.target, [paymentCardBlock, paymentCashBlock], paymentCashBtn);
   }
 
   paymentCardBtn.addEventListener('click', onClickPayment);
   paymentCashBtn.addEventListener('click', onClickPayment);
+
+  deliverStoreBtn.addEventListener('click', onClickDelivery);
+  deliverCourierBtn.addEventListener('click', onClickDelivery);
 
 
   function getInvalidityOfGroup(fields) {
@@ -99,10 +98,6 @@
       return status === false;
     });
   }
-
-
-  deliverStoreBtn.addEventListener('click', onClickDelivery);
-  deliverCourierBtn.addEventListener('click', onClickDelivery);
 
 
   window.inputManager.formInputsByBlock[1].inputs.forEach(function (field) {
@@ -119,7 +114,7 @@
 
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    if (form.checkValidity() && (cardNumberInput.disabled || window.util.getLuhnValidation(cardNumberInput.value))) {
+    if (form.checkValidity() && window.cart.items.length && (cardNumberInput.disabled || window.util.getLuhnValidation(cardNumberInput.value))) {
       window.backend.upload(new FormData(form));
     } else if (!cardNumberInput.disabled && !window.util.getLuhnValidation(cardNumberInput.value)) {
       cardNumberInput.focus();
@@ -149,7 +144,7 @@
       } else if (targetClassList.contains(COMPOSITION_BUTTON_CLASS)) {
         evt.currentTarget.querySelector('.card__composition').classList.toggle('card__composition--hidden');
 
-      } else if (evt.currentTarget.classList.contains(CART_CARD_CLASS) || targetClassList.contains(FAVORITE_BUTTON_ADD_CLASS)) {
+      } else if (evt.currentTarget.classList.contains(CART_CARD_CLASS) || targetClassList.contains(ADD_BUTTON_CLASS)) {
         window.cart.modify(evt, currentCard);
       }
     }

@@ -9,7 +9,7 @@
 
   var successPopup = document.querySelector('.modal--success');
   var errorPopup = document.querySelector('.modal--error');
-  var errorMessageNode = errorPopup.querySelector('.modal__message');
+  var errorMessageElement = errorPopup.querySelector('.modal__message');
 
 
   function onErrorCloseBtnClick(evt) {
@@ -48,8 +48,8 @@
   }
 
 
-  function errorHandler(status) {
-    window.domManager.fillTextContent(errorMessageNode, status);
+  function onError(status) {
+    window.domManager.setElementText(errorMessageElement, status);
     errorPopup.classList.remove('modal--hidden');
 
     document.addEventListener('keydown', onErrorKeyPress);
@@ -57,7 +57,7 @@
   }
 
 
-  function successUploadHandler() {
+  function onUploadSuccess() {
     successPopup.classList.remove('modal--hidden');
     document.addEventListener('keydown', onSuccessKeyPress);
     successPopup.addEventListener('click', onSuccessCloseBtnClick);
@@ -66,12 +66,12 @@
   }
 
 
-  function successLoadHandler(loadData) {
+  function onLoadSuccess(loadData) {
     window.backend.catalogCards = loadData;
     window.filter.init();
     window.priceFilter.init();
-    window.cart.checkCart();
-    window.renderCards.renderCatalog();
+    window.cart.check();
+    window.render.catalog();
   }
 
 
@@ -82,15 +82,15 @@
       if (request.status === STATUS_OK) {
         onSuccess(request.response);
       } else {
-        errorHandler('Код ошибки: ' + request.status + ' ' + request.statusText);
+        onError('Код ошибки: ' + request.status + ' ' + request.statusText);
       }
     });
 
     request.addEventListener('error', function () {
-      errorHandler(ERR_BAD_CONNECTION);
+      onError(ERR_BAD_CONNECTION);
     });
     request.addEventListener('timeout', function () {
-      errorHandler('Время ожидания истекло!');
+      onError('Время ожидания истекло!');
     });
 
     request.timeout = TIMEOUT;
@@ -100,14 +100,14 @@
   window.backend = {
     load: function () {
       var xhr = new XMLHttpRequest();
-      setXhrRequest(xhr, successLoadHandler);
+      setXhrRequest(xhr, onLoadSuccess);
 
       xhr.open('GET', URL_LOAD);
       xhr.send();
     },
     upload: function (data) {
       var xhr = new XMLHttpRequest();
-      setXhrRequest(xhr, successUploadHandler);
+      setXhrRequest(xhr, onUploadSuccess);
 
       xhr.open('POST', URL_UPLOAD);
       xhr.send(data);
