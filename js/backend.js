@@ -6,6 +6,7 @@
   var STATUS_OK = 200;
   var TIMEOUT = 10000;
   var ERR_BAD_CONNECTION = 'Ошибка соединения';
+  var ERR_TIMEOUT = 'Время ожидания истекло!';
 
   var successPopupBlock = document.querySelector('.modal--success');
   var errorPopupBlock = document.querySelector('.modal--error');
@@ -63,6 +64,8 @@
     successPopupBlock.addEventListener('click', onSuccessCloseBtnClick);
 
     window.inputManager.resetFormNodes();
+    window.cart.clear();
+    window.filter.init();
   }
 
 
@@ -90,7 +93,7 @@
       onError(ERR_BAD_CONNECTION);
     });
     request.addEventListener('timeout', function () {
-      onError('Время ожидания истекло!');
+      onError(ERR_TIMEOUT);
     });
 
     request.timeout = TIMEOUT;

@@ -295,13 +295,13 @@
   window.filter = {
     init: function () {
       window.filter.cards = window.backend.catalogCards.slice(0);
-      window.render.filter();
       sortCatalog(window.filter.cards, getActiveCriteries(sorter));
 
       resetAllFilters();
       setAllQuantities();
-
       sorter.handlers[0].checked = true;
+
+      window.render.filter();
     },
     getInStockQuantity: function () {
       inStock.setQuantity();

@@ -102,6 +102,19 @@
       window.inputManager.disableInputToggle();
       toggleCartVisibility(!!this.items.length);
     },
+    clear: function () {
+      do {
+        var catalogIndex = window.backend.catalogCards.findIndex(function (it) {
+          return window.cart.items[0].name === it.name;
+        });
+
+        deleteCartItem(0, catalogIndex);
+      }
+      while (this.items.length);
+
+      window.render.cart();
+      this.check();
+    },
     items: []
   };
 })();
