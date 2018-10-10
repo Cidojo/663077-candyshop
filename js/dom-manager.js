@@ -5,11 +5,18 @@
   var emptyFilterTemplate = document.querySelector('#empty-filters');
   var catalogBlock = document.querySelector('.catalog__cards');
 
+
+  function onShowAllButtonClick(evt) {
+    window.filter.init();
+    evt.target.removeEventListener('click', onShowAllButtonClick);
+  }
+
+
   window.domManager = {
-    fillTextContent: function (owner, text) {
+    setElementText: function (owner, text) {
       owner.textContent = text;
     },
-    removeDomChild: function (elem, start) {
+    removeDomChildren: function (elem, start) {
       while (elem.children[start - 1]) {
         elem.removeChild(elem.children[start - 1]);
       }
@@ -21,18 +28,14 @@
 
       var showAllButton = fragment.querySelector('.catalog__show-all');
       showAllButton.setAttribute('style', 'cursor: pointer;');
-      showAllButton.addEventListener('click', function () {
-        window.renderCards.renderCatalog();
-      });
+      showAllButton.addEventListener('click', onShowAllButtonClick);
 
       catalogBlock.appendChild(fragment);
     },
-    setAmountStyle: function (owner, amount) {
-      if (owner) {
-        owner.classList.toggle('card--in-stock', amount > MAX_AMOUNT);
-        owner.classList.toggle('card--little', amount && amount < MAX_AMOUNT);
-        owner.classList.toggle('card--soon', !amount);
-      }
+    setAmountStyle: function (element, amount) {
+      element.classList.toggle('card--in-stock', amount > MAX_AMOUNT);
+      element.classList.toggle('card--little', amount && amount < MAX_AMOUNT);
+      element.classList.toggle('card--soon', !amount);
     }
 
   };

@@ -6,7 +6,7 @@
 
   window.favorite = {
     updateFavoriteList: function (card, btn) {
-      var thisCard = window.catalogCards.find(function (it) {
+      var thisCard = window.backend.catalogCards.find(function (it) {
         return it.name === card.name;
       });
 
@@ -28,7 +28,7 @@
       });
     },
     setQuantity: function () {
-      window.domManager.fillTextContent(quantityField, this.list.length);
+      window.domManager.setElementText(quantityField, '(' + this.list.length + ')');
     },
     list: []
   };

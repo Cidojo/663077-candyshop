@@ -1,39 +1,44 @@
 'use strict';
 
 (function () {
-  var DELETE_FROM_CART_BUTTON = 'card-order__close';
+  var CART_DELETE_BUTTON = 'card-order__close';
   var CART_INCREASE_BUTTON = 'card-order__btn--increase';
   var CART_DECREASE_BUTTON = 'card-order__btn--decrease';
 
-  function deleteCartItem(indexInCart, indexInCatalog) {
-    window.catalogCards[indexInCatalog].amount += window.cart.items[indexInCart].count;
-    window.cart.items.splice(indexInCart, 1);
+  var emptyCartHeaderElement = document.querySelector('.main-header__basket');
+  var emptyCartBottomElement = document.querySelector('.goods__card-empty');
+
+
+  function deleteCartItem(cartIndex, catalogIndex) {
+    window.backend.catalogCards[catalogIndex].amount += window.cart.items[cartIndex].count;
+    window.cart.items.splice(cartIndex, 1);
   }
 
-  function increaseCartItem(indexInCart, indexInCatalog) {
-    if (window.catalogCards[indexInCatalog].amount > 0) {
-      window.cart.items[indexInCart].count++;
-      window.catalogCards[indexInCatalog].amount--;
-      updateTotalPrice(indexInCart);
+
+  function increaseCartItem(cartIndex, catalogIndex) {
+    if (window.backend.catalogCards[catalogIndex].amount > 0) {
+      window.cart.items[cartIndex].count++;
+      window.backend.catalogCards[catalogIndex].amount--;
+      updateTotalPrice(cartIndex);
     }
   }
 
-  function decreaseCartItem(indexInCart, indexInCatalog) {
-    if (window.cart.items[indexInCart].count > 1) {
-      window.cart.items[indexInCart].count--;
-      window.catalogCards[indexInCatalog].amount++;
-      updateTotalPrice(indexInCart);
-    } else if (window.cart.items[indexInCart].count === 1) {
-      deleteCartItem(indexInCart, indexInCatalog);
+
+  function decreaseCartItem(cartIndex, catalogIndex) {
+    if (window.cart.items[cartIndex].count > 1) {
+      window.cart.items[cartIndex].count--;
+      window.backend.catalogCards[catalogIndex].amount++;
+      updateTotalPrice(cartIndex);
+    } else if (window.cart.items[cartIndex].count === 1) {
+      deleteCartItem(cartIndex, catalogIndex);
     }
   }
+
 
   function updateTotalPrice(index) {
     window.cart.items[index].price = window.cart.items[index].count * window.cart.items[index].pricePerItem;
   }
 
-  var emptyCartHeader = document.querySelector('.main-header__basket');
-  var emptyCartBottom = document.querySelector('.goods__card-empty');
 
   function toggleCartVisibility(_toggle) {
     var message = !_toggle ? 'В корзине ничего нет' :
@@ -42,60 +47,61 @@
             return sum + current.price;
           }, 0) + ' ' + window.util.getStringEnding(['рубль', 'рубля', 'рублей']) + '.';
 
-    emptyCartBottom.classList.toggle('visually-hidden', _toggle);
-    window.domManager.fillTextContent(emptyCartHeader, message);
+    emptyCartBottomElement.classList.toggle('visually-hidden', _toggle);
+    window.domManager.setElementText(emptyCartHeaderElement, message);
   }
 
-  function addToCart(indexes, cartItems) {
-    if (indexes.cart !== -1) {
-      increaseCartItem(indexes.cart, indexes.catalog);
-    } else if (window.catalogCards[indexes.catalog].amount) {
+
+  function addToCart(indexCollection, cartItems) {
+    if (indexCollection.cart !== -1) {
+      increaseCartItem(indexCollection.cart, indexCollection.catalog);
+    } else if (window.backend.catalogCards[indexCollection.catalog].amount) {
       cartItems.push(Object.assign({},
-          window.catalogCards[indexes.catalog],
+          window.backend.catalogCards[indexCollection.catalog],
           {count: 1},
-          {pricePerItem: window.catalogCards[indexes.catalog].price}
+          {pricePerItem: window.backend.catalogCards[indexCollection.catalog].price}
       ));
-      window.catalogCards[indexes.catalog].amount -= 1;
+      window.backend.catalogCards[indexCollection.catalog].amount -= 1;
     }
   }
+
 
   window.cart = {
     modify: function (evt, thisCard) {
       if (thisCard.isInCatalog) {
 
-        addToCart(thisCard.indexes, this.items);
+        addToCart(thisCard.index, this.items);
 
-        window.domManager.setAmountStyle(evt.currentTarget, window.catalogCards[thisCard.indexes.catalog].amount);
+        window.domManager.setAmountStyle(evt.currentTarget, window.backend.catalogCards[thisCard.index.catalog].amount);
 
-      } else if (thisCard.indexes.catalog !== -1) {
+      } else if (thisCard.index.catalog !== -1) {
 
         var targetClassList = evt.target.classList;
 
         switch (true) {
-          case (targetClassList.contains(DELETE_FROM_CART_BUTTON)):
-            deleteCartItem(thisCard.indexes.cart, thisCard.indexes.catalog);
+          case (targetClassList.contains(CART_DELETE_BUTTON)):
+            deleteCartItem(thisCard.index.cart, thisCard.index.catalog);
             break;
           case (targetClassList.contains(CART_INCREASE_BUTTON)):
-            increaseCartItem(thisCard.indexes.cart, thisCard.indexes.catalog);
+            increaseCartItem(thisCard.index.cart, thisCard.index.catalog);
             break;
           case (targetClassList.contains(CART_DECREASE_BUTTON)):
-            decreaseCartItem(thisCard.indexes.cart, thisCard.indexes.catalog);
+            decreaseCartItem(thisCard.index.cart, thisCard.index.catalog);
             break;
         }
 
-        window.domManager.setAmountStyle(thisCard.currentCatalogCardNode, window.catalogCards[thisCard.indexes.catalog].amount);
-
+        window.domManager.setAmountStyle(thisCard.currentCatalogCardNode, window.backend.catalogCards[thisCard.index.catalog].amount);
       }
 
-      window.renderCards.renderCart();
-      this.checkCart();
+      window.filter.getInStockQuantity();
+
+      window.render.cart();
+      this.check();
     },
-    checkCart: function () {
-      var toggle = this.items.length ? true : false;
+    check: function () {
       window.inputManager.disableInputToggle();
-      toggleCartVisibility(toggle);
+      toggleCartVisibility(!!this.items.length);
     },
     items: []
   };
-
 })();

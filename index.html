@@ -144,7 +144,7 @@
     <section class="buy">
       <h2 class="visually-hidden">Оформление покупки</h2>
 
-      <form action="http://echo.htmlacademy.ru" method="post">
+      <form action="https://js.dump.academy/candyshop" method="post" enctype="multipart/form-data">
         <section class="goods">
           <div class="goods__wrap container">
             <h2 class="group-title goods__title" id="basket">Твои покупки</h2>
@@ -225,7 +225,7 @@
                     </p>
 
                     <p class="text-input text-input--light payment__input-wrap payment__input-wrap--cvc">
-                      <input type="text" class="text-input__input" name="card-cvc" id="payment__card-cvc" placeholder="CVC" maxlength="3" pattern="[0-9]{3}" required>
+                      <input type="text" class="text-input__input" name="card-cvc" id="payment__card-cvc" placeholder="CVC" maxlength="3" pattern="[1-9][0-9]{2}" required>
                       <label class="text-input__label text-input__label--lock" for="payment__card-cvc">CVC</label>
                     </p>
 
@@ -332,7 +332,7 @@
             </div>
 
             <div class="deliver__courier visually-hidden">
-              <fieldset class="deliver__entry-fields-wrap" disabled>
+              <fieldset class="deliver__entry-fields-wrap">
                 <legend class="deliver__courier-title">Куда завозить?</legend>
 
                 <ul class="deliver__address-entry-fields">
@@ -347,7 +347,7 @@
                   </li>
 
                   <li class="text-input deliver__floor">
-                    <input type="text" class="text-input__input" name="deliver-floor" id="deliver__floor" placeholder="Эт." maxlength="3" pattertn="[0-9]{1,}">
+                    <input type="text" class="text-input__input" name="deliver-floor" id="deliver__floor" placeholder="Эт." maxlength="3" pattern="[0-9]{1,}">
                     <label class="text-input__label" for="deliver__floor">Эт.</label>
                   </li>
 
@@ -488,9 +488,9 @@
   <script src="js/render-cards.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/input-manager.js"></script>
-  <script src="js/load.js"></script>
+  <script src="js/backend.js"></script>
   <script src="js/filter.js"></script>
   <script src="js/event-manager.js"></script>
-  <script src="js/init-price-filter.js"></script>
+  <script src="js/price-filter.js"></script>
 </body>
 </html>
