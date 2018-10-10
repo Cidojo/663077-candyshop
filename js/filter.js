@@ -152,6 +152,8 @@
       resetFilters(inStock.handler);
 
       window.priceFilter.reset();
+      window.util.debounce(false, true);
+
       window.filter.cards = window.favorite.list;
     }
 
@@ -160,6 +162,8 @@
       resetFilters(contents.handlers);
       resetFilters(favorite.handler);
       window.priceFilter.reset();
+
+      window.util.debounce(false, true);
 
       window.filter.cards = inStock.filter(window.backend.catalogCards);
     }
@@ -175,6 +179,7 @@
 
 
   function sortCatalog(array, matrix) {
+
     var bingo = matrix.filter(function (it) {
       return it !== -1;
     })
@@ -259,6 +264,7 @@
   showAll.addEventListener('click', function (evt) {
     evt.preventDefault();
     window.filter.init();
+    window.util.debounce(false, true);
   });
 
 

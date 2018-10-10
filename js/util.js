@@ -7,7 +7,8 @@
     'ESC': 27
   };
 
-  var DEBOUNCE_INTERVAL = 500;
+  var DEBOUNCE_INTERVAL = 5000;
+  var lastTimeout = null;
 
 
   window.util = {
@@ -47,8 +48,11 @@
       }
       return false;
     },
-    debounce: function (action) {
-      var lastTimeout = null;
+    debounce: function (action, abort) {
+      if (lastTimeout && abort) {
+        window.clearTimeout(lastTimeout);
+        return action;
+      }
       return function () {
         var args = arguments;
         if (lastTimeout) {
