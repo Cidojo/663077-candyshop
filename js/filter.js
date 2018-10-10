@@ -221,9 +221,7 @@
   function onPriceFilterChange(evt) {
     document.removeEventListener('mouseup', onPriceFilterChange);
     evt.preventDefault();
-    window.util.debounce(function () {
-      return onFilterGroupChange(arguments);
-    }.apply(null, evt));
+    onFilterGroupChange(evt);
 
     // window.setTimeout(function () {
     //   onFilterGroupChange(evt);
@@ -290,7 +288,7 @@
   prices.handlers.forEach(function (it) {
     it.addEventListener('mousedown', function (downEvt) {
       downEvt.preventDefault();
-      document.addEventListener('mouseup', onPriceFilterChange);
+      document.addEventListener('mouseup', window.util.debounce(onPriceFilterChange), {once: true});
     });
   });
 
