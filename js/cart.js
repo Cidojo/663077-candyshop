@@ -52,16 +52,16 @@
   }
 
 
-  function addToCart(indexes, cartItems) {
-    if (indexes.cart !== -1) {
-      increaseCartItem(indexes.cart, indexes.catalog);
-    } else if (window.backend.catalogCards[indexes.catalog].amount) {
+  function addToCart(indexCollection, cartItems) {
+    if (indexCollection.cart !== -1) {
+      increaseCartItem(indexCollection.cart, indexCollection.catalog);
+    } else if (window.backend.catalogCards[indexCollection.catalog].amount) {
       cartItems.push(Object.assign({},
-          window.backend.catalogCards[indexes.catalog],
+          window.backend.catalogCards[indexCollection.catalog],
           {count: 1},
-          {pricePerItem: window.backend.catalogCards[indexes.catalog].price}
+          {pricePerItem: window.backend.catalogCards[indexCollection.catalog].price}
       ));
-      window.backend.catalogCards[indexes.catalog].amount -= 1;
+      window.backend.catalogCards[indexCollection.catalog].amount -= 1;
     }
   }
 
@@ -70,27 +70,27 @@
     modify: function (evt, thisCard) {
       if (thisCard.isInCatalog) {
 
-        addToCart(thisCard.indexes, this.items);
+        addToCart(thisCard.index, this.items);
 
-        window.domManager.setAmountStyle(evt.currentTarget, window.backend.catalogCards[thisCard.indexes.catalog].amount);
+        window.domManager.setAmountStyle(evt.currentTarget, window.backend.catalogCards[thisCard.index.catalog].amount);
 
-      } else if (thisCard.indexes.catalog !== -1) {
+      } else if (thisCard.index.catalog !== -1) {
 
         var targetClassList = evt.target.classList;
 
         switch (true) {
           case (targetClassList.contains(CART_DELETE_BUTTON)):
-            deleteCartItem(thisCard.indexes.cart, thisCard.indexes.catalog);
+            deleteCartItem(thisCard.index.cart, thisCard.index.catalog);
             break;
           case (targetClassList.contains(CART_INCREASE_BUTTON)):
-            increaseCartItem(thisCard.indexes.cart, thisCard.indexes.catalog);
+            increaseCartItem(thisCard.index.cart, thisCard.index.catalog);
             break;
           case (targetClassList.contains(CART_DECREASE_BUTTON)):
-            decreaseCartItem(thisCard.indexes.cart, thisCard.indexes.catalog);
+            decreaseCartItem(thisCard.index.cart, thisCard.index.catalog);
             break;
         }
 
-        window.domManager.setAmountStyle(thisCard.currentCatalogCardNode, window.backend.catalogCards[thisCard.indexes.catalog].amount);
+        window.domManager.setAmountStyle(thisCard.currentCatalogCardNode, window.backend.catalogCards[thisCard.index.catalog].amount);
       }
 
       window.filter.getInStockQuantity();
@@ -99,9 +99,8 @@
       this.check();
     },
     check: function () {
-      var toggle = !!this.items.length;
       window.inputManager.disableInputToggle();
-      toggleCartVisibility(toggle);
+      toggleCartVisibility(!!this.items.length);
     },
     items: []
   };

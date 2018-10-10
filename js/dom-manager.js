@@ -32,12 +32,10 @@
 
       catalogBlock.appendChild(fragment);
     },
-    setAmountStyle: function (owner, amount) {
-      if (owner) {
-        owner.classList.toggle('card--in-stock', amount > MAX_AMOUNT);
-        owner.classList.toggle('card--little', amount && amount < MAX_AMOUNT);
-        owner.classList.toggle('card--soon', !amount);
-      }
+    setAmountStyle: function (element, amount) {
+      element.classList.toggle('card--in-stock', amount > MAX_AMOUNT);
+      element.classList.toggle('card--little', amount && amount < MAX_AMOUNT);
+      element.classList.toggle('card--soon', !amount);
     }
 
   };

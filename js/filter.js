@@ -4,11 +4,11 @@
   var TYPE_CRITERIES = ['Мороженое', 'Газировка', 'Жевательная резинка', 'Мармелад', 'Зефир'];
   var CONTENT_CRITERIES = ['sugar', 'vegetarian', 'gluten'];
   var SORTER_CRITERIES = ['number', 'price', 'priceReverse', 'value'];
-
+  var catalogSidebar = document.querySelector('.catalog__sidebar');
 
   var types = {
-    handlers: document.querySelectorAll('.catalog__filter:nth-of-type(1) input'),
-    quantities: document.querySelectorAll('.catalog__filter:nth-of-type(1) input ~ span'),
+    handlers: catalogSidebar.querySelectorAll('.catalog__filter:nth-of-type(1) input'),
+    quantities: catalogSidebar.querySelectorAll('.catalog__filter:nth-of-type(1) input ~ span'),
     criteries: TYPE_CRITERIES,
 
     filter: function (array, matrix) {
@@ -35,8 +35,8 @@
 
 
   var contents = {
-    handlers: document.querySelectorAll('.catalog__filter:nth-of-type(2) input'),
-    quantities: document.querySelectorAll('.catalog__filter:nth-of-type(2) input ~ span'),
+    handlers: catalogSidebar.querySelectorAll('.catalog__filter:nth-of-type(2) input'),
+    quantities: catalogSidebar.querySelectorAll('.catalog__filter:nth-of-type(2) input ~ span'),
     criteries: CONTENT_CRITERIES,
 
     filter: function (array, matrix) {
@@ -62,9 +62,9 @@
 
 
   var prices = {
-    handlers: [document.querySelector('.range__btn--left'), document.querySelector('.range__btn--right')],
-    quantity: document.querySelector('.range__price-count .range__count'),
-    criteries: [document.querySelector('.range__price--min'), document.querySelector('.range__price--max')],
+    handlers: [catalogSidebar.querySelector('.range__btn--left'), catalogSidebar.querySelector('.range__btn--right')],
+    quantity: catalogSidebar.querySelector('.range__price-count .range__count'),
+    criteries: [catalogSidebar.querySelector('.range__price--min'), catalogSidebar.querySelector('.range__price--max')],
 
     filter: function (array, matrix) {
 
@@ -91,15 +91,15 @@
 
 
   var favorite = {
-    handler: document.querySelector('#filter-favorite'),
-    cardNode: document.querySelectorAll('.catalog__card'),
+    handler: catalogSidebar.querySelector('#filter-favorite'),
+    cardNode: catalogSidebar.querySelectorAll('.catalog__card'),
     cardNodeSelector: '.catalog__card',
   };
 
 
   var inStock = {
-    handler: document.querySelector('#filter-availability'),
-    quantity: document.querySelector('#filter-availability ~ span'),
+    handler: catalogSidebar.querySelector('#filter-availability'),
+    quantity: catalogSidebar.querySelector('#filter-availability ~ span'),
 
     filter: function (array) {
       return array.filter(function (card) {
@@ -113,12 +113,12 @@
 
 
   var sorter = {
-    handlers: document.querySelectorAll('.catalog__filter:nth-of-type(4) input'),
+    handlers: catalogSidebar.querySelectorAll('.catalog__filter:nth-of-type(4) input'),
     criteries: SORTER_CRITERIES
   };
 
 
-  var showAll = document.querySelector('button.catalog__submit');
+  var showAll = catalogSidebar.querySelector('button.catalog__submit');
 
 
   function getActiveCriteries(myObject) {
@@ -146,7 +146,7 @@
     window.filter.cards = contents.filter(window.filter.cards, getActiveCriteries(contents));
     window.filter.cards = prices.filter(window.filter.cards, prices.criteries);
 
-    if (evt.currentTarget === favorite.handler && evt.currentTarget.checked) {
+    if (evt.currentTarget === favorite.handler && evt.currentTarget.checked || favorite.handler.checked && evt.currentTarget !== inStock.handler) {
       resetFilters(types.handlers);
       resetFilters(contents.handlers);
       resetFilters(inStock.handler);
@@ -157,7 +157,7 @@
       window.filter.cards = window.favorite.list;
     }
 
-    if (evt.currentTarget === inStock.handler && evt.currentTarget.checked) {
+    if (evt.currentTarget === inStock.handler && evt.currentTarget.checked || inStock.handler.checked && evt.currentTarget !== favorite.handler) {
       resetFilters(types.handlers);
       resetFilters(contents.handlers);
       resetFilters(favorite.handler);
@@ -180,33 +180,30 @@
 
   function sortCatalog(array, matrix) {
 
-    var bingo = matrix.filter(function (it) {
+    var bingo = matrix.find(function (it) {
       return it !== -1;
-    })
-    .join('');
+    });
 
-    switch (true) {
-      case (bingo === SORTER_CRITERIES[0]):
+    switch (bingo) {
+      case SORTER_CRITERIES[0]:
         window.filter.cards.sort(function (a, b) {
           return window.util.getCardIndex(window.backend.catalogCards, a.name) - window.util.getCardIndex(window.backend.catalogCards, b.name);
         });
         break;
-      case (bingo === SORTER_CRITERIES[1]):
+      case SORTER_CRITERIES[1]:
         window.filter.cards.sort(function (a, b) {
-          return a.price - b.price;
-        })
-        .reverse();
+          return b.price - a.price;
+        });
         break;
-      case (bingo === SORTER_CRITERIES[2]):
+      case SORTER_CRITERIES[2]:
         window.filter.cards.sort(function (a, b) {
           return a.price - b.price;
         });
         break;
-      case (bingo === SORTER_CRITERIES[3]):
+      case SORTER_CRITERIES[3]:
         window.filter.cards.sort(function (a, b) {
-          return a.rating.value === b.rating.value ? a.rating.number > b.rating.number : a.rating.value - b.rating.value;
-        })
-        .reverse();
+          return a.rating.value === b.rating.value ? b.rating.number - a.rating.number : b.rating.value - a.rating.value;
+        });
         break;
     }
   }

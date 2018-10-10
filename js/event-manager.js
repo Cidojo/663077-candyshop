@@ -9,7 +9,7 @@
   var ADD_BUTTON_CLASS = 'card__btn';
   var COMPOSITION_BUTTON_CLASS = 'card__btn-composition';
   var CART_CARD_CLASS = 'card-order';
-  var PAYMENT_STATUS_APPROVED = 'Одобрено';
+  var PAYMENT_STATUS_APPROVED = 'Одобрен';
   var PAYMENT_STATUS_INVALID = 'Не определен';
   var INVALID_CARD_NUMBER = 'Неверно введен номер карты';
 
@@ -54,7 +54,7 @@
     };
 
     card.currentCatalogCardNode = findCardElement(card.name);
-    card.indexes = getCardsIndexes(card.name);
+    card.index = getCardsIndexes(card.name);
 
     return card;
   }

@@ -48,7 +48,7 @@
       },
       {
         fieldSelector: '.deliver__courier',
-        inputsSelector: 'fieldset'
+        inputsSelector: '.text-input__input, textarea'
       }
     ]
   };

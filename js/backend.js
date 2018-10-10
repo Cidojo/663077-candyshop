@@ -7,15 +7,15 @@
   var TIMEOUT = 10000;
   var ERR_BAD_CONNECTION = 'Ошибка соединения';
 
-  var successPopup = document.querySelector('.modal--success');
-  var errorPopup = document.querySelector('.modal--error');
-  var errorMessageElement = errorPopup.querySelector('.modal__message');
+  var successPopupBlock = document.querySelector('.modal--success');
+  var errorPopupBlock = document.querySelector('.modal--error');
+  var errorMessageElement = errorPopupBlock.querySelector('.modal__message');
 
 
   function onErrorCloseBtnClick(evt) {
     if (evt.target.classList.contains('modal__close') || evt.target.classList.contains('modal--error')) {
-      errorPopup.classList.add('modal--hidden');
-      errorPopup.removeEventListener('click', onErrorCloseBtnClick);
+      errorPopupBlock.classList.add('modal--hidden');
+      errorPopupBlock.removeEventListener('click', onErrorCloseBtnClick);
       document.removeEventListener('keydown', onErrorKeyPress);
     }
   }
@@ -23,8 +23,8 @@
 
   function onSuccessCloseBtnClick(evt) {
     if (evt.target.classList.contains('modal__close') || evt.target.classList.contains('modal--success')) {
-      successPopup.classList.add('modal--hidden');
-      successPopup.removeEventListener('click', onSuccessCloseBtnClick);
+      successPopupBlock.classList.add('modal--hidden');
+      successPopupBlock.removeEventListener('click', onSuccessCloseBtnClick);
       document.removeEventListener('keydown', onSuccessKeyPress);
     }
   }
@@ -32,8 +32,8 @@
 
   function onErrorKeyPress(evt) {
     if (window.util.testKeyPressed(evt.keyCode, 'ESC')) {
-      errorPopup.classList.add('modal--hidden');
-      errorPopup.removeEventListener('click', onErrorCloseBtnClick);
+      errorPopupBlock.classList.add('modal--hidden');
+      errorPopupBlock.removeEventListener('click', onErrorCloseBtnClick);
       document.removeEventListener('keydown', onErrorKeyPress);
     }
   }
@@ -41,8 +41,8 @@
 
   function onSuccessKeyPress(evt) {
     if (window.util.testKeyPressed(evt.keyCode, 'ESC')) {
-      successPopup.classList.add('modal--hidden');
-      successPopup.removeEventListener('click', onSuccessCloseBtnClick);
+      successPopupBlock.classList.add('modal--hidden');
+      successPopupBlock.removeEventListener('click', onSuccessCloseBtnClick);
       document.removeEventListener('keydown', onSuccessKeyPress);
     }
   }
@@ -50,17 +50,17 @@
 
   function onError(status) {
     window.domManager.setElementText(errorMessageElement, status);
-    errorPopup.classList.remove('modal--hidden');
+    errorPopupBlock.classList.remove('modal--hidden');
 
     document.addEventListener('keydown', onErrorKeyPress);
-    errorPopup.addEventListener('click', onErrorCloseBtnClick);
+    errorPopupBlock.addEventListener('click', onErrorCloseBtnClick);
   }
 
 
   function onUploadSuccess() {
-    successPopup.classList.remove('modal--hidden');
+    successPopupBlock.classList.remove('modal--hidden');
     document.addEventListener('keydown', onSuccessKeyPress);
-    successPopup.addEventListener('click', onSuccessCloseBtnClick);
+    successPopupBlock.addEventListener('click', onSuccessCloseBtnClick);
 
     window.inputManager.resetFormNodes();
   }

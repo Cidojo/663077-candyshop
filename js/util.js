@@ -7,7 +7,7 @@
     'ESC': 27
   };
 
-  var DEBOUNCE_INTERVAL = 5000;
+  var DEBOUNCE_INTERVAL = 500;
   var lastTimeout = null;
 
 
@@ -17,9 +17,9 @@
       string.split('').forEach(function (elem, index) {
         elem = Number(elem);
 
-        if (index + 1 % 2 !== 0) {
+        if (index % 2 === 0) {
           elem *= 2;
-          if (elem >= 10) {
+          if (elem > 9) {
             elem -= 9;
           }
         }
