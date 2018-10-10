@@ -222,10 +222,6 @@
     document.removeEventListener('mouseup', onPriceFilterChange);
     evt.preventDefault();
     onFilterGroupChange(evt);
-
-    // window.setTimeout(function () {
-    //   onFilterGroupChange(evt);
-    // }, 1500);
   }
 
 
