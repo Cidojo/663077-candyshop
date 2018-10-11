@@ -103,17 +103,14 @@
       toggleCartVisibility(!!this.items.length);
     },
     clear: function () {
-      if (this.items.length) {
+      do {
         var catalogIndex = window.backend.catalogCards.findIndex(function (it) {
           return window.cart.items[0].name === it.name;
         });
 
         deleteCartItem(0, catalogIndex);
-
-        this.clear();
-      } else {
-        return;
       }
+      while (this.items.length);
 
       window.render.cart();
       this.check();
