@@ -40,14 +40,14 @@
   }
 
 
-  function toggleCartVisibility(_toggle) {
-    var message = !_toggle ? 'В корзине ничего нет' :
+  function toggleCartVisibility(flag) {
+    var message = !flag ? 'В корзине ничего нет' :
       'В корзине ' + window.cart.items.length + ' ' + window.util.getStringEnding(['товар', 'товара', 'товаров'], window.cart.items.length) + ' на сумму ' +
           window.cart.items.reduce(function (sum, current) {
             return sum + current.price;
           }, 0) + ' ' + window.util.getStringEnding(['рубль', 'рубля', 'рублей']) + '.';
 
-    emptyCartBottomElement.classList.toggle('visually-hidden', _toggle);
+    emptyCartBottomElement.classList.toggle('visually-hidden', flag);
     window.domManager.setElementText(emptyCartHeaderElement, message);
   }
 
@@ -67,30 +67,30 @@
 
 
   window.cart = {
-    modify: function (evt, thisCard) {
-      if (thisCard.isInCatalog) {
+    modify: function (evt, _cardClicked) {
+      if (_cardClicked.isInCatalog) {
 
-        addToCart(thisCard.index, this.items);
+        addToCart(_cardClicked.index, this.items);
 
-        window.domManager.setAmountStyle(evt.currentTarget, window.backend.catalogCards[thisCard.index.catalog].amount);
+        window.domManager.setAmountStyle(evt.currentTarget, window.backend.catalogCards[_cardClicked.index.catalog].amount);
 
-      } else if (thisCard.index.catalog !== -1) {
+      } else if (_cardClicked.index.catalog !== -1) {
 
         var targetClassList = evt.target.classList;
 
         switch (true) {
           case (targetClassList.contains(CART_DELETE_BUTTON)):
-            deleteCartItem(thisCard.index.cart, thisCard.index.catalog);
+            deleteCartItem(_cardClicked.index.cart, _cardClicked.index.catalog);
             break;
           case (targetClassList.contains(CART_INCREASE_BUTTON)):
-            increaseCartItem(thisCard.index.cart, thisCard.index.catalog);
+            increaseCartItem(_cardClicked.index.cart, _cardClicked.index.catalog);
             break;
           case (targetClassList.contains(CART_DECREASE_BUTTON)):
-            decreaseCartItem(thisCard.index.cart, thisCard.index.catalog);
+            decreaseCartItem(_cardClicked.index.cart, _cardClicked.index.catalog);
             break;
         }
 
-        window.domManager.setAmountStyle(thisCard.currentCatalogCardNode, window.backend.catalogCards[thisCard.index.catalog].amount);
+        window.domManager.setAmountStyle(_cardClicked.currentCatalogCardNode, window.backend.catalogCards[_cardClicked.index.catalog].amount);
       }
 
       window.filter.getInStockQuantity();

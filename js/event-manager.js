@@ -14,20 +14,20 @@
   var INVALID_CARD_NUMBER = 'Неверно введен номер карты';
 
 
-  var deliverStoreBtn = document.querySelector('#deliver__store');
-  var deliverCourierBtn = document.querySelector('#deliver__courier');
-  var deliverStoreBlock = document.querySelector('.deliver__store');
-  var deliverCourierBlock = document.querySelector('.deliver__courier');
-  var paymentCardBtn = document.querySelector('#payment__card');
-  var paymentCashBtn = document.querySelector('#payment__cash');
-  var paymentCardBlock = document.querySelector('.payment__card-wrap');
-  var paymentCashBlock = document.querySelector('.payment__cash-wrap');
-  var cardNumberInput = document.querySelector('#payment__card-number');
-  var paymentStatus = document.querySelector('.payment__card-status');
-  var form = document.querySelector('.buy form');
-  var mapImg = document.querySelector('.deliver__store-map-wrap img');
-  var selfCarryInputs = document.querySelectorAll('input[name="store"]');
-  var selfCarryLabels = document.querySelectorAll('input[name="store"] + label');
+  var buyForm = document.querySelector('.buy form');
+  var deliverStoreTab = buyForm.querySelector('#deliver__store');
+  var deliverCourierTab = buyForm.querySelector('#deliver__courier');
+  var deliverStoreBlock = buyForm.querySelector('.deliver__store');
+  var deliverCourierBlock = buyForm.querySelector('.deliver__courier');
+  var paymentCardTab = buyForm.querySelector('#payment__card');
+  var paymentCashTab = buyForm.querySelector('#payment__cash');
+  var paymentCardBlock = buyForm.querySelector('.payment__card-wrap');
+  var paymentCashBlock = buyForm.querySelector('.payment__cash-wrap');
+  var cardNumberInput = buyForm.querySelector('#payment__card-number');
+  var paymentStatus = buyForm.querySelector('.payment__card-status');
+  var mapImg = buyForm.querySelector('.deliver__store-map-wrap img');
+  var selfCarryInputs = buyForm.querySelectorAll('input[name="store"]');
+  var selfCarryLabels = buyForm.querySelectorAll('input[name="store"] + label');
 
 
   function findCardElement(cardTitle) {
@@ -75,33 +75,30 @@
   }
 
 
-  function onClickDelivery(evt) {
-    toggleTabs(evt.target, [deliverStoreBlock, deliverCourierBlock], deliverCourierBtn);
+  function onClickDeliveryTab(evt) {
+    toggleTabs(evt.target, [deliverStoreBlock, deliverCourierBlock], deliverCourierTab);
   }
 
 
-  function onClickPayment(evt) {
-    toggleTabs(evt.target, [paymentCardBlock, paymentCashBlock], paymentCashBtn);
+  function onClickPaymentTab(evt) {
+    toggleTabs(evt.target, [paymentCardBlock, paymentCashBlock], paymentCashTab);
   }
 
-  paymentCardBtn.addEventListener('click', onClickPayment);
-  paymentCashBtn.addEventListener('click', onClickPayment);
+  paymentCardTab.addEventListener('click', onClickPaymentTab);
+  paymentCashTab.addEventListener('click', onClickPaymentTab);
 
-  deliverStoreBtn.addEventListener('click', onClickDelivery);
-  deliverCourierBtn.addEventListener('click', onClickDelivery);
+  deliverStoreTab.addEventListener('click', onClickDeliveryTab);
+  deliverCourierTab.addEventListener('click', onClickDeliveryTab);
 
-
+  // Проверка валидации полей, return true если поля НЕ валидны
   function getCardPaymentInvalidity(fields) {
     if (!cardNumberInput.disabled && !window.util.getLuhnValidation(cardNumberInput.value)) {
       return true;
     }
 
-    var myArr = [];
-    fields.forEach(function (field) {
-      myArr.push(field.checkValidity());
-    });
-
-    return myArr.some(function (status) {
+    return Array.from(fields).map(function (field) {
+      return field.checkValidity();
+    }).some(function (status) {
       return status === false;
     });
   }
@@ -119,10 +116,10 @@
   });
 
 
-  form.addEventListener('submit', function (evt) {
+  buyForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
 
-    if (!form.checkValidity() || window.inputManager.formInputsByBlock[0].inputs[0].disabled) {
+    if (!buyForm.checkValidity() || window.inputManager.formInputsByBlock[0].inputs[0].disabled) {
       return;
     }
 
@@ -131,7 +128,7 @@
       return;
     }
 
-    window.backend.upload(new FormData(form));
+    window.backend.upload(new FormData(buyForm));
   });
 
 

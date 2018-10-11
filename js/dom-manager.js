@@ -13,12 +13,12 @@
 
 
   window.domManager = {
-    setElementText: function (owner, text) {
-      owner.textContent = text;
+    setElementText: function (element, text) {
+      element.textContent = text;
     },
-    removeDomChildren: function (elem, start) {
-      while (elem.children[start - 1]) {
-        elem.removeChild(elem.children[start - 1]);
+    removeDomChildren: function (element, start) {
+      while (element.children[start - 1]) {
+        element.removeChild(element.children[start - 1]);
       }
     },
     getEmptyFilterMessage: function () {
