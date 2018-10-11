@@ -99,7 +99,7 @@
       this.check();
     },
     check: function () {
-      window.inputManager.disableInputToggle();
+      window.inputManager.disableToggle();
       toggleCartVisibility(!!this.items.length);
     },
     clear: function () {

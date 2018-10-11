@@ -14,10 +14,16 @@
     return Math.round(drag / priceBarLength * 100) + '%';
   }
 
+  function getPriceBarScale() {
+    var maxPrice = window.backend.catalogCards ? Math.max.apply(null, window.backend.catalogCards.map(function (current) {
+      return current.price;
+    })) : 0;
+    return maxPrice / priceBarLength;
+  }
 
   window.priceFilter = {
     init: function () {
-      var priceBarScale = this.getPriceBarScale();
+      var priceBarScale = getPriceBarScale();
 
       this.reset();
 
@@ -103,14 +109,8 @@
       priceFillLine.style.left = 0;
       priceFillLine.style.right = 0;
 
-      rangePriceMin.textContent = Math.round((priceHandlerLeft.offsetLeft + handlerHalfWidth) * this.getPriceBarScale());
-      rangePriceMax.textContent = Math.round((priceHandlerRight.offsetLeft + handlerHalfWidth) * this.getPriceBarScale());
-    },
-    getPriceBarScale: function () {
-      var maxPrice = window.backend.catalogCards ? Math.max.apply(null, window.backend.catalogCards.map(function (current) {
-        return current.price;
-      })) : 0;
-      return maxPrice / priceBarLength;
+      rangePriceMin.textContent = Math.round((priceHandlerLeft.offsetLeft + handlerHalfWidth) * getPriceBarScale());
+      rangePriceMax.textContent = Math.round((priceHandlerRight.offsetLeft + handlerHalfWidth) * getPriceBarScale());
     }
   };
 })();

@@ -149,7 +149,7 @@
       var currentCard = getCardClicked(evt);
 
       if (targetClassList.contains(FAVORITE_BUTTON_CLASS)) {
-        window.favorite.updateFavoriteList(currentCard, evt.target);
+        window.favorite.updateList(currentCard, evt.target);
 
       } else if (targetClassList.contains(COMPOSITION_BUTTON_CLASS)) {
         evt.currentTarget.querySelector('.card__composition').classList.toggle('card__composition--hidden');

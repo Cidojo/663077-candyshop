@@ -8,7 +8,7 @@
     handlerElement: document.querySelector('#filter-favorite'),
     quantityElement: document.querySelector('#filter-favorite ~ span'),
 
-    updateFavoriteList: function (card, btn) {
+    updateList: function (card, btn) {
       var cardClicked = window.backend.catalogCards.find(function (it) {
         return it.name === card.name;
       });
@@ -25,7 +25,7 @@
       }
       this.setQuantity();
     },
-    isFavorite: function (card) {
+    checkIt: function (card) {
       return this.list.some(function (it) {
         return it.name === card.name;
       });
