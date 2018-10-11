@@ -27,7 +27,7 @@
       fragment.appendChild(emptyFilterTemplate.cloneNode(true).content);
 
       var showAllButton = fragment.querySelector('.catalog__show-all');
-      showAllButton.setAttribute('style', 'cursor: pointer;');
+      showAllButton.style.cursor = 'pointer';
       showAllButton.addEventListener('click', onShowAllButtonClick);
 
       catalogBlock.appendChild(fragment);

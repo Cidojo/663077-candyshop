@@ -248,7 +248,7 @@
   }
 
 
-  showAll.setAttribute('style', 'cursor: pointer;');
+  showAll.style.cursor = 'pointer';
 
 
   showAll.addEventListener('click', function (evt) {

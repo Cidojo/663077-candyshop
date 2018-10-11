@@ -135,8 +135,8 @@
   selfCarryInputs.forEach(function (button, buttonIndex) {
     button.addEventListener('change', function (evt) {
       if (evt.currentTarget.checked) {
-        mapImg.setAttribute('src', 'img/map/' + evt.currentTarget.value + '.jpg');
-        mapImg.setAttribute('alt', selfCarryLabels[buttonIndex].textContent);
+        mapImg.src = 'img/map/' + evt.currentTarget.value + '.jpg';
+        mapImg.alt = selfCarryLabels[buttonIndex].textContent;
       }
     });
   });
