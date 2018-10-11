@@ -289,6 +289,7 @@
   window.filter = {
     init: function () {
       window.filter.cards = window.backend.catalogCards.slice(0);
+      sortCatalog(window.filter.cards, getActiveCriteries(sorter));
 
       resetAllFilters();
       setAllQuantities();
