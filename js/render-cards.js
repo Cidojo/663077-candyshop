@@ -5,7 +5,7 @@
   var STARS_LITERALS = ['one', 'two', 'three', 'four', 'five'];
   var PICTURE_PATH = 'img/cards/';
 
-  var catalogTemplate = new TemplateMethods({
+  var catalogSet = new TemplateMethods({
     parentElement: document.querySelector('.catalog__cards'),
     template: '#card',
     nest: '.catalog__card',
@@ -20,7 +20,7 @@
     favorite: '.card__btn-favorite'
   });
 
-  var cartTemplate = new TemplateMethods({
+  var cartSet = new TemplateMethods({
     parentElement: document.querySelector('.goods__cards'),
     template: '#card-order',
     nest: '.card-order',
@@ -77,7 +77,7 @@
 
 
   function setCardFavoriteStyle(element, cardItem) {
-    element.classList.toggle('card__btn-favorite--selected', window.favorite.isFavorite(cardItem));
+    element.classList.toggle('card__btn-favorite--selected', window.favorite.checkIt(cardItem));
   }
 
 
@@ -124,18 +124,18 @@
   window.render = {
     catalog: function () {
       toggleEmptyCatalogMessage();
-      this.render(catalogTemplate, window.backend.catalogCards);
+      this.method(catalogSet, window.backend.catalogCards);
     },
 
     cart: function () {
-      this.render(cartTemplate, window.cart.items);
+      this.method(cartSet, window.cart.items);
     },
 
     filter: function () {
-      this.render(catalogTemplate, window.filter.cards);
+      this.method(catalogSet, window.filter.cards);
     },
 
-    render: function (template, cardItems) {
+    method: function (template, cardItems) {
       var parentElement = template.parentElement;
 
       var fragment = document.createDocumentFragment();

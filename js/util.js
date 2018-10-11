@@ -14,17 +14,17 @@
   window.util = {
     getLuhnValidation: function getLuhnValidation(string) {
       var sum = 0;
-      string.split('').forEach(function (elem, index) {
-        elem = Number(elem);
+      string.split('').forEach(function (element, index) {
+        element = Number(element);
 
         if (index % 2 === 0) {
-          elem *= 2;
-          if (elem > 9) {
-            elem -= 9;
+          element *= 2;
+          if (element > 9) {
+            element -= 9;
           }
         }
 
-        sum += elem;
+        sum += element;
       });
 
       return sum % 10 === 0;
@@ -54,12 +54,12 @@
         return action;
       }
       return function () {
-        var args = arguments;
+        var actionArguments = arguments;
         if (lastTimeout) {
           window.clearTimeout(lastTimeout);
         }
         lastTimeout = window.setTimeout(function () {
-          action.apply(null, args);
+          action.apply(null, actionArguments);
         }, DEBOUNCE_INTERVAL);
       };
     }
