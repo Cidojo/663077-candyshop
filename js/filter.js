@@ -162,6 +162,7 @@
     }
 
     setAllQuantities();
+    sortCatalog(window.filter.cards, getActiveCriteries(sorter));
 
     window.render.filter();
 
