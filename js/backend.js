@@ -12,39 +12,19 @@
   var errorPopupBlock = document.querySelector('.modal--error');
   var errorMessageElement = errorPopupBlock.querySelector('.modal__message');
 
-
-  function onErrorCloseBtnClick(evt) {
-    if (evt.target.classList.contains('modal__close') || evt.target.classList.contains('modal--error')) {
+  function onErrorCloseQuery(evt) {
+    if (evt.target.classList.contains('modal__close') || evt.target.classList.contains('modal--error') || window.util.testKeyPressed(evt.keyCode, 'ESC')) {
       errorPopupBlock.classList.add('modal--hidden');
-      errorPopupBlock.removeEventListener('click', onErrorCloseBtnClick);
-      document.removeEventListener('keydown', onErrorKeyPress);
+      errorPopupBlock.removeEventListener('click', onErrorCloseQuery);
+      document.removeEventListener('keydown', onErrorCloseQuery);
     }
   }
 
-
-  function onSuccessCloseBtnClick(evt) {
-    if (evt.target.classList.contains('modal__close') || evt.target.classList.contains('modal--success')) {
+  function onSuccessCloseQuery(evt) {
+    if (evt.target.classList.contains('modal__close') || evt.target.classList.contains('modal--success') || window.util.testKeyPressed(evt.keyCode, 'ESC')) {
       successPopupBlock.classList.add('modal--hidden');
-      successPopupBlock.removeEventListener('click', onSuccessCloseBtnClick);
-      document.removeEventListener('keydown', onSuccessKeyPress);
-    }
-  }
-
-
-  function onErrorKeyPress(evt) {
-    if (window.util.testKeyPressed(evt.keyCode, 'ESC')) {
-      errorPopupBlock.classList.add('modal--hidden');
-      errorPopupBlock.removeEventListener('click', onErrorCloseBtnClick);
-      document.removeEventListener('keydown', onErrorKeyPress);
-    }
-  }
-
-
-  function onSuccessKeyPress(evt) {
-    if (window.util.testKeyPressed(evt.keyCode, 'ESC')) {
-      successPopupBlock.classList.add('modal--hidden');
-      successPopupBlock.removeEventListener('click', onSuccessCloseBtnClick);
-      document.removeEventListener('keydown', onSuccessKeyPress);
+      successPopupBlock.removeEventListener('click', onSuccessCloseQuery);
+      document.removeEventListener('keydown', onSuccessCloseQuery);
     }
   }
 
@@ -53,15 +33,15 @@
     window.domManager.setElementText(errorMessageElement, status);
     errorPopupBlock.classList.remove('modal--hidden');
 
-    document.addEventListener('keydown', onErrorKeyPress);
-    errorPopupBlock.addEventListener('click', onErrorCloseBtnClick);
+    document.addEventListener('keydown', onErrorCloseQuery);
+    errorPopupBlock.addEventListener('click', onErrorCloseQuery);
   }
 
 
   function onUploadSuccess() {
     successPopupBlock.classList.remove('modal--hidden');
-    document.addEventListener('keydown', onSuccessKeyPress);
-    successPopupBlock.addEventListener('click', onSuccessCloseBtnClick);
+    document.addEventListener('keydown', onSuccessCloseQuery);
+    successPopupBlock.addEventListener('click', onSuccessCloseQuery);
 
     window.inputManager.resetFormNodes();
     window.cart.clear();

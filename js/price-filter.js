@@ -44,11 +44,7 @@
           jump = (jump < handlerHalfWidth * (-1)) ? handlerHalfWidth * (-1) : jump;
           jump = (jump > priceHandlerRight.offsetLeft) ? priceHandlerRight.offsetLeft : jump;
 
-          if (jump > priceHandlerRight.offsetLeft - handlerWidth) {
-            priceHandlerLeft.style['z-index'] = 2;
-          } else {
-            priceHandlerLeft.style['z-index'] = 1;
-          }
+          priceHandlerLeft.style['z-index'] = jump > priceHandlerRight.offsetLeft - handlerWidth ? 2 : 1;
 
           priceHandlerLeft.style.left = setHandlerOffset(jump);
           priceFillLine.style.left = setHandlerOffset(jump + handlerHalfWidth);
