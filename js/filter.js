@@ -293,6 +293,7 @@
       resetAllFilters();
       setAllQuantities();
       sorter.handlerElements[0].checked = true;
+      sortCatalog(window.filter.cards, getActiveCriteries(sorter));
 
       window.render.filter();
     },
