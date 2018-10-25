@@ -70,9 +70,9 @@
   }
 
 
-  function setCardSugar(isSugar) {
-    return isSugar ? 'Без сахара. ' : 'Содержит сахар. ' +
-        isSugar + ' ккал';
+  function setCardSugar(nutritionFacts) {
+    return nutritionFacts.sugar ? 'Без сахара. ' : 'Содержит сахар. ' +
+        nutritionFacts.energy + ' ккал';
   }
 
 
@@ -100,7 +100,7 @@
       window.domManager.setElementText(cardTemplate.getDomElement(cardTemplate.starsCount), cardItem.rating.number);
     }
     if (cardTemplate.characteristics) {
-      window.domManager.setElementText(cardTemplate.getDomElement(cardTemplate.characteristics), setCardSugar(cardItem.nutritionFacts.sugar));
+      window.domManager.setElementText(cardTemplate.getDomElement(cardTemplate.characteristics), setCardSugar(cardItem.nutritionFacts));
     }
     if (cardTemplate.composition) {
       window.domManager.setElementText(cardTemplate.getDomElement(cardTemplate.composition), cardItem.nutritionFacts.contents);
